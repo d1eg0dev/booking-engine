@@ -1,0 +1,78 @@
+{
+  "_info": "Configuración de UNA propiedad. Para un cliente nuevo solo se cambia este archivo. Ver README.md.",
+
+  "property": {
+    "name": "Casa Aurora",
+    "tagline": {
+      "es": "Cuatro suites, hasta diez huéspedes. Alberca, terraza y el mar a unos pasos.",
+      "en": "Four suites, up to ten guests. Pool, terrace and the sea a few steps away."
+    },
+    "logo": "",
+    "website": "https://example.com",
+    "maxGuests": 10,
+    "checkIn": "15:00",
+    "checkOut": "11:00"
+  },
+
+  "brand": {
+    "ink": "#1A1A18",
+    "accent": "#2D5F56",
+    "paper": "#FCFBF9",
+    "font": "Inter",
+    "poweredBy": false
+  },
+
+  "languages": ["es", "en"],
+  "defaultLanguage": "es",
+  "currency": "USD",
+  "locale": "es-MX",
+
+  "rates": {
+    "defaultNightly": 495,
+    "defaultMinNights": 3,
+    "seasons": [
+      { "name": { "es": "Temporada alta", "en": "High season" }, "from": "2026-12-15", "to": "2027-04-15", "nightly": 690, "minNights": 4 },
+      { "name": { "es": "Temporada media", "en": "Mid season" }, "from": "2026-10-01", "to": "2026-12-14", "nightly": 495, "minNights": 3 },
+      { "name": { "es": "Temporada verde", "en": "Green season" }, "from": "2027-04-16", "to": "2027-09-30", "nightly": 390, "minNights": 2 }
+    ]
+  },
+
+  "fees": {
+    "cleaning": 150,
+    "petPerNight": 30,
+    "maxPets": 2,
+    "taxPercent": 0
+  },
+
+  "extras": [
+    { "id": "chef", "name": { "es": "Chef privado", "en": "Private chef" }, "desc": { "es": "Desayuno y cena, diario", "en": "Breakfast and dinner, daily" }, "price": 160, "unit": "night" },
+    { "id": "transfer", "name": { "es": "Traslado al aeropuerto", "en": "Airport transfer" }, "desc": { "es": "Viaje redondo privado", "en": "Private round trip" }, "price": 120, "unit": "stay" },
+    { "id": "tour", "name": { "es": "Excursión guiada", "en": "Guided excursion" }, "desc": { "es": "Guía privado, medio día", "en": "Private guide, half day" }, "price": 70, "unit": "stay" }
+  ],
+
+  "payment": {
+    "mode": "demo",
+    "_modes": "demo = no cobra (para enseñar) · stripe = cobra con Stripe vía el backend · whatsapp = manda la solicitud por WhatsApp sin cobrar",
+    "chargePercent": 100,
+    "_chargePercent": "100 = se cobra todo al reservar · 30 = anticipo del 30% y el resto lo cobra el dueño después"
+  },
+
+  "availability": {
+    "icalUrls": [],
+    "_icalUrls": "Enlaces iCal de Airbnb, Booking o VRBO. Los lee el backend; el navegador no puede leerlos directo.",
+    "blockedDates": ["2026-12-20", "2026-12-21", "2026-12-22", "2026-12-23", "2026-12-24", "2026-12-25", "2026-12-26"]
+  },
+
+  "backendUrl": "",
+  "_backendUrl": "URL de la app web de Google Apps Script (termina en /exec). Vacío = sin backend.",
+
+  "contact": {
+    "email": "reservas@example.com",
+    "whatsapp": "+520000000000"
+  },
+
+  "policy": {
+    "es": "<p><b>Reserva.</b> La reserva se confirma al recibir el pago.</p><p><b>Cancelación.</b> Más de 60 días antes de la llegada se reembolsa el 100%. Entre 30 y 60 días, el 50%. Con menos de 30 días no hay reembolso.</p><p><b>Entrada y salida.</b> Entrada desde las 15:00. Salida antes de las 11:00.</p><p><b>Daños.</b> El huésped es responsable de cualquier daño durante la estancia.</p><p><b>Reglas.</b> No se permiten eventos sin aprobación por escrito. Horario de silencio desde las 22:00.</p>",
+    "en": "<p><b>Reservation.</b> A reservation is confirmed once payment is received.</p><p><b>Cancellation.</b> More than 60 days before arrival, 100% is refunded. Between 30 and 60 days, 50%. Under 30 days, non-refundable.</p><p><b>Check-in and check-out.</b> Check-in from 15:00. Check-out by 11:00.</p><p><b>Damages.</b> The guest is responsible for any damage during the stay.</p><p><b>House rules.</b> No events without written approval. Quiet hours from 22:00.</p>"
+  }
+}
