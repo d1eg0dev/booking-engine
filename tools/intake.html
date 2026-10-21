@@ -30,8 +30,15 @@
 body{font-family:var(--sans);font-size:15px;line-height:1.6;color:var(--ink);background:var(--paper);padding:0 0 120px}
 .wrap{max-width:820px;margin:0 auto;padding:0 20px}
 header{background:var(--head);color:var(--head-txt);padding:44px 0 38px;margin-bottom:40px}
+header .wrap{display:flex;gap:20px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
 header h1{font-size:clamp(24px,4vw,32px);font-weight:600;letter-spacing:-.01em}
-header p{color:var(--mute);margin-top:10px;max-width:60ch}
+header p{color:var(--mute);margin-top:10px;max-width:58ch}
+#lang{display:flex;gap:0;border:1px solid #4A463E;border-radius:7px;overflow:hidden;flex:0 0 auto}
+#lang button{
+  background:none;border:0;color:var(--head-txt);font:inherit;font-size:13px;
+  padding:7px 14px;cursor:pointer;opacity:.6;
+}
+#lang button[aria-pressed=true]{background:var(--head-txt);color:var(--head);opacity:1;font-weight:500}
 fieldset{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px;margin-bottom:22px}
 legend{font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding:0 10px}
 .hint{font-size:13px;color:var(--mute);margin:-4px 0 18px}
@@ -57,11 +64,11 @@ button.add{
   background:none;border:1px dashed var(--accent);color:var(--accent);
   padding:9px 16px;border-radius:7px;font:inherit;font-size:13.5px;cursor:pointer;
 }
-button.add:hover{background:rgba(45,95,86,.06)}
+button.add:hover{background:rgba(45,95,86,.08)}
 .bar{
   position:fixed;left:0;right:0;bottom:0;background:var(--card);
   border-top:1px solid var(--line);padding:14px 20px;z-index:20;
-  box-shadow:0 -4px 20px rgba(0,0,0,.05);
+  box-shadow:0 -4px 20px rgba(0,0,0,.06);
 }
 .bar .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .btn{
@@ -70,7 +77,7 @@ button.add:hover{background:rgba(45,95,86,.06)}
 }
 .btn:hover{background:var(--accent)}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
-.btn.ghost:hover{background:var(--field-alt);color:var(--ink)}
+.btn.ghost:hover{background:var(--field-alt)}
 #status{font-size:13px;color:var(--mute)}
 #status.err{color:var(--err)}
 #status.ok{color:var(--accent)}
@@ -87,41 +94,47 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 
 <header>
   <div class="wrap">
-    <h1>Tu sistema de reservas</h1>
-    <p>Llena lo que sepas y descarga el archivo al final. Lo que no tengas a la mano, déjalo en blanco y lo resolvemos nosotros. Toma unos quince minutos.</p>
+    <div>
+      <h1 data-en="Your booking system">Tu sistema de reservas</h1>
+      <p data-en="Fill in what you know and download the file at the end. Leave anything you don't have at hand blank and we'll sort it out. Takes about fifteen minutes.">Llena lo que sepas y descarga el archivo al final. Lo que no tengas a la mano, déjalo en blanco y lo resolvemos nosotros. Toma unos quince minutos.</p>
+    </div>
+    <div id="lang">
+      <button type="button" data-lang="es" aria-pressed="true">Español</button>
+      <button type="button" data-lang="en" aria-pressed="false">English</button>
+    </div>
   </div>
 </header>
 
 <form class="wrap" id="f">
 
   <fieldset>
-    <legend>La propiedad</legend>
-    <label><span>Nombre</span><input name="p_name" required placeholder="Casa Luna"></label>
-    <label><span>Una frase que la describa · español</span>
-      <em>Lo primero que lee el huésped. Dos renglones máximo.</em>
+    <legend data-en="The property">La propiedad</legend>
+    <label><span data-en="Name">Nombre</span><input name="p_name" required placeholder="Casa Luna"></label>
+    <label><span data-en="One line describing it · Spanish">Una frase que la describa · español</span>
+      <em data-en="The first thing a guest reads. Two lines at most.">Lo primero que lee el huésped. Dos renglones máximo.</em>
       <input name="p_tag_es" placeholder="Cuatro suites, hasta diez huéspedes. Alberca, terraza y el mar a unos pasos."></label>
-    <label><span>La misma frase en inglés</span>
-      <em>Si no la tienes, la traducimos nosotros.</em>
-      <input name="p_tag_en"></label>
+    <label><span data-en="The same line in English">La misma frase en inglés</span>
+      <em data-en="If you don't have it, we'll translate it.">Si no la tienes, la traducimos nosotros.</em>
+      <input name="p_tag_en" data-ph-en="Four suites, up to ten guests. Pool, terrace and the sea a few steps away."></label>
     <div class="row row-2">
-      <label><span>Sitio web actual</span><em>Si no tienes, déjalo vacío.</em><input name="p_site" type="url" placeholder="https://"></label>
-      <label><span>Huéspedes máximo</span><input name="p_max" type="number" min="1" value="10"></label>
+      <label><span data-en="Current website">Sitio web actual</span><em data-en="Leave blank if you don't have one.">Si no tienes, déjalo vacío.</em><input name="p_site" type="url" placeholder="https://"></label>
+      <label><span data-en="Maximum guests">Huéspedes máximo</span><input name="p_max" type="number" min="1" value="10"></label>
     </div>
     <div class="row row-2">
-      <label><span>Hora de entrada</span><input name="p_in" type="time" value="15:00"></label>
-      <label><span>Hora de salida</span><input name="p_out" type="time" value="11:00"></label>
+      <label><span data-en="Check-in time">Hora de entrada</span><input name="p_in" type="time" value="15:00"></label>
+      <label><span data-en="Check-out time">Hora de salida</span><input name="p_out" type="time" value="11:00"></label>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Marca</legend>
-    <p class="hint">Si no sabes los colores, déjalos como están: elegimos algo que combine con tus fotos.</p>
+    <legend data-en="Brand">Marca</legend>
+    <p class="hint" data-en="If you're not sure about colors, leave them as they are: we'll pick something that works with your photos.">Si no sabes los colores, déjalos como están: elegimos algo que combine con tus fotos.</p>
     <div class="row row-3">
-      <label><span>Color de texto</span><div class="swatch"><input name="b_ink" type="color" value="#1A1A18"></div></label>
-      <label><span>Color de acento</span><em>Botones y detalles.</em><div class="swatch"><input name="b_accent" type="color" value="#2D5F56"></div></label>
-      <label><span>Color de fondo</span><div class="swatch"><input name="b_paper" type="color" value="#FCFBF9"></div></label>
+      <label><span data-en="Text color">Color de texto</span><div class="swatch"><input name="b_ink" type="color" value="#1A1A18"></div></label>
+      <label><span data-en="Accent color">Color de acento</span><em data-en="Buttons and details.">Botones y detalles.</em><div class="swatch"><input name="b_accent" type="color" value="#2D5F56"></div></label>
+      <label><span data-en="Background color">Color de fondo</span><div class="swatch"><input name="b_paper" type="color" value="#FCFBF9"></div></label>
     </div>
-    <label><span>Tipografía</span>
+    <label><span data-en="Typeface">Tipografía</span>
       <select name="b_font">
         <option>Inter</option><option>Jost</option><option>Cormorant Garamond</option>
         <option>Montserrat</option><option>Lora</option><option>Poppins</option>
@@ -129,95 +142,109 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
   </fieldset>
 
   <fieldset>
-    <legend>Idioma y moneda</legend>
+    <legend data-en="Language and currency">Idioma y moneda</legend>
     <div class="row row-3">
-      <label><span>Idiomas del sitio</span>
-        <select name="langs"><option value="es,en">Español e inglés</option><option value="es">Solo español</option><option value="en">Solo inglés</option></select></label>
-      <label><span>Idioma por defecto</span>
-        <select name="deflang"><option value="es">Español</option><option value="en">Inglés</option></select></label>
-      <label><span>Moneda en que cobras</span>
+      <label><span data-en="Site languages">Idiomas del sitio</span>
+        <select name="langs">
+          <option value="es,en" data-en="Spanish and English">Español e inglés</option>
+          <option value="es" data-en="Spanish only">Solo español</option>
+          <option value="en" data-en="English only">Solo inglés</option>
+        </select></label>
+      <label><span data-en="Default language">Idioma por defecto</span>
+        <select name="deflang">
+          <option value="es" data-en="Spanish">Español</option>
+          <option value="en" data-en="English">Inglés</option>
+        </select></label>
+      <label><span data-en="Currency you charge in">Moneda en que cobras</span>
         <select name="cur"><option>USD</option><option>MXN</option><option>EUR</option><option>CAD</option></select></label>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Tarifas</legend>
+    <legend data-en="Rates">Tarifas</legend>
     <div class="row row-2">
-      <label><span>Tarifa por noche, normal</span><em>La que cobras la mayor parte del año.</em><input name="r_def" type="number" min="0" step="1" required placeholder="495"></label>
-      <label><span>Mínimo de noches, normal</span><input name="r_min" type="number" min="1" value="3"></label>
+      <label><span data-en="Nightly rate, standard">Tarifa por noche, normal</span><em data-en="What you charge most of the year.">La que cobras la mayor parte del año.</em><input name="r_def" type="number" min="0" step="1" required placeholder="495"></label>
+      <label><span data-en="Minimum nights, standard">Mínimo de noches, normal</span><input name="r_min" type="number" min="1" value="3"></label>
     </div>
-    <p class="hint">Temporadas con precio distinto. Agrega las que necesites; si cobras igual todo el año, no agregues ninguna.</p>
+    <p class="hint" data-en="Seasons with a different price. Add as many as you need; if you charge the same all year, add none.">Temporadas con precio distinto. Agrega las que necesites; si cobras igual todo el año, no agregues ninguna.</p>
     <div id="seasons"></div>
-    <button class="add" type="button" data-add="season">+ Agregar temporada</button>
+    <button class="add" type="button" data-add="season" data-en="+ Add season">+ Agregar temporada</button>
   </fieldset>
 
   <fieldset>
-    <legend>Cargos</legend>
+    <legend data-en="Fees">Cargos</legend>
     <div class="row row-4">
-      <label><span>Limpieza</span><em>Por estancia.</em><input name="f_clean" type="number" min="0" value="0"></label>
-      <label><span>Mascota, por noche</span><em>0 si no aceptas.</em><input name="f_pet" type="number" min="0" value="0"></label>
-      <label><span>Máximo de mascotas</span><input name="f_maxpet" type="number" min="0" value="0"></label>
-      <label><span>Impuesto %</span><em>0 si ya va incluido.</em><input name="f_tax" type="number" min="0" step="0.1" value="0"></label>
+      <label><span data-en="Cleaning">Limpieza</span><em data-en="Per stay.">Por estancia.</em><input name="f_clean" type="number" min="0" value="0"></label>
+      <label><span data-en="Pet, per night">Mascota, por noche</span><em data-en="0 if you don't accept them.">0 si no aceptas.</em><input name="f_pet" type="number" min="0" value="0"></label>
+      <label><span data-en="Maximum pets">Máximo de mascotas</span><input name="f_maxpet" type="number" min="0" value="0"></label>
+      <label><span data-en="Tax %">Impuesto %</span><em data-en="0 if already included.">0 si ya va incluido.</em><input name="f_tax" type="number" min="0" step="0.1" value="0"></label>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Extras</legend>
-    <p class="hint">Servicios que el huésped puede agregar al reservar: chef, traslado, tour, masaje. Si no ofreces ninguno, sáltalo.</p>
+    <legend data-en="Extras">Extras</legend>
+    <p class="hint" data-en="Services a guest can add when booking: chef, transfer, tour, massage. Skip it if you don't offer any.">Servicios que el huésped puede agregar al reservar: chef, traslado, tour, masaje. Si no ofreces ninguno, sáltalo.</p>
     <div id="extras"></div>
-    <button class="add" type="button" data-add="extra">+ Agregar extra</button>
+    <button class="add" type="button" data-add="extra" data-en="+ Add extra">+ Agregar extra</button>
   </fieldset>
 
   <fieldset>
-    <legend>Cobro</legend>
+    <legend data-en="Payment">Cobro</legend>
     <div class="row row-2">
-      <label><span>Cuánto cobras al reservar</span>
-        <select name="pay_pct"><option value="100">Todo por adelantado</option><option value="50">50% de anticipo</option><option value="30">30% de anticipo</option></select></label>
-      <label><span>¿Ya tienes cuenta de Stripe?</span>
-        <select name="has_stripe"><option value="no">No, necesito ayuda para abrirla</option><option value="si">Sí, ya tengo</option></select></label>
+      <label><span data-en="How much you charge at booking">Cuánto cobras al reservar</span>
+        <select name="pay_pct">
+          <option value="100" data-en="The full amount up front">Todo por adelantado</option>
+          <option value="50" data-en="50% deposit">50% de anticipo</option>
+          <option value="30" data-en="30% deposit">30% de anticipo</option>
+        </select></label>
+      <label><span data-en="Do you already have a Stripe account?">¿Ya tienes cuenta de Stripe?</span>
+        <select name="has_stripe">
+          <option value="no" data-en="No, I need help opening one">No, necesito ayuda para abrirla</option>
+          <option value="si" data-en="Yes, I have one">Sí, ya tengo</option>
+        </select></label>
     </div>
-    <div class="note"><b>Importante.</b> La cuenta de Stripe queda a tu nombre y el dinero de cada reserva entra directo ahí. En ningún momento pasa por nosotros. Nunca nos mandes tu llave secreta por mensaje: la pones tú en la configuración cuando lleguemos a ese paso.</div>
+    <div class="note"><b data-en="Important.">Importante.</b> <span data-en="The Stripe account stays in your name and the money from each booking goes straight into it. It never passes through us. Never send us your secret key by message: you enter it yourself in the settings when we get to that step.">La cuenta de Stripe queda a tu nombre y el dinero de cada reserva entra directo ahí. En ningún momento pasa por nosotros. Nunca nos mandes tu llave secreta por mensaje: la pones tú en la configuración cuando lleguemos a ese paso.</span></div>
   </fieldset>
 
   <fieldset>
-    <legend>Calendarios</legend>
-    <p class="hint">Para que las fechas ocupadas en las plataformas se bloqueen solas en tu sitio. Es el enlace iCal de exportación de cada una.</p>
-    <label><span>iCal de Airbnb</span><input name="ical1" type="url" placeholder="https://www.airbnb.com/calendar/ical/..."></label>
-    <label><span>iCal de Booking</span><input name="ical2" type="url"></label>
-    <label><span>iCal de VRBO u otra</span><input name="ical3" type="url"></label>
-    <details><summary>¿Dónde encuentro ese enlace?</summary>
-      <p class="hint" style="margin-top:10px">En Airbnb: Calendario → Disponibilidad → Sincronizar calendarios → Exportar calendario. En Booking: Calendario → Sincronizar calendarios. Si no los encuentras, dínoslo y lo vemos juntos en una llamada corta.</p></details>
+    <legend data-en="Calendars">Calendarios</legend>
+    <p class="hint" data-en="So dates already booked on the platforms block themselves on your site. It's the iCal export link from each one.">Para que las fechas ocupadas en las plataformas se bloqueen solas en tu sitio. Es el enlace iCal de exportación de cada una.</p>
+    <label><span data-en="Airbnb iCal">iCal de Airbnb</span><input name="ical1" type="url" placeholder="https://www.airbnb.com/calendar/ical/..."></label>
+    <label><span data-en="Booking iCal">iCal de Booking</span><input name="ical2" type="url"></label>
+    <label><span data-en="VRBO or other iCal">iCal de VRBO u otra</span><input name="ical3" type="url"></label>
+    <details><summary data-en="Where do I find that link?">¿Dónde encuentro ese enlace?</summary>
+      <p class="hint" style="margin-top:10px" data-en="On Airbnb: Calendar → Availability → Sync calendars → Export calendar. On Booking: Calendar → Sync calendars. If you can't find them, tell us and we'll do it together on a short call.">En Airbnb: Calendario → Disponibilidad → Sincronizar calendarios → Exportar calendario. En Booking: Calendario → Sincronizar calendarios. Si no los encuentras, dínoslo y lo vemos juntos en una llamada corta.</p></details>
   </fieldset>
 
   <fieldset>
-    <legend>Contacto</legend>
+    <legend data-en="Contact">Contacto</legend>
     <div class="row row-2">
-      <label><span>Correo donde recibes las reservas</span><input name="c_email" type="email" required placeholder="reservas@tusitio.com"></label>
-      <label><span>WhatsApp</span><em>Con código de país.</em><input name="c_wa" placeholder="+52 312 000 0000"></label>
+      <label><span data-en="Email where you receive bookings">Correo donde recibes las reservas</span><input name="c_email" type="email" required placeholder="reservas@tusitio.com"></label>
+      <label><span data-en="WhatsApp">WhatsApp</span><em data-en="With country code.">Con código de país.</em><input name="c_wa" placeholder="+52 312 000 0000"></label>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Políticas</legend>
-    <p class="hint">Vienen llenas con lo más común. Cámbialas si tus reglas son distintas. Escribe normal: un punto por renglón.</p>
-    <label><span>Política de cancelación y reglas · español</span><textarea name="pol_es" rows="7"></textarea></label>
-    <label><span>La misma en inglés</span><em>Si la dejas vacía, la traducimos de la de arriba.</em><textarea name="pol_en"></textarea></label>
+    <legend data-en="Policies">Políticas</legend>
+    <p class="hint" data-en="These come filled in with the most common terms. Change them if your rules are different. Write normally: one point per line.">Vienen llenas con lo más común. Cámbialas si tus reglas son distintas. Escribe normal: un punto por renglón.</p>
+    <label><span data-en="Cancellation policy and house rules · Spanish">Política de cancelación y reglas · español</span><textarea name="pol_es" rows="7"></textarea></label>
+    <label><span data-en="The same in English">La misma en inglés</span><em data-en="If you leave it blank, we'll translate the one above.">Si la dejas vacía, la traducimos de la de arriba.</em><textarea name="pol_en" rows="7"></textarea></label>
   </fieldset>
 
   <fieldset>
-    <legend>Fotos</legend>
-    <div class="note"><b>Esto no va en el formulario.</b> Manda entre 8 y 15 fotos horizontales, lo más grandes que las tengas, por Drive o WeTransfer al correo de abajo. Empieza por la que mejor vende la propiedad: esa va primero.</div>
-    <label><span>Enlace a tus fotos</span><em>Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
+    <legend data-en="Photos">Fotos</legend>
+    <div class="note"><b data-en="This part doesn't go in the form.">Esto no va en el formulario.</b> <span data-en="Send between 8 and 15 landscape photos, the largest you have, by Drive or WeTransfer to the email below. Start with the one that sells the property best: that one goes first.">Manda entre 8 y 15 fotos horizontales, lo más grandes que las tengas, por Drive o WeTransfer al correo de abajo. Empieza por la que mejor vende la propiedad: esa va primero.</span></div>
+    <label><span data-en="Link to your photos">Enlace a tus fotos</span><em data-en="Drive, Dropbox or WeTransfer. Check that the link is public.">Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
   </fieldset>
 
 </form>
 
 <div class="bar">
   <div class="wrap">
-    <span id="status">Al terminar, descarga el archivo y mándanoslo.</span>
+    <span id="status" data-en="When you're done, download the file and send it to us.">Al terminar, descarga el archivo y mándanoslo.</span>
     <span style="display:flex;gap:10px">
-      <button class="btn ghost" type="button" id="preview">Ver el archivo</button>
-      <button class="btn" type="button" id="download">Descargar config.json</button>
+      <button class="btn ghost" type="button" id="preview" data-en="View the file">Ver el archivo</button>
+      <button class="btn" type="button" id="download" data-en="Download config.json">Descargar config.json</button>
     </span>
   </div>
 </div>
@@ -225,22 +252,52 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 <div class="wrap"><pre id="out" hidden></pre></div>
 
 <script>
-/* El cliente escribe texto normal: un párrafo por renglón, con su título y punto
-   al inicio si quiere. El formulario lo convierte al HTML que lee el motor. */
-const POL_ES = [
-  'Reserva. La reserva se confirma al recibir el pago.',
-  'Cancelación. Más de 60 días antes de la llegada se reembolsa el 100%. Entre 30 y 60 días, el 50%. Con menos de 30 días no hay reembolso.',
-  'Entrada y salida. Entrada desde las 15:00. Salida antes de las 11:00.',
-  'Daños. El huésped es responsable de cualquier daño durante la estancia.',
-  'Reglas. No se permiten eventos sin aprobación por escrito. Horario de silencio desde las 22:00.'
-].join('\n');
-const POL_EN = [
-  'Reservation. A reservation is confirmed once payment is received.',
-  'Cancellation. More than 60 days before arrival, 100% is refunded. Between 30 and 60 days, 50%. Under 30 days, non-refundable.',
-  'Check-in and check-out. Check-in from 15:00. Check-out by 11:00.',
-  'Damages. The guest is responsible for any damage during the stay.',
-  'House rules. No events without written approval. Quiet hours from 22:00.'
-].join('\n');
+/* ---------- idioma ---------- */
+/* Cada texto trae su version en ingles en data-en. El español se guarda
+   en data-es la primera vez, para poder ir y venir sin perderlo. */
+let LANG = 'es';
+
+function swap(el, attr, store){
+  const other = el.getAttribute('data-' + attr + '-en') || (attr === 'txt' ? el.getAttribute('data-en') : null);
+  if (other === null) return;
+  if (!el.hasAttribute(store)) {
+    el.setAttribute(store, attr === 'txt' ? el.textContent : el.getAttribute('placeholder') || '');
+  }
+  const val = LANG === 'en' ? other : el.getAttribute(store);
+  if (attr === 'txt') el.textContent = val; else el.setAttribute('placeholder', val);
+}
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-en]').forEach(el => swap(el, 'txt', 'data-es'));
+  document.querySelectorAll('[data-ph-en]').forEach(el => swap(el, 'ph', 'data-ph-es'));
+  document.querySelectorAll('#lang button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+  syncPolicyDefaults();
+  rebuildBlockLabels();
+}
+
+document.querySelectorAll('#lang button').forEach(b =>
+  b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang(); }));
+
+/* ---------- politicas ---------- */
+const POL = {
+  es: [
+    'Reserva. La reserva se confirma al recibir el pago.',
+    'Cancelación. Más de 60 días antes de la llegada se reembolsa el 100%. Entre 30 y 60 días, el 50%. Con menos de 30 días no hay reembolso.',
+    'Entrada y salida. Entrada desde las 15:00. Salida antes de las 11:00.',
+    'Daños. El huésped es responsable de cualquier daño durante la estancia.',
+    'Reglas. No se permiten eventos sin aprobación por escrito. Horario de silencio desde las 22:00.'
+  ].join('\n'),
+  en: [
+    'Reservation. A reservation is confirmed once payment is received.',
+    'Cancellation. More than 60 days before arrival, 100% is refunded. Between 30 and 60 days, 50%. Under 30 days, non-refundable.',
+    'Check-in and check-out. Check-in from 15:00. Check-out by 11:00.',
+    'Damages. The guest is responsible for any damage during the stay.',
+    'House rules. No events without written approval. Quiet hours from 22:00.'
+  ].join('\n')
+};
+const POL_ES = POL.es, POL_EN = POL.en;
 
 const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
@@ -254,41 +311,85 @@ function toHtml(txt){
 }
 
 const f = document.getElementById('f');
-f.pol_es.value = POL_ES;
-f.pol_en.value = POL_EN;
+f.pol_es.value = POL.es;
+f.pol_en.value = POL.en;
+
+/* El idioma del formulario no cambia el idioma de las políticas: siempre se
+   entregan las dos. Esto solo evita que una quede en blanco. */
+function syncPolicyDefaults(){
+  if (!f.pol_es.value.trim()) f.pol_es.value = POL.es;
+  if (!f.pol_en.value.trim()) f.pol_en.value = POL.en;
+}
 
 /* ---------- bloques repetibles ---------- */
-const TPL = {
-  season: i => `<button class="del" type="button" data-del>Quitar</button>
+const T = {
+  season: {
+    name_es: ['Nombre · español', 'Name · Spanish'], name_en: ['Nombre · inglés', 'Name · English'],
+    from: ['Desde', 'From'], to: ['Hasta', 'To'],
+    nightly: ['Por noche', 'Per night'], minNights: ['Mín. noches', 'Min. nights']
+  },
+  extra: {
+    name_es: ['Nombre · español', 'Name · Spanish'], name_en: ['Nombre · inglés', 'Name · English'],
+    desc_es: ['Descripción corta · español', 'Short description · Spanish'],
+    desc_en: ['Descripción corta · inglés', 'Short description · English'],
+    price: ['Precio', 'Price'], unit: ['Se cobra', 'Charged']
+  }
+};
+const DEL = ['Quitar', 'Remove'];
+const UNITS = [['stay', 'Una vez por estancia', 'Once per stay'],
+               ['night', 'Por noche', 'Per night'],
+               ['person', 'Por persona', 'Per person']];
+
+const L = pair => pair[LANG === 'en' ? 1 : 0];
+
+function TPL(kind){
+  const t = T[kind];
+  const lab = (k, extra = '') => `<label><span data-k-label="${k}">${L(t[k])}</span>${extra}`;
+  if (kind === 'season') return `
+    <button class="del" type="button" data-del>${L(DEL)}</button>
     <div class="row row-2">
-      <label><span>Nombre · español</span><input data-k="name_es" placeholder="Temporada alta"></label>
-      <label><span>Nombre · inglés</span><input data-k="name_en" placeholder="High season"></label>
+      ${lab('name_es')}<input data-k="name_es" placeholder="Temporada alta" data-ph-en="High season"></label>
+      ${lab('name_en')}<input data-k="name_en" placeholder="High season"></label>
     </div>
     <div class="row row-4">
-      <label><span>Desde</span><input data-k="from" type="date"></label>
-      <label><span>Hasta</span><input data-k="to" type="date"></label>
-      <label><span>Por noche</span><input data-k="nightly" type="number" min="0"></label>
-      <label><span>Mín. noches</span><input data-k="minNights" type="number" min="1" value="2"></label>
-    </div>`,
-  extra: i => `<button class="del" type="button" data-del>Quitar</button>
+      ${lab('from')}<input data-k="from" type="date"></label>
+      ${lab('to')}<input data-k="to" type="date"></label>
+      ${lab('nightly')}<input data-k="nightly" type="number" min="0"></label>
+      ${lab('minNights')}<input data-k="minNights" type="number" min="1" value="2"></label>
+    </div>`;
+  return `
+    <button class="del" type="button" data-del>${L(DEL)}</button>
     <div class="row row-2">
-      <label><span>Nombre · español</span><input data-k="name_es" placeholder="Chef privado"></label>
-      <label><span>Nombre · inglés</span><input data-k="name_en" placeholder="Private chef"></label>
+      ${lab('name_es')}<input data-k="name_es" placeholder="Chef privado" data-ph-en="Private chef"></label>
+      ${lab('name_en')}<input data-k="name_en" placeholder="Private chef"></label>
     </div>
-    <label><span>Descripción corta · español</span><input data-k="desc_es" placeholder="Desayuno y cena, diario"></label>
-    <label><span>Descripción corta · inglés</span><input data-k="desc_en"></label>
+    ${lab('desc_es')}<input data-k="desc_es" placeholder="Desayuno y cena, diario" data-ph-en="Breakfast and dinner, daily"></label>
+    ${lab('desc_en')}<input data-k="desc_en" placeholder="Breakfast and dinner, daily"></label>
     <div class="row row-2">
-      <label><span>Precio</span><input data-k="price" type="number" min="0"></label>
-      <label><span>Se cobra</span><select data-k="unit"><option value="stay">Una vez por estancia</option><option value="night">Por noche</option><option value="person">Por persona</option></select></label>
-    </div>`
-};
+      ${lab('price')}<input data-k="price" type="number" min="0"></label>
+      ${lab('unit')}<select data-k="unit">${UNITS.map(u =>
+        `<option value="${u[0]}">${L([u[1], u[2]])}</option>`).join('')}</select></label>
+    </div>`;
+}
+
+/* Al cambiar de idioma, reetiquetar los bloques ya agregados sin tocar lo escrito. */
+function rebuildBlockLabels(){
+  document.querySelectorAll('.rep').forEach(el => {
+    const t = T[el.dataset.kind];
+    el.querySelectorAll('[data-k-label]').forEach(s => { s.textContent = L(t[s.dataset.kLabel]); });
+    const d = el.querySelector('[data-del]'); if (d) d.textContent = L(DEL);
+    const u = el.querySelector('[data-k=unit]');
+    if (u) UNITS.forEach((opt, i) => { u.options[i].textContent = L([opt[1], opt[2]]); });
+    el.querySelectorAll('[data-ph-en]').forEach(i => swap(i, 'ph', 'data-ph-es'));
+  });
+}
 
 function addBlock(kind){
   const host = document.getElementById(kind === 'season' ? 'seasons' : 'extras');
   const div = document.createElement('div');
   div.className = 'rep';
   div.dataset.kind = kind;
-  div.innerHTML = TPL[kind]();
+  div.innerHTML = TPL(kind);
   host.appendChild(div);
 }
 document.querySelectorAll('[data-add]').forEach(b =>
@@ -306,28 +407,46 @@ const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
 function readBlocks(kind){
   return [...document.querySelectorAll(`.rep[data-kind="${kind}"]`)].map(el => {
     const g = k => { const i = el.querySelector(`[data-k="${k}"]`); return i ? i.value.trim() : ''; };
+    /* El que falte toma el del otro idioma: llenar el formulario en inglés no
+       puede dejar el sitio en español con nombres vacíos, ni al revés. */
+    const both = (a, bk) => ({ es: g(a) || g(bk), en: g(bk) || g(a) });
     return kind === 'season'
-      ? { name:{ es:g('name_es'), en:g('name_en') || g('name_es') },
+      ? { name: both('name_es','name_en'),
           from:g('from'), to:g('to'),
           nightly:parseFloat(g('nightly'))||0, minNights:parseInt(g('minNights'))||1 }
-      : { id:slug(g('name_es')), name:{ es:g('name_es'), en:g('name_en') || g('name_es') },
-          desc:{ es:g('desc_es'), en:g('desc_en') || g('desc_es') },
+      : { id:slug(g('name_es') || g('name_en')), name: both('name_es','name_en'),
+          desc: both('desc_es','desc_en'),
           price:parseFloat(g('price'))||0, unit:g('unit') || 'stay' };
   });
 }
 
+const MSG = {
+  missName:   ['el nombre de la propiedad', 'the property name'],
+  missRate:   ['la tarifa por noche', 'the nightly rate'],
+  missEmail:  ['el correo de contacto', 'the contact email'],
+  seasonRev:  ['las fechas de la temporada %s están al revés', 'the dates of season %s are the wrong way round'],
+  seasonHalf: ['falta una fecha en la temporada %s', 'season %s is missing a date'],
+  extraName:  ['el extra %s no tiene nombre', 'extra %s has no name'],
+  missing:    ['Falta %s.', 'Missing: %s.'],
+  ready:      ['Al terminar, descarga el archivo y mándanoslo.', "When you're done, download the file and send it to us."],
+  done:       ['Listo. Mándanoslo junto con el enlace de tus fotos.', 'Done. Send it to us along with the link to your photos.'],
+  declined:   ['No se guardó el archivo. Si fue sin querer, vuelve a intentarlo.', "The file wasn't saved. If that was a mistake, try again."],
+  rate:       ['Espera unos segundos y vuelve a intentarlo.', 'Wait a few seconds and try again.'],
+  big:        ['El archivo salió demasiado grande. Avísanos.', 'The file came out too large. Let us know.'],
+  nosave:     ['No se pudo guardar. Usa "Ver el archivo" y cópialo.', 'Could not save. Use "View the file" and copy it.']
+};
+const M = (k, n) => L(MSG[k]).replace('%s', n);
+
 function problems(){
   const bad = [];
-  if (!val('p_name')) bad.push('el nombre de la propiedad');
-  if (!val('r_def')) bad.push('la tarifa por noche');
-  if (!val('c_email')) bad.push('el correo de contacto');
+  if (!val('p_name'))  bad.push(M('missName'));
+  if (!val('r_def'))   bad.push(M('missRate'));
+  if (!val('c_email')) bad.push(M('missEmail'));
   readBlocks('season').forEach((s, i) => {
-    if (s.from && s.to && s.from > s.to) bad.push(`las fechas de la temporada ${i+1} están al revés`);
-    if ((s.from && !s.to) || (!s.from && s.to)) bad.push(`falta una fecha en la temporada ${i+1}`);
+    if (s.from && s.to && s.from > s.to) bad.push(M('seasonRev', i + 1));
+    if ((s.from && !s.to) || (!s.from && s.to)) bad.push(M('seasonHalf', i + 1));
   });
-  readBlocks('extra').forEach((x, i) => {
-    if (!x.name.es) bad.push(`el extra ${i+1} no tiene nombre`);
-  });
+  readBlocks('extra').forEach((x, i) => { if (!x.name.es && !x.name.en) bad.push(M('extraName', i + 1)); });
   return bad;
 }
 
@@ -340,13 +459,14 @@ function build(){
       photosUrl: val('photos') || null,
       hasStripe: val('has_stripe') === 'si',
       filledAt: new Date().toISOString().slice(0,10),
-      /* Editó el español pero dejó el inglés de fábrica: hay que traducir antes de publicar. */
-      policyNeedsTranslation: val('pol_es') !== POL_ES && val('pol_en') === POL_EN,
-      taglineNeedsTranslation: !val('p_tag_en') && !!val('p_tag_es')
+      formLanguage: LANG,
+      /* Editó una política pero dejó la otra de fábrica: hay que traducir antes de publicar. */
+      policyNeedsTranslation: (val('pol_es') !== POL.es) !== (val('pol_en') !== POL.en),
+      taglineNeedsTranslation: !val('p_tag_en') !== !val('p_tag_es')
     },
     property: {
       name: val('p_name'),
-      tagline: { es: val('p_tag_es'), en: val('p_tag_en') || val('p_tag_es') },
+      tagline: { es: val('p_tag_es') || val('p_tag_en'), en: val('p_tag_en') || val('p_tag_es') },
       logo: '',
       website: val('p_site'),
       maxGuests: parseInt(val('p_max')) || 10,
@@ -365,7 +485,7 @@ function build(){
     availability: { icalUrls: icals, blockedDates: [] },
     backendUrl: '',
     contact: { email: val('c_email'), whatsapp: val('c_wa') },
-    policy: { es: toHtml(val('pol_es') || POL_ES), en: toHtml(val('pol_en') || val('pol_es') || POL_EN) }
+    policy: { es: toHtml(val('pol_es') || POL.es), en: toHtml(val('pol_en') || val('pol_es') || POL.en) }
   };
 }
 
@@ -376,10 +496,12 @@ function check(){
   const bad = problems();
   if (bad.length){
     status.className = 'err';
-    status.textContent = 'Falta ' + bad.join(', ') + '.';
+    status.textContent = M('missing', bad.join(', '));
+    status.removeAttribute('data-en');
     return false;
   }
   status.className = '';
+  status.textContent = M('ready');   // borrar el error anterior ya corregido
   return true;
 }
 
@@ -398,23 +520,20 @@ if (window.claude && typeof window.claude.use === 'function'){
   window.claude.use('downloads').then(d => { saver = d; }).catch(() => {});
 }
 
-const ERRS = {
-  declined: 'No se guardó el archivo. Si fue sin querer, vuelve a intentarlo.',
-  rate_limited: 'Espera unos segundos y vuelve a intentarlo.',
-  too_large: 'El archivo salió demasiado grande. Avísanos.'
-};
-
 document.getElementById('download').addEventListener('click', async () => {
   if (!check()) return;
   const text = JSON.stringify(build(), null, 2) + '\n';
-  const done = () => { status.className = 'ok';
-    status.textContent = 'Listo. Mándanoslo junto con el enlace de tus fotos.'; };
+  const done = () => { status.className = 'ok'; status.textContent = M('done');
+                       status.removeAttribute('data-en'); };
+  const fail = k => { status.className = 'err'; status.textContent = M(k);
+                      status.removeAttribute('data-en'); };
 
   if (saver){
     try { await saver.save({ filename: 'config.json', data: text }); done(); }
     catch (e){
-      status.className = 'err';
-      status.textContent = ERRS[e && e.code] || 'No se pudo guardar. Usa "Ver el archivo" y cópialo.';
+      const code = e && e.code;
+      fail(code === 'declined' ? 'declined' : code === 'rate_limited' ? 'rate'
+         : code === 'too_large' ? 'big' : 'nosave');
     }
     return;
   }
@@ -426,6 +545,8 @@ document.getElementById('download').addEventListener('click', async () => {
   URL.revokeObjectURL(a.href);
   done();
 });
+
+applyLang();
 </script>
 </body>
 </html>
