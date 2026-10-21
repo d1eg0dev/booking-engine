@@ -3,20 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Formulario de recepción · Motor de reservas</title>
+<title>Formulario de recepción</title>
 <style>
 :root{
-  --ink:#1A1A18; --soft:#4A463E; --mute:#8B857A;
+  --ink:#1A1A18; --mute:#8B857A;
   --paper:#FBFAF7; --card:#FFFFFF; --line:#E2DED4;
-  --accent:#2D5F56; --warn:#A8611C;
+  --field:#FFFFFF; --field-alt:#FDFCFA; --head:#1A1A18; --head-txt:#FBFAF7;
+  --accent:#2D5F56; --warn:#A8611C; --warn-bg:#FFF8EC; --err:#B3261E;
   --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#ECE8E0; --mute:#9A9488;
+    --paper:#141412; --card:#1D1D1A; --line:#33332E;
+    --field:#141412; --field-alt:#191916; --head:#000; --head-txt:#ECE8E0;
+    --accent:#6FB3A4; --warn:#D99B52; --warn-bg:#2A2117; --err:#F2B8B5;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#ECE8E0; --mute:#9A9488;
+  --paper:#141412; --card:#1D1D1A; --line:#33332E;
+  --field:#141412; --field-alt:#191916; --head:#000; --head-txt:#ECE8E0;
+  --accent:#6FB3A4; --warn:#D99B52; --warn-bg:#2A2117; --err:#F2B8B5;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--sans);font-size:15px;line-height:1.6;color:var(--ink);background:var(--paper);padding:0 0 120px}
 .wrap{max-width:820px;margin:0 auto;padding:0 20px}
-header{background:var(--ink);color:var(--paper);padding:44px 0 38px;margin-bottom:40px}
+header{background:var(--head);color:var(--head-txt);padding:44px 0 38px;margin-bottom:40px}
 header h1{font-size:clamp(24px,4vw,32px);font-weight:600;letter-spacing:-.01em}
-header p{color:#B9B4A9;margin-top:10px;max-width:60ch}
+header p{color:var(--mute);margin-top:10px;max-width:60ch}
 fieldset{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px;margin-bottom:22px}
 legend{font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding:0 10px}
 .hint{font-size:13px;color:var(--mute);margin:-4px 0 18px}
@@ -25,7 +40,7 @@ label>span{display:block;font-size:13px;font-weight:500;margin-bottom:5px}
 label>em{display:block;font-size:12px;font-style:normal;color:var(--mute);margin-bottom:5px}
 input,select,textarea{
   width:100%;font:inherit;font-size:14px;padding:10px 12px;
-  border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);
+  border:1px solid var(--line);border-radius:7px;background:var(--field);color:var(--ink);
 }
 input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
 textarea{min-height:90px;resize:vertical}
@@ -35,9 +50,9 @@ textarea{min-height:90px;resize:vertical}
   .row-3{grid-template-columns:1fr 1fr 1fr}
   .row-4{grid-template-columns:1fr 1fr 1fr 1fr}
 }
-.rep{border:1px dashed var(--line);border-radius:8px;padding:16px;margin-bottom:12px;position:relative;background:#FDFCFA}
+.rep{border:1px dashed var(--line);border-radius:8px;padding:16px;margin-bottom:12px;position:relative;background:var(--field-alt)}
 .rep .del{position:absolute;top:10px;right:10px;background:none;border:0;color:var(--mute);cursor:pointer;font-size:13px}
-.rep .del:hover{color:#B3261E}
+.rep .del:hover{color:var(--err)}
 button.add{
   background:none;border:1px dashed var(--accent);color:var(--accent);
   padding:9px 16px;border-radius:7px;font:inherit;font-size:13.5px;cursor:pointer;
@@ -50,20 +65,20 @@ button.add:hover{background:rgba(45,95,86,.06)}
 }
 .bar .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .btn{
-  background:var(--ink);color:#fff;border:0;border-radius:7px;
+  background:var(--ink);color:var(--paper);border:0;border-radius:7px;
   padding:13px 24px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;
 }
 .btn:hover{background:var(--accent)}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
-.btn.ghost:hover{background:#F4F2ED;color:var(--ink)}
+.btn.ghost:hover{background:var(--field-alt);color:var(--ink)}
 #status{font-size:13px;color:var(--mute)}
-#status.err{color:#B3261E}
+#status.err{color:var(--err)}
 #status.ok{color:var(--accent)}
-.note{background:#FFF8EC;border-left:3px solid var(--warn);padding:14px 16px;border-radius:0 7px 7px 0;font-size:13.5px;margin-bottom:18px}
+.note{background:var(--warn-bg);border-left:3px solid var(--warn);padding:14px 16px;border-radius:0 7px 7px 0;font-size:13.5px;margin-bottom:18px}
 .note b{color:var(--warn)}
 details{margin-top:10px}
 summary{cursor:pointer;font-size:13.5px;color:var(--accent)}
-pre{background:#1A1A18;color:#E8E4DA;padding:16px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.5;margin-top:12px;max-height:380px}
+pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.5;margin-top:12px;max-height:380px}
 .swatch{display:flex;gap:8px;align-items:center}
 .swatch input[type=color]{width:46px;height:40px;padding:3px;cursor:pointer}
 </style>
@@ -375,16 +390,41 @@ document.getElementById('preview').addEventListener('click', () => {
   out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
-document.getElementById('download').addEventListener('click', () => {
+/* Publicado como página, el navegador no deja que la página baje archivos sola:
+   hay que pedírselo al visor. Como archivo suelto, esa vía no existe y se usa
+   la descarga normal. Las dos quedan cubiertas. */
+let saver = null;
+if (window.claude && typeof window.claude.use === 'function'){
+  window.claude.use('downloads').then(d => { saver = d; }).catch(() => {});
+}
+
+const ERRS = {
+  declined: 'No se guardó el archivo. Si fue sin querer, vuelve a intentarlo.',
+  rate_limited: 'Espera unos segundos y vuelve a intentarlo.',
+  too_large: 'El archivo salió demasiado grande. Avísanos.'
+};
+
+document.getElementById('download').addEventListener('click', async () => {
   if (!check()) return;
-  const blob = new Blob([JSON.stringify(build(), null, 2) + '\n'], { type: 'application/json' });
+  const text = JSON.stringify(build(), null, 2) + '\n';
+  const done = () => { status.className = 'ok';
+    status.textContent = 'Listo. Mándanoslo junto con el enlace de tus fotos.'; };
+
+  if (saver){
+    try { await saver.save({ filename: 'config.json', data: text }); done(); }
+    catch (e){
+      status.className = 'err';
+      status.textContent = ERRS[e && e.code] || 'No se pudo guardar. Usa "Ver el archivo" y cópialo.';
+    }
+    return;
+  }
+  const blob = new Blob([text], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'config.json';
   a.click();
   URL.revokeObjectURL(a.href);
-  status.className = 'ok';
-  status.textContent = 'Descargado. Mándanoslo junto con el enlace de tus fotos.';
+  done();
 });
 </script>
 </body>
