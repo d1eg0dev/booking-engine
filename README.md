@@ -12,6 +12,7 @@ Sistema de reserva directa que se instala para cualquier villa, casa u hotel bou
 | `config.json` | Todo lo de la propiedad: nombre, logo, colores, tipografía, idiomas, moneda, temporadas, limpieza, mascotas, impuestos, extras, porcentaje a cobrar, calendarios iCal, fechas bloqueadas, contacto y política. |
 | `pricing.js` | El cálculo del precio. Se usa en el navegador y se copia al backend. |
 | `backend/Code.gs` | Google Apps Script ligado a una Google Sheet: disponibilidad (iCal de Airbnb/Booking/VRBO + hoja "Bloqueos" + reservas pagadas), pago con Stripe Checkout, confirmación, correos al huésped y al dueño, y correo de recuperación de reservas abandonadas cada hora. |
+| `tools/intake.html` | El formulario que llena el cliente. Al terminar descarga un `config.json` ya armado: no hay que transcribir nada. |
 | `tools/new-client.py` | Crea la carpeta de un cliente nuevo. |
 | `tools/build-backend.py` | Regenera `backend/Code.gs` si se cambia `pricing.js`. |
 
@@ -23,8 +24,10 @@ Sistema de reserva directa que se instala para cualquier villa, casa u hotel bou
 
 ## Cliente nuevo en 15 minutos
 
+0. **Mandarle el formulario al cliente:** `tools/intake.html` (publicado, o el archivo por correo). Lo llena, descarga su `config.json` y lo devuelve junto con el enlace de sus fotos.
 1. **Crear la carpeta:** `python3 tools/new-client.py casa-luna "Casa Luna"`.
-2. **Llenar `config.json`:** nombre, frase, logo, colores, temporadas y tarifas, limpieza, extras, contacto, política. Fechas en formato `AAAA-MM-DD`.
+2. **Llenar `config.json`:** si llegó del formulario, solo reemplazarlo y revisar. Si no: nombre, frase, logo, colores, temporadas y tarifas, limpieza, extras, contacto, política. Fechas en formato `AAAA-MM-DD`.
+   - Antes de publicar, revisar el bloque `_intake`: `policyNeedsTranslation` o `taglineNeedsTranslation` en `true` significa que falta la versión en inglés. Borrar `_intake` al terminar.
 3. **Publicar:** subir la carpeta a un repo nuevo de GitHub → Settings → Pages → rama `main`. Queda en `https://<usuario>.github.io/casa-luna/` (o con su dominio).
 4. **Probar en modo `demo`** y mandarle el enlace al cliente para que lo apruebe.
 5. **Para cobrar de verdad (modo `stripe`):**
