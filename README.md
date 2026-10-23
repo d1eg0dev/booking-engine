@@ -16,6 +16,13 @@ Sistema de reserva directa que se instala para cualquier villa, casa u hotel bou
 | `tools/new-client.py` | Crea la carpeta de un cliente nuevo. |
 | `tools/build-backend.py` | Regenera `backend/Code.gs` si se cambia `pricing.js`. |
 
+## Dos planes (`plan`)
+
+- `renta` · Booking Page, 79 USD o 1,399 MXN + IVA al mes. La plantilla con los colores, la tipografía y el logo del cliente. Sin extras ni cargo por mascota: el formulario los oculta y manda `extras: []` y `maxPets: 0`, y el widget se salta ese paso solo. No activar la recuperación de reservas abandonadas (no correr el activador horario de `setup`).
+- `compra` · Booking link, integrado o landing + booking. Todo lo anterior más extras, mascotas, recuperación de reservas y diseño a la medida.
+
+El logo llega como enlace de Drive o Dropbox, que no sirve directo en `<img>`. Descargarlo, subirlo a la carpeta del cliente (`logo.png` o `logo.svg`) y poner esa ruta en `property.logo`.
+
 ## Tres modos de pago (`payment.mode`)
 
 - `demo` · no cobra; sirve para enseñarlo a prospectos.

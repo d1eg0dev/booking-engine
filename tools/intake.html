@@ -88,6 +88,7 @@ summary{cursor:pointer;font-size:13.5px;color:var(--accent)}
 pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.5;margin-top:12px;max-height:380px}
 .swatch{display:flex;gap:8px;align-items:center}
 .swatch input[type=color]{width:46px;height:40px;padding:3px;cursor:pointer}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -106,6 +107,16 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 </header>
 
 <form class="wrap" id="f">
+
+  <fieldset>
+    <legend data-en="Your plan">Tu plan</legend>
+    <label><span data-en="What did you sign up for?">¿Qué contrataste?</span>
+      <select name="plan">
+        <option value="renta" data-en="Booking Page, rented monthly">Booking Page en renta mensual</option>
+        <option value="compra" data-en="Full system, purchased">Sistema completo, comprado</option>
+      </select></label>
+    <p class="hint" id="planHint" data-plan="renta" data-en="The Booking Page runs on our template with your colors, typeface and logo. Extras and pet fees come with the full system.">La Booking Page usa nuestra plantilla con tus colores, tu tipografía y tu logo. Los extras y el cargo por mascota vienen con el sistema completo.</p>
+  </fieldset>
 
   <fieldset>
     <legend data-en="The property">La propiedad</legend>
@@ -134,6 +145,9 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
       <label><span data-en="Accent color">Color de acento</span><em data-en="Buttons and details.">Botones y detalles.</em><div class="swatch"><input name="b_accent" type="color" value="#2D5F56"></div></label>
       <label><span data-en="Background color">Color de fondo</span><div class="swatch"><input name="b_paper" type="color" value="#FCFBF9"></div></label>
     </div>
+    <label><span data-en="Link to your logo">Enlace a tu logo</span>
+      <em data-en="PNG or SVG with a transparent background, on Drive or Dropbox with a public link. If you don't have one, we'll use the property name in your typeface.">PNG o SVG con fondo transparente, en Drive o Dropbox con enlace público. Si no tienes, usamos el nombre de la propiedad con tu tipografía.</em>
+      <input name="b_logo" type="url" placeholder="https://"></label>
     <label><span data-en="Typeface">Tipografía</span>
       <select name="b_font">
         <option>Inter</option><option>Jost</option><option>Cormorant Garamond</option>
@@ -175,13 +189,13 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
     <legend data-en="Fees">Cargos</legend>
     <div class="row row-4">
       <label><span data-en="Cleaning">Limpieza</span><em data-en="Per stay.">Por estancia.</em><input name="f_clean" type="number" min="0" value="0"></label>
-      <label><span data-en="Pet, per night">Mascota, por noche</span><em data-en="0 if you don't accept them.">0 si no aceptas.</em><input name="f_pet" type="number" min="0" value="0"></label>
-      <label><span data-en="Maximum pets">Máximo de mascotas</span><input name="f_maxpet" type="number" min="0" value="0"></label>
+      <label data-plan="compra"><span data-en="Pet, per night">Mascota, por noche</span><em data-en="0 if you don't accept them.">0 si no aceptas.</em><input name="f_pet" type="number" min="0" value="0"></label>
+      <label data-plan="compra"><span data-en="Maximum pets">Máximo de mascotas</span><input name="f_maxpet" type="number" min="0" value="0"></label>
       <label><span data-en="Tax %">Impuesto %</span><em data-en="0 if already included.">0 si ya va incluido.</em><input name="f_tax" type="number" min="0" step="0.1" value="0"></label>
     </div>
   </fieldset>
 
-  <fieldset>
+  <fieldset data-plan="compra">
     <legend data-en="Extras">Extras</legend>
     <p class="hint" data-en="Services a guest can add when booking: chef, transfer, tour, massage. Skip it if you don't offer any.">Servicios que el huésped puede agregar al reservar: chef, traslado, tour, masaje. Si no ofreces ninguno, sáltalo.</p>
     <div id="extras"></div>
@@ -313,6 +327,15 @@ function toHtml(txt){
 const f = document.getElementById('f');
 f.pol_es.value = POL.es;
 f.pol_en.value = POL.en;
+
+/* ---------- plan ---------- */
+/* La renta va sobre la plantilla: sin extras ni cargo por mascota.
+   Lo que no aplica se oculta y no se manda en el archivo. */
+const isRent = () => f.plan.value === 'renta';
+function applyPlan(){
+  document.querySelectorAll('[data-plan]').forEach(el => { el.hidden = el.dataset.plan !== f.plan.value; });
+}
+f.plan.addEventListener('change', applyPlan);
 
 /* El idioma del formulario no cambia el idioma de las políticas: siempre se
    entregan las dos. Esto solo evita que una quede en blanco. */
@@ -446,7 +469,7 @@ function problems(){
     if (s.from && s.to && s.from > s.to) bad.push(M('seasonRev', i + 1));
     if ((s.from && !s.to) || (!s.from && s.to)) bad.push(M('seasonHalf', i + 1));
   });
-  readBlocks('extra').forEach((x, i) => { if (!x.name.es && !x.name.en) bad.push(M('extraName', i + 1)); });
+  if (!isRent()) readBlocks('extra').forEach((x, i) => { if (!x.name.es && !x.name.en) bad.push(M('extraName', i + 1)); });
   return bad;
 }
 
@@ -456,6 +479,7 @@ function build(){
   return {
     _info: 'Generado con el formulario de recepción. Revisar antes de publicar.',
     _intake: {
+      plan: val('plan'),
       photosUrl: val('photos') || null,
       hasStripe: val('has_stripe') === 'si',
       filledAt: new Date().toISOString().slice(0,10),
@@ -467,20 +491,22 @@ function build(){
     property: {
       name: val('p_name'),
       tagline: { es: val('p_tag_es') || val('p_tag_en'), en: val('p_tag_en') || val('p_tag_es') },
-      logo: '',
+      logo: val('b_logo'),
       website: val('p_site'),
       maxGuests: parseInt(val('p_max')) || 10,
       checkIn: val('p_in') || '15:00',
       checkOut: val('p_out') || '11:00'
     },
+    plan: val('plan'),
     brand: { ink: val('b_ink'), accent: val('b_accent'), paper: val('b_paper'), font: val('b_font'), poweredBy: false },
     languages: langs,
     defaultLanguage: langs.includes(val('deflang')) ? val('deflang') : langs[0],
     currency: val('cur'),
     locale: val('cur') === 'MXN' ? 'es-MX' : 'en-US',
     rates: { defaultNightly: num('r_def'), defaultMinNights: parseInt(val('r_min')) || 1, seasons: readBlocks('season') },
-    fees: { cleaning: num('f_clean'), petPerNight: num('f_pet'), maxPets: parseInt(val('f_maxpet')) || 0, taxPercent: num('f_tax') },
-    extras: readBlocks('extra'),
+    fees: { cleaning: num('f_clean'), petPerNight: isRent() ? 0 : num('f_pet'),
+            maxPets: isRent() ? 0 : (parseInt(val('f_maxpet')) || 0), taxPercent: num('f_tax') },
+    extras: isRent() ? [] : readBlocks('extra'),
     payment: { mode: 'demo', chargePercent: parseInt(val('pay_pct')) || 100 },
     availability: { icalUrls: icals, blockedDates: [] },
     backendUrl: '',
@@ -546,6 +572,7 @@ document.getElementById('download').addEventListener('click', async () => {
   done();
 });
 
+applyPlan();
 applyLang();
 </script>
 </body>
