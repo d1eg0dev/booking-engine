@@ -176,6 +176,11 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 
   <fieldset>
     <legend data-en="Rates">Tarifas</legend>
+    <label><span data-en="You charge">Cobras</span>
+      <select name="unit">
+        <option value="night" data-en="Per night (lodging)">Por noche (hospedaje)</option>
+        <option value="day" data-en="Per day (cars, boats, venues)">Por día (autos, yates, espacios)</option>
+      </select></label>
     <div class="row row-2">
       <label><span data-en="Nightly rate, standard">Tarifa por noche, normal</span><em data-en="What you charge most of the year.">La que cobras la mayor parte del año.</em><input name="r_def" type="number" min="0" step="1" required placeholder="495"></label>
       <label><span data-en="Minimum nights, standard">Mínimo de noches, normal</span><input name="r_min" type="number" min="1" value="3"></label>
@@ -501,6 +506,7 @@ function build(){
     brand: { ink: val('b_ink'), accent: val('b_accent'), paper: val('b_paper'), font: val('b_font'), poweredBy: false },
     languages: langs,
     defaultLanguage: langs.includes(val('deflang')) ? val('deflang') : langs[0],
+    unit: val('unit') || 'night',
     currency: val('cur'),
     locale: val('cur') === 'MXN' ? 'es-MX' : 'en-US',
     rates: { defaultNightly: num('r_def'), defaultMinNights: parseInt(val('r_min')) || 1, seasons: readBlocks('season') },

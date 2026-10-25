@@ -23,6 +23,11 @@ Sistema de reserva directa que se instala para cualquier villa, casa u hotel bou
 
 El logo llega como enlace de Drive o Dropbox, que no sirve directo en `<img>`. Descargarlo, subirlo a la carpeta del cliente (`logo.png` o `logo.svg`) y poner esa ruta en `property.logo`.
 
+## Por noche o por día (`unit`)
+
+- `night` (por defecto) · hospedaje: villas, hoteles boutique, cabañas, glamping.
+- `day` · rentas por día: autos, yates, espacios para eventos. El cálculo es el mismo (cada día entre inicio y fin, con temporadas y mínimo); solo cambian las palabras: "día" en lugar de "noche", "Inicio/Fin" en lugar de "Entrada/Salida", "Personas" en lugar de "Huéspedes". El formulario lo pregunta en Tarifas.
+
 ## Tres modos de pago (`payment.mode`)
 
 - `demo` · no cobra; sirve para enseñarlo a prospectos.

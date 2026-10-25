@@ -149,10 +149,19 @@ var T = {
     demoDone:'Demo only: no payment was processed.', again:'Start again', processing:'Processing…', error:'We could not process the reservation. Please try again or message us on WhatsApp.',
     checking:'Confirming your payment…', notPaid:'We could not find the payment for this reservation. If you already paid, message us and we will check.', direct:'Direct booking' }
 };
+/* Rentas por día (autos, yates, espacios): mismos cálculos, otras palabras. Se activa con "unit": "day" en config.json. */
+var TD = {
+  es: { stay:'Tu reserva', perNight:'/ día', nights:'días', night:'día', guests:'Personas', addTitle:'Agrega a tu reserva', perStay:'por reserva', perGuest:'por persona',
+    notesPh:'Hora de llegada, lugar de entrega, detalles…', checkin:'Inicio', checkout:'Fin', rest:'Resto, antes de la fecha', minStay:'Reserva mínima',
+    minStayTxt:'Estas fechas requieren al menos {n} días.', unavail:'Alguno de esos días ya no está disponible. Elige otras fechas.' },
+  en: { stay:'Your booking', perNight:'/ day', nights:'days', night:'day', guests:'People', addTitle:'Add to your booking', perStay:'per booking', perGuest:'per person',
+    notesPh:'Arrival time, pick-up place, details…', checkin:'Start', checkout:'End', rest:'Balance, before the date', minStay:'Minimum booking',
+    minStayTxt:'These dates require at least {n} days.', unavail:'Some of those days are no longer available. Please pick other dates.' }
+};
 var C = null, L = 'es', BLOCKED = [];
 var S = { step:0, m:0, y:0, ci:null, co:null, g:2, pets:0, ad:{}, nm:'', em:'', ph:'', nt:'', ag:false, touched:false, busy:false, done:null, err:'' };
 
-function t(k){ return (T[L] && T[L][k]) || T.en[k] || k; }
+function t(k){ var d = C && C.unit === 'day' && TD[L] && TD[L][k]; return d || (T[L] && T[L][k]) || T.en[k] || k; }
 function nm(v){ return BookingPricing.name(v, L); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function money(n){ return Number(n).toLocaleString(C.locale || 'es-MX', { style:'currency', currency:C.currency || 'USD', maximumFractionDigits: n % 1 ? 2 : 0 }); }
