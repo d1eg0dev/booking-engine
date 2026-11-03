@@ -127,6 +127,12 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
     <label><span data-en="The same line in English">La misma frase en inglés</span>
       <em data-en="If you don't have it, we'll translate it.">Si no la tienes, la traducimos nosotros.</em>
       <input name="p_tag_en" data-ph-en="Four suites, up to ten guests. Pool, terrace and the sea a few steps away."></label>
+    <label><span data-en="Describe it · Spanish">Descríbela · español</span>
+      <em data-en="Two or three sentences, under the photos. What it's like to be there, not a list of features.">Dos o tres frases, van debajo de las fotos. Cómo se siente estar ahí, no una lista de características.</em>
+      <textarea name="p_about_es" rows="4" placeholder="Una casa de piedra sobre el acantilado, con tres terrazas que miran al mar y una cocina donde de verdad se cocina. El pueblo queda a diez minutos a pie; la cala, a dos."></textarea></label>
+    <label><span data-en="The same in English">La misma en inglés</span>
+      <em data-en="If you leave it blank, we'll translate the one above.">Si la dejas vacía, la traducimos de la de arriba.</em>
+      <textarea name="p_about_en" rows="4"></textarea></label>
     <div class="row row-2">
       <label><span data-en="Current website">Sitio web actual</span><em data-en="Leave blank if you don't have one.">Si no tienes, déjalo vacío.</em><input name="p_site" type="url" placeholder="https://"></label>
       <label><span data-en="Maximum guests">Huéspedes máximo</span><input name="p_max" type="number" min="1" value="10"></label>
@@ -500,11 +506,17 @@ function build(){
       formLanguage: LANG,
       /* Editó una política pero dejó la otra de fábrica: hay que traducir antes de publicar. */
       policyNeedsTranslation: (val('pol_es') !== POL.es) !== (val('pol_en') !== POL.en),
-      taglineNeedsTranslation: !val('p_tag_en') !== !val('p_tag_es')
+      taglineNeedsTranslation: !val('p_tag_en') !== !val('p_tag_es'),
+      aboutNeedsTranslation: !val('p_about_en') !== !val('p_about_es')
     },
     property: {
       name: val('p_name'),
       tagline: { es: val('p_tag_es') || val('p_tag_en'), en: val('p_tag_en') || val('p_tag_es') },
+      about: { es: val('p_about_es') || val('p_about_en'), en: val('p_about_en') || val('p_about_es') },
+      /* Las fotos no se piden aquí: un enlace de Drive no se puede incrustar
+         en la página. El cliente manda el enlace en _intake.photosUrl, y las
+         direcciones definitivas se llenan al subir las imágenes. */
+      photos: [],
       logo: val('b_logo'),
       website: val('p_site'),
       maxGuests: parseInt(val('p_max')) || 10,

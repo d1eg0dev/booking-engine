@@ -122,7 +122,7 @@ def valida(cfg):
         errores.append(f'defaultLanguage "{pred}" no está en languages {idiomas}')
 
     for idioma in idiomas:
-        for campo in ('property.tagline', 'policy'):
+        for campo in ('property.tagline', 'property.about', 'policy'):
             v = busca(cfg, campo)
             if isinstance(v, dict) and not (v.get(idioma) or '').strip():
                 avisos.append(f'{campo}.{idioma} está vacío')
@@ -133,6 +133,10 @@ def valida(cfg):
     if modo == 'stripe' and not (cfg.get('backendUrl') or '').strip():
         avisos.append('payment.mode es "stripe" pero backendUrl está vacío; '
                       'hay que pegar la URL del Apps Script antes de cobrar')
+
+    if not (busca(cfg, 'property.photos') or []):
+        avisos.append('property.photos está vacío; la página sale sin portada '
+                      'ni galería, sólo con el nombre y el formulario')
 
     wa = busca(cfg, 'contact.whatsapp') or ''
     if wa.replace('+', '').replace(' ', '') in ('520000000000', ''):

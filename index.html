@@ -28,6 +28,18 @@ body{background:var(--paper);color:var(--ink);font-family:var(--f);font-weight:3
 h1{font-weight:300;font-size:30px;line-height:1.15;letter-spacing:-.022em}
 h1 b{font-weight:500}
 .sub{margin-top:9px;font-size:14px;color:var(--soft)}
+/* Portada, descripción y galería. Todo esto desaparece solo cuando el config
+   no los trae, para que una propiedad sin fotos no deje huecos grises. */
+.hero{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:2px;background:var(--acc-tint);margin-bottom:26px}
+.about{margin-top:16px;font-size:14.5px;line-height:1.65;color:var(--soft);white-space:pre-line}
+.gal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:24px}
+.gal img{display:block;width:100%;grid-column:span 2;aspect-ratio:1/1;object-fit:cover;border-radius:2px;background:var(--acc-tint)}
+/* La rejilla va de tres en tres. Cuando sobra una foto ocupa el ancho, y
+   cuando sobran dos se reparten la fila: así no queda un hueco al final. */
+.gal img:last-child:nth-child(3n+1){grid-column:span 6;aspect-ratio:16/9}
+.gal img:nth-last-child(2):nth-child(3n+1),
+.gal img:last-child:nth-child(3n+2){grid-column:span 3;aspect-ratio:4/3}
+.sec{margin-top:40px;padding-top:30px;border-top:1px solid var(--line);font-weight:300;font-size:21px;letter-spacing:-.015em}
 .steps{display:flex;align-items:center;margin:28px 0 26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .stp{flex:1;display:flex;align-items:center;gap:9px;padding:15px 0}
 /* La línea es lo que convierte tres círculos sueltos en un avance. Sin ella
@@ -174,6 +186,10 @@ var S = { step:0, m:0, y:0, ci:null, co:null, g:2, pets:0, ad:{}, nm:'', em:'', 
 
 function t(k){ var d = C && C.unit === 'day' && TD[L] && TD[L][k]; return d || (T[L] && T[L][k]) || T.en[k] || k; }
 function nm(v){ return BookingPricing.name(v, L); }
+/* Sólo http(s). El config lo llena un cliente por formulario, así que una
+   dirección rara no debe acabar en un atributo de la página. */
+function foto(u){ return /^https?:\/\/\S+$/i.test(String(u || '').trim()) ? String(u).trim() : ''; }
+function fotos(){ return (C.property.photos || []).map(foto).filter(Boolean); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function money(n){
   // narrowSymbol para que MXN salga "$333" y no "MX$333" cuando el locale no
@@ -279,9 +295,21 @@ function R(){
   var hasExtras = (C.extras || []).length > 0, labels = hasExtras ? [t('dates'), t('extras'), t('details')] : [t('dates'), t('details')];
   var cur = (!hasExtras && S.step === 2) ? 1 : S.step, st = '';
   labels.forEach(function(lb, i){ st += '<div class="stp' + (cur < i ? ' dim' : '') + (cur === i ? ' cur' : '') + '"><div class="dot' + (cur === i ? ' on' : cur > i ? ' ok' : '') + '">' + (cur > i ? '✓' : i + 1) + '</div><span>' + lb + '</span></div>'; });
+  // La portada manda: el nombre de la propiedad es el título de la página y
+  // "Reservar" pasa a ser el encabezado de la sección del formulario. Si una
+  // imagen no carga se borra sola, porque un enlace de Drive pegado por el
+  // cliente no se puede incrustar y un icono roto se ve peor que nada.
+  var ph = fotos(), about = (C.property.about ? nm(C.property.about) : '').trim();
   var h = top + ((C.payment && C.payment.mode === 'demo') ? '<div class="bar">' + t('demo') + '</div>' : '')
-    + '<h1>' + t('reserve') + ' <b>' + esc(C.property.name) + '</b></h1>'
+    + (ph.length ? '<img class="hero" src="' + esc(ph[0]) + '" alt="' + esc(C.property.name)
+        + '" onerror="this.remove()">' : '')
+    + '<h1>' + esc(C.property.name) + '</h1>'
     + (C.property.tagline ? '<p class="sub">' + esc(nm(C.property.tagline)) + '</p>' : '')
+    + (about ? '<p class="about">' + esc(about) + '</p>' : '')
+    + (ph.length > 1 ? '<div class="gal">' + ph.slice(1, 7).map(function(u){
+        return '<img src="' + esc(u) + '" alt="' + esc(C.property.name) + '" loading="lazy" onerror="this.remove()">';
+      }).join('') + '</div>' : '')
+    + '<h2 class="sec">' + t('reserve') + '</h2>'
     + '<div class="steps">' + st + '</div>';
   var r = (S.ci && S.co) ? q() : null;
 
