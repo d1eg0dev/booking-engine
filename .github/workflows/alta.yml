@@ -128,8 +128,16 @@ jobs:
               os.environ['WEBHOOK'], method='POST',
               data=json.dumps(cuerpo).encode(),
               headers={'Content-Type': 'text/plain;charset=utf-8'})
-          with urllib.request.urlopen(pet, timeout=60) as r:
-              print('la hoja respondió', r.status, r.read(300).decode(errors='replace'))
+          # Amplio, porque del otro lado se suben las fotos al repo del
+          # cliente una por una antes de contestar.
+          try:
+              with urllib.request.urlopen(pet, timeout=300) as r:
+                  print('la hoja respondió', r.status, r.read(300).decode(errors='replace'))
+          except Exception as e:
+              # El sitio ya está publicado; no tiene sentido marcar el alta
+              # como fallida porque el aviso no llegó. La fila se queda en
+              # "publicando", y eso mismo es la señal de que algo pasó aquí.
+              print(f'::warning::No pude avisar a la hoja: {e}')
           PY
 
       - name: Guardar el informe

@@ -89,6 +89,31 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 .swatch{display:flex;gap:8px;align-items:center}
 .swatch input[type=color]{width:46px;height:40px;padding:3px;cursor:pointer}
 [hidden]{display:none!important}
+
+/* Subida de fotos */
+.drop{
+  border:1.5px dashed var(--line);border-radius:9px;padding:30px 20px;text-align:center;
+  background:var(--field-alt);transition:border-color .15s,background .15s;cursor:pointer;
+}
+.drop:hover,.drop.sobre{border-color:var(--accent);background:var(--card)}
+.drop p{font-size:14px;margin:0}
+.drop em{display:block;margin-top:7px;font-size:12.5px;color:var(--mute);font-style:normal}
+.enlace{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
+.tiras{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:14px}
+.tira{position:relative;border-radius:7px;overflow:hidden;background:var(--field-alt);border:1px solid var(--line)}
+.tira img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.tira .n{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.72);color:#fff;font-size:10.5px;
+  padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+.tira .acc{display:flex;border-top:1px solid var(--line)}
+.tira .acc button{flex:1;background:var(--card);border:0;border-right:1px solid var(--line);
+  padding:5px 0;font:inherit;font-size:12px;color:var(--mute);cursor:pointer;line-height:1.2}
+.tira .acc button:last-child{border-right:0}
+.tira .acc button:hover:not(:disabled){background:var(--field-alt);color:var(--ink)}
+.tira .acc button:disabled{opacity:.3;cursor:default}
+.tira.sube img{opacity:.45}
+.tira .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;color:var(--ink)}
+.fotos-info{margin-top:10px;font-size:12.5px;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -258,8 +283,18 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 
   <fieldset>
     <legend data-en="Photos">Fotos</legend>
-    <div class="note"><b data-en="This part doesn't go in the form.">Esto no va en el formulario.</b> <span data-en="Send between 8 and 15 landscape photos, the largest you have, by Drive or WeTransfer to the email below. Start with the one that sells the property best: that one goes first.">Manda entre 8 y 15 fotos horizontales, lo más grandes que las tengas, por Drive o WeTransfer al correo de abajo. Empieza por la que mejor vende la propiedad: esa va primero.</span></div>
-    <label><span data-en="Link to your photos">Enlace a tus fotos</span><em data-en="Drive, Dropbox or WeTransfer. Check that the link is public.">Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
+    <div class="drop" id="drop">
+      <input type="file" id="archivos" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      <p><span data-en="Drag your photos here, or">Arrastra tus fotos aquí, o</span>
+        <button type="button" class="enlace" id="buscar" data-en="browse">búscalas</button></p>
+      <em data-en="Between 8 and 15, landscape. The first one is the cover. We resize them for you.">Entre 8 y 15, horizontales. La primera es la portada. Nosotros las ajustamos de tamaño.</em>
+    </div>
+    <div class="tiras" id="tiras"></div>
+    <p class="fotos-info" id="fotos-info" hidden></p>
+    <details>
+      <summary data-en="I'd rather send them by link">Prefiero mandarlas por enlace</summary>
+      <label><span data-en="Link to your photos">Enlace a tus fotos</span><em data-en="Drive, Dropbox or WeTransfer. Check that the link is public.">Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
+    </details>
   </fieldset>
 
   <fieldset>
@@ -501,6 +536,7 @@ function build(){
     _intake: {
       plan: val('plan'),
       photosUrl: val('photos') || null,
+      fotos: FOTOS.length,
       hasStripe: val('has_stripe') === 'si',
       filledAt: new Date().toISOString().slice(0,10),
       formLanguage: LANG,
@@ -599,6 +635,135 @@ document.getElementById('download').addEventListener('click', async () => {
   done();
 });
 
+/* ---------- fotos ---------- */
+/* El cliente arrastra sus fotos y aquí mismo se achican antes de salir:
+   una foto de celular pesa 8 MB y llega a unos 300 KB. Sin esto no caben
+   en el límite de Apps Script, tardan una eternidad desde un móvil, y la
+   página del huésped acaba pesando veinte megas. */
+const MAX_LADO = 1800, CALIDAD = 0.82, MAX_FOTOS = 15;
+let FOTOS = [];
+
+async function achica(file){
+  let bm;
+  try {
+    /* from-image endereza las fotos verticales del celular. Sin esto salen
+       acostadas en los navegadores que no aplican el EXIF al dibujar. */
+    bm = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch (e){
+    bm = await new Promise((ok, mal) => {
+      const u = URL.createObjectURL(file), im = new Image();
+      im.onload = () => { URL.revokeObjectURL(u); ok(im); };
+      im.onerror = () => { URL.revokeObjectURL(u); mal(new Error('no se pudo leer')); };
+      im.src = u;
+    });
+  }
+  const f = Math.min(1, MAX_LADO / Math.max(bm.width, bm.height));
+  const w = Math.max(1, Math.round(bm.width * f)), h = Math.max(1, Math.round(bm.height * f));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d').drawImage(bm, 0, 0, w, h);
+  if (bm.close) bm.close();
+  return { datos: c.toDataURL('image/jpeg', CALIDAD), w, h };
+}
+
+function pesoFotos(){
+  /* El dataURL lleva cabecera y base64: los bytes reales son ~3/4. */
+  return FOTOS.reduce((s, f) => s + f.datos.length * 0.75, 0);
+}
+
+function pintaFotos(){
+  const cont = document.getElementById('tiras'), info = document.getElementById('fotos-info');
+  cont.innerHTML = FOTOS.map((f, i) => `
+    <div class="tira" data-i="${i}">
+      <img src="${f.datos}" alt="">
+      <span class="n">${i === 0 ? (LANG === 'en' ? 'cover' : 'portada') : i + 1}</span>
+      <div class="acc">
+        <button type="button" data-ac="izq" ${i === 0 ? 'disabled' : ''} title="${LANG === 'en' ? 'Move left' : 'Mover a la izquierda'}">←</button>
+        <button type="button" data-ac="der" ${i === FOTOS.length - 1 ? 'disabled' : ''} title="${LANG === 'en' ? 'Move right' : 'Mover a la derecha'}">→</button>
+        <button type="button" data-ac="fuera" title="${LANG === 'en' ? 'Remove' : 'Quitar'}">✕</button>
+      </div>
+    </div>`).join('');
+  info.hidden = !FOTOS.length;
+  if (FOTOS.length){
+    const mb = (pesoFotos() / 1048576).toFixed(1);
+    info.textContent = LANG === 'en'
+      ? `${FOTOS.length} photos · ${mb} MB after resizing` + (FOTOS.length < 8 ? ' · we recommend at least 8' : '')
+      : `${FOTOS.length} fotos · ${mb} MB ya ajustadas` + (FOTOS.length < 8 ? ' · recomendamos al menos 8' : '');
+  }
+}
+
+async function agrega(files){
+  const drop = document.getElementById('drop');
+  const sitio = MAX_FOTOS - FOTOS.length;
+  const lista = [...files].filter(f => /^image\//.test(f.type)).slice(0, Math.max(0, sitio));
+  if (!lista.length) return;
+  drop.querySelector('p').textContent = LANG === 'en' ? 'Preparing…' : 'Preparando…';
+  for (const f of lista){
+    try { FOTOS.push(await achica(f)); pintaFotos(); }
+    catch (e){ /* una foto ilegible no debe tumbar las demás */ }
+  }
+  drop.querySelector('p').innerHTML = LANG === 'en'
+    ? 'Drag your photos here, or <button type="button" class="enlace" id="buscar">browse</button>'
+    : 'Arrastra tus fotos aquí, o <button type="button" class="enlace" id="buscar">búscalas</button>';
+  enganchaBuscar();
+}
+
+function enganchaBuscar(){
+  const b = document.getElementById('buscar');
+  if (b) b.onclick = e => { e.stopPropagation(); document.getElementById('archivos').click(); };
+}
+
+(function fotosWidget(){
+  const drop = document.getElementById('drop'), inp = document.getElementById('archivos');
+  if (!drop) return;
+  enganchaBuscar();
+  drop.addEventListener('click', () => inp.click());
+  inp.addEventListener('change', () => { agrega(inp.files); inp.value = ''; });
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.add('sobre');
+  }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.remove('sobre');
+  }));
+  drop.addEventListener('drop', e => agrega(e.dataTransfer.files));
+  document.getElementById('tiras').addEventListener('click', e => {
+    const b = e.target.closest('button[data-ac]');
+    if (!b) return;
+    const i = +b.closest('.tira').dataset.i, ac = b.dataset.ac;
+    if (ac === 'fuera') FOTOS.splice(i, 1);
+    else { const j = ac === 'izq' ? i - 1 : i + 1; [FOTOS[i], FOTOS[j]] = [FOTOS[j], FOTOS[i]]; }
+    pintaFotos();
+  });
+})();
+
+/* Una foto por petición: Apps Script no traga un envío de veinte megas, y
+   así una que falle no se lleva por delante a las demás. */
+function mandaFoto(id, i){
+  return new Promise((ok, mal) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', ALTA_URL);
+    x.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+    x.upload.onprogress = e => {
+      if (!e.lengthComputable) return;
+      const t = document.querySelector(`.tira[data-i="${i}"]`);
+      if (t){ t.classList.add('sube'); let p = t.querySelector('.pct');
+        if (!p){ p = document.createElement('div'); p.className = 'pct'; t.appendChild(p); }
+        p.textContent = Math.round(e.loaded / e.total * 100) + '%'; }
+    };
+    x.onload = () => {
+      let d = {};
+      try { d = JSON.parse(x.responseText); } catch (e){}
+      if (!d.ok) return mal(new Error(d.error || 'foto ' + (i + 1)));
+      const t = document.querySelector(`.tira[data-i="${i}"]`);
+      if (t){ t.classList.remove('sube'); const p = t.querySelector('.pct'); if (p) p.remove(); }
+      ok();
+    };
+    x.onerror = () => mal(new Error('se cortó la conexión en la foto ' + (i + 1)));
+    x.send(JSON.stringify({ accion: 'foto', id, n: i + 1, total: FOTOS.length,
+                            datos: FOTOS[i].datos }));
+  });
+}
+
 /* ---------- publicar ---------- */
 /* Pega aquí la URL de la aplicación web de Apps Script (backend/Intake.gs).
    Mientras esté vacía, el formulario se comporta como antes: el cliente
@@ -622,6 +787,20 @@ if (ALTA_URL){
       });
       const d = await r.json();
       if (!d.ok) throw new Error(d.error || 'sin detalle');
+
+      /* Las fotos van después y de una en una: ya existe la fila que las
+         espera. Si alguna falla, el alta ya está guardada y sólo se pierden
+         las fotos, no los datos que el cliente tardó en llenar. */
+      if (FOTOS.length && d.referencia){
+        for (let i = 0; i < FOTOS.length; i++){
+          status.className = '';
+          status.textContent = LANG === 'en'
+            ? `Uploading photo ${i + 1} of ${FOTOS.length}…`
+            : `Subiendo foto ${i + 1} de ${FOTOS.length}…`;
+          await mandaFoto(d.referencia, i);
+        }
+      }
+
       status.className = 'ok';
       status.textContent = d.mensaje || M('sent');
     } catch (e){

@@ -37,9 +37,16 @@ var S = { step:0, m:0, y:0, ci:null, co:null, g:2, pets:0, ad:{}, nm:'', em:'', 
 
 function t(k){ var d = C && C.unit === 'day' && TD[L] && TD[L][k]; return d || (T[L] && T[L][k]) || T.en[k] || k; }
 function nm(v){ return BookingPricing.name(v, L); }
-/* Sólo http(s). El config lo llena un cliente por formulario, así que una
-   dirección rara no debe acabar en un atributo de la página. */
-function foto(u){ return /^https?:\/\/\S+$/i.test(String(u || '').trim()) ? String(u).trim() : ''; }
+/* Se admite http(s) y la ruta relativa de las fotos que viven en el propio
+   repo del cliente ("fotos/1.jpg"), que es el caso normal. Nada más: el
+   config lo llena un cliente por formulario y una dirección rara no debe
+   acabar en un atributo de la página. */
+function foto(u){
+  var s = String(u || '').trim();
+  if(/^https?:\/\/\S+$/i.test(s)) return s;
+  if(/^fotos\/[\w.-]+\.(jpe?g|png|webp)$/i.test(s)) return s;
+  return '';
+}
 function fotos(){ return (C.property.photos || []).map(foto).filter(Boolean); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function money(n){

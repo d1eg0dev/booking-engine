@@ -83,6 +83,7 @@ function doPost(e) {
     // El workflow avisa aquí cómo acabó el alta. Sin esto la fila se queda en
     // "publicando" para siempre, publique o no, y el estado acaba mintiendo.
     if (cuerpo.accion === 'resultado') return resultado_(cuerpo);
+    if (cuerpo.accion === 'foto') return guardaFoto_(cuerpo);
 
     var cfg = cuerpo.config;
     if (!cfg || typeof cfg !== 'object') {
@@ -156,6 +157,96 @@ function doGet(e) {
   return HtmlService.createHtmlOutput('<p>No encuentro esa alta.</p>');
 }
 
+/* ── Fotos ───────────────────────────────────────────────────────────────
+   El formulario las manda de una en una, ya achicadas por el navegador, en
+   cuanto la fila existe. Se guardan en Drive porque en ese momento el repo
+   del cliente todavía no se ha creado: se crea al aprobar. Cuando el
+   workflow avisa que el sitio quedó, entonces se pasan al repo.           */
+
+function carpetaFotos_(id) {
+  var madre, it = DriveApp.getFoldersByName('Fotos de altas · Booking Page');
+  madre = it.hasNext() ? it.next() : DriveApp.createFolder('Fotos de altas · Booking Page');
+  var h = madre.getFoldersByName(id);
+  return h.hasNext() ? h.next() : madre.createFolder(id);
+}
+
+function guardaFoto_(c) {
+  var id = (c.id || '').toString().trim();
+  if (!id) return json_({ ok: false, error: 'falta el id' });
+  if (!filaDe_(id)) return json_({ ok: false, error: 'no encuentro esa alta' });
+
+  var m = /^data:image\/(jpeg|jpg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(c.datos || '');
+  if (!m) return json_({ ok: false, error: 'la foto no llegó en un formato que entienda' });
+  var bytes = Utilities.base64Decode(m[2]);
+  if (bytes.length > 6 * 1024 * 1024) {
+    return json_({ ok: false, error: 'la foto pesa demasiado' });
+  }
+  var n = Math.max(1, Math.min(99, parseInt(c.n, 10) || 1));
+  var nombre = (n < 10 ? '0' + n : '' + n) + '.jpg';
+  var carpeta = carpetaFotos_(id);
+  // Si el cliente reintenta, se reemplaza en vez de duplicar.
+  var viejas = carpeta.getFilesByName(nombre);
+  while (viejas.hasNext()) viejas.next().setTrashed(true);
+  carpeta.createFile(Utilities.newBlob(bytes, 'image/jpeg', nombre));
+  return json_({ ok: true, n: n });
+}
+
+/** Sube las fotos guardadas al repo del cliente y las pone en su config. */
+function subeFotos_(id, slug) {
+  var carpeta = carpetaFotos_(id);
+  var archivos = [], it = carpeta.getFiles();
+  while (it.hasNext()) archivos.push(it.next());
+  if (!archivos.length) return 0;
+  archivos.sort(function (a, b) { return a.getName() < b.getName() ? -1 : 1; });
+
+  var dueno = prop_('GITHUB_REPO', true).split('/')[0];
+  var rutas = [];
+  for (var i = 0; i < archivos.length; i++) {
+    var nombre = archivos[i].getName();
+    gh_('PUT', 'repos/' + dueno + '/' + slug + '/contents/fotos/' + nombre, {
+      message: 'Fotos de ' + slug,
+      content: Utilities.base64Encode(archivos[i].getBlob().getBytes())
+    });
+    rutas.push('fotos/' + nombre);
+  }
+
+  // El config ya está en el repo con photos vacío: se vuelve a escribir con
+  // las rutas, y hay que mandar su sha o GitHub rechaza la sobreescritura.
+  var ruta = 'repos/' + dueno + '/' + slug + '/contents/config.json';
+  var actual = JSON.parse(gh_('GET', ruta));
+  var cfg = JSON.parse(Utilities.newBlob(Utilities.base64Decode(actual.content)).getDataAsString());
+  cfg.property = cfg.property || {};
+  cfg.property.photos = rutas;
+  gh_('PUT', ruta, {
+    message: 'Fotos de ' + slug,
+    sha: actual.sha,
+    content: Utilities.base64Encode(Utilities.newBlob(JSON.stringify(cfg, null, 2) + '\n').getBytes())
+  });
+  return rutas.length;
+}
+
+function gh_(metodo, ruta, cuerpo) {
+  var o = {
+    method: metodo.toLowerCase(),
+    headers: { Authorization: 'Bearer ' + prop_('GITHUB_TOKEN', true),
+               Accept: 'application/vnd.github+json' },
+    muteHttpExceptions: true
+  };
+  if (cuerpo) { o.contentType = 'application/json'; o.payload = JSON.stringify(cuerpo); }
+  var r = UrlFetchApp.fetch('https://api.github.com/' + ruta, o);
+  var cod = r.getResponseCode();
+  if (cod < 200 || cod >= 300) {
+    throw new Error('GitHub ' + cod + ' en ' + ruta + ': ' + r.getContentText().slice(0, 200));
+  }
+  return r.getContentText();
+}
+
+function filaDe_(id) {
+  var datos = hoja_().getDataRange().getValues();
+  for (var i = 1; i < datos.length; i++) if (datos[i][0] === id) return i + 1;
+  return 0;
+}
+
 /** Cierra la fila: vivo con su dirección, o falló con el motivo. */
 function resultado_(c) {
   if (c.token !== prop_('SECRETO', true)) return json_({ ok: false, error: 'no autorizado' });
@@ -166,8 +257,16 @@ function resultado_(c) {
   var datos = h.getDataRange().getValues();
   for (var i = 1; i < datos.length; i++) {
     if (datos[i][0] !== id) continue;
-    h.getRange(i + 1, 7).setValue(c.ok ? (c.vivo ? 'vivo' : 'publicando en GitHub')
-                                       : ('falló: ' + (c.error || 'sin motivo')).slice(0, 240));
+    var estado = c.ok ? (c.vivo ? 'vivo' : 'publicando en GitHub')
+                      : ('falló: ' + (c.error || 'sin motivo')).slice(0, 240);
+    var fotos = 0;
+    if (c.ok) {
+      // Ahora sí existe el repo, así que las fotos ya tienen a dónde ir. Si
+      // esto falla, el sitio igual quedó publicado: se anota y no se pierde.
+      try { fotos = subeFotos_(id, datos[i][3]); }
+      catch (err) { estado = 'vivo, sin fotos: ' + String(err.message).slice(0, 180); }
+    }
+    h.getRange(i + 1, 7).setValue(estado);
     if (c.url) h.getRange(i + 1, 8).setValue(c.url);
     if (!c.ok) {
       MailApp.sendEmail(prop_('AVISO_EMAIL', true),
@@ -175,7 +274,7 @@ function resultado_(c) {
         'El alta de ' + (datos[i][2] || id) + ' no se publicó.\n\n' +
         (c.error || 'sin motivo') + '\n\nRevisa la pestaña Actions del repo del motor.\n');
     }
-    return json_({ ok: true });
+    return json_({ ok: true, fotos: fotos });
   }
   return json_({ ok: false, error: 'no encuentro esa alta' });
 }
