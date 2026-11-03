@@ -47,6 +47,7 @@ jobs:
           import json, os, pathlib, re, sys
 
           payload = os.environ.get('PAYLOAD') or 'null'
+          # El id de la fila en la hoja, para poder cerrarla al final.
           try:
               p = json.loads(payload) or {}
           except json.JSONDecodeError:
@@ -71,6 +72,7 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f'slug={slug}\n')
               f.write(f'dominio={dominio}\n')
+              f.write('id={}\n'.format((p.get('id') or '').strip()))
           print(f'Alta de {slug}' + (f' en {dominio}' if dominio else ''))
           PY
 
@@ -84,9 +86,51 @@ jobs:
           if [ -n "${{ steps.datos.outputs.dominio }}" ]; then
             ARGS+=(--domain "${{ steps.datos.outputs.dominio }}")
           fi
-          python3 "${ARGS[@]}" | tee salida.txt
+          # 2>&1 para que el motivo del fallo quede en el archivo y no sólo en
+          # el log: es lo que se le manda a la hoja cuando el alta se cae.
+          python3 "${ARGS[@]}" 2>&1 | tee salida.txt
           tail -1 salida.txt > resultado.json
           echo "url=$(python3 -c "import json;print(json.load(open('resultado.json'))['url'])")" >> "$GITHUB_OUTPUT"
+
+      # Pase lo que pase arriba, la hoja tiene que enterarse. Si esto no corre,
+      # la fila se queda en "publicando" aunque el alta se haya caído, y el
+      # estado acaba mintiendo justo cuando más se consulta.
+      - name: Avisar a la hoja
+        if: always() && steps.datos.outputs.id != ''
+        env:
+          WEBHOOK: ${{ secrets.ALTA_WEBHOOK }}
+          SECRETO: ${{ secrets.ALTA_SECRETO }}
+          ID: ${{ steps.datos.outputs.id }}
+          OK: ${{ steps.alta.outcome == 'success' }}
+        run: |
+          if [ -z "$WEBHOOK" ] || [ -z "$SECRETO" ]; then
+            echo "Faltan los secretos ALTA_WEBHOOK o ALTA_SECRETO: la hoja no se entera."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.request
+
+          ok = os.environ['OK'] == 'true'
+          cuerpo = {'accion': 'resultado', 'token': os.environ['SECRETO'],
+                    'id': os.environ['ID'], 'ok': ok}
+          res = pathlib.Path('resultado.json')
+          if ok and res.is_file() and res.read_text().strip():
+              d = json.loads(res.read_text())
+              cuerpo['url'] = d.get('url')
+              cuerpo['vivo'] = bool(d.get('vivo'))
+              cuerpo['avisos'] = d.get('avisos') or []
+          else:
+              cola = pathlib.Path('salida.txt')
+              txt = cola.read_text(errors='replace') if cola.is_file() else ''
+              cuerpo['error'] = ('\n'.join(txt.strip().splitlines()[-6:])
+                                 or 'el alta no dejó salida')
+          pet = urllib.request.Request(
+              os.environ['WEBHOOK'], method='POST',
+              data=json.dumps(cuerpo).encode(),
+              headers={'Content-Type': 'text/plain;charset=utf-8'})
+          with urllib.request.urlopen(pet, timeout=60) as r:
+              print('la hoja respondió', r.status, r.read(300).decode(errors='replace'))
+          PY
 
       - name: Guardar el informe
         if: always()

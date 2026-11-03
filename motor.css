@@ -1,0 +1,131 @@
+:root{
+  --ink:#1A1A18; --soft:#55524D; --mute:#93908A;
+  --line:#E5E2DC; --paper:#FCFBF9; --card:#FFFFFF;
+  --acc:#2D5F56; --acc-tint:#EDF1EF; --warn:#A8564C;
+  --f:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;font-size:15px}
+.wrap{max-width:680px;margin:0 auto;padding:40px 24px 64px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.top img{max-height:34px;width:auto}
+.lang{display:flex;gap:4px}
+.lang button{border:1px solid var(--line);background:var(--card);color:var(--soft);font:500 11px/1 var(--f);letter-spacing:.12em;padding:7px 10px;border-radius:2px;cursor:pointer}
+.lang button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bar{background:#FFF8E5;border:1px solid #F5D98B;color:#8A6D1F;font-size:12px;padding:9px 13px;border-radius:2px;margin-bottom:20px}
+h1{font-weight:300;font-size:30px;line-height:1.15;letter-spacing:-.022em}
+h1 b{font-weight:500}
+.sub{margin-top:9px;font-size:14px;color:var(--soft)}
+/* Portada, descripción y galería. Todo esto desaparece solo cuando el config
+   no los trae, para que una propiedad sin fotos no deje huecos grises. */
+.hero{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:2px;background:var(--acc-tint);margin-bottom:26px}
+.about{margin-top:16px;font-size:14.5px;line-height:1.65;color:var(--soft);white-space:pre-line}
+.gal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:24px}
+.gal img{display:block;width:100%;grid-column:span 2;aspect-ratio:1/1;object-fit:cover;border-radius:2px;background:var(--acc-tint)}
+/* La rejilla va de tres en tres. Cuando sobra una foto ocupa el ancho, y
+   cuando sobran dos se reparten la fila: así no queda un hueco al final. */
+.gal img:last-child:nth-child(3n+1){grid-column:span 6;aspect-ratio:16/9}
+.gal img:nth-last-child(2):nth-child(3n+1),
+.gal img:last-child:nth-child(3n+2){grid-column:span 3;aspect-ratio:4/3}
+.sec{margin-top:40px;padding-top:30px;border-top:1px solid var(--line);font-weight:300;font-size:21px;letter-spacing:-.015em}
+.steps{display:flex;align-items:center;margin:28px 0 26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stp{flex:1;display:flex;align-items:center;gap:9px;padding:15px 0}
+/* La línea es lo que convierte tres círculos sueltos en un avance. Sin ella
+   los pasos flotan separados por un hueco vacío y se leen como un error. */
+.stp::after{content:'';flex:1;height:1px;background:var(--line);margin:0 12px}
+.stp:last-child{flex:0 0 auto}
+.stp:last-child::after{display:none}
+.dot{width:22px;height:22px;line-height:1;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:500;color:var(--mute);flex-shrink:0}
+.dot.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.dot.ok{background:var(--acc);border-color:var(--acc);color:#fff}
+.stp span{font-size:12px;color:var(--mute);white-space:nowrap}
+.stp.cur span{color:var(--ink);font-weight:500}
+/* El paso pendiente se apaga con color, no con transparencia: antes todo el
+   bloque iba a opacity .35 y el número del círculo quedaba ilegible. */
+.stp.dim .dot{border-color:var(--line);color:var(--soft)}
+.stp.dim span{color:var(--soft)}
+h2{font-weight:400;font-size:19px;letter-spacing:-.015em;margin-bottom:4px}
+.h2s{font-size:13.5px;color:var(--soft);margin-bottom:18px}
+.calhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.calhd h3{font-weight:400;font-size:17px}
+.nav button{width:32px;height:32px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:14px;color:var(--soft);border-radius:2px;margin-left:5px;font-family:var(--f)}
+.nav button:hover{border-color:var(--ink);color:var(--ink)}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:16px}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px}
+.dow div{text-align:center;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);padding:5px 0}
+.gr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.dy{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border-radius:2px;color:var(--ink);border:none;background:none;font-family:var(--f)}
+.dy.pad{cursor:default}
+.dy.off{color:#CFCCC6;cursor:not-allowed}
+.dy.bk{color:#C49A94;cursor:not-allowed;text-decoration:line-through;background:#FBF4F3}
+.dy:not(.pad):not(.off):not(.bk):hover{background:#F1EFEA}
+.dy.sel{background:var(--ink);color:#fff}
+.dy.rng{background:var(--acc-tint)}
+.dy i{font-style:normal;font-size:8.5px;color:var(--mute);margin-top:1px}
+.dy.sel i{color:rgba(255,255,255,.65)}
+.lg{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:10.5px;color:var(--mute)}
+/* El borde es lo que hace legibles las dos muestras claras: sin él, "Tu
+   estancia" y "No disponible" desaparecen contra la tarjeta blanca. */
+.lg s{display:inline-block;width:10px;height:10px;border-radius:2px;border:1px solid var(--line);margin-right:6px;vertical-align:middle}
+.tbl{margin-top:20px;border:1px solid var(--line);border-radius:2px;background:var(--card)}
+.tbl .r{display:flex;justify-content:space-between;gap:12px;padding:11px 15px;font-size:12.5px;border-bottom:1px solid var(--line);color:var(--soft)}
+.tbl .r:last-child{border-bottom:none}
+.tbl .r b{font-weight:500;color:var(--ink)}
+.tbl .r em{font-style:normal;color:var(--mute)}
+.fl{margin-bottom:15px}
+.lb{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:6px;font-weight:500}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:2px;background:var(--card);padding:11px 13px;font-family:var(--f);font-size:14px;font-weight:300;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc)}
+textarea{resize:vertical;min-height:72px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.ad{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:14px 16px;margin-bottom:8px;cursor:pointer;width:100%;text-align:left;font-family:var(--f)}
+.ad:hover{border-color:var(--mute)}
+.ad.on{border-color:var(--acc)}
+.ad .bx{width:17px;height:17px;border:1px solid var(--line);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+.ad.on .bx{background:var(--acc);border-color:var(--acc)}
+.ad .tx{flex:1}
+.ad .tx b{display:block;font-size:14px;font-weight:500;color:var(--ink)}
+.ad .tx span{font-size:12px;color:var(--mute)}
+.ad .pr{font-size:13.5px;font-weight:500;white-space:nowrap;color:var(--ink)}
+.sm{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:17px 19px;margin-top:20px}
+.smh{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-bottom:12px;font-weight:500}
+.sm .r{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:13px;color:var(--soft);border-bottom:1px solid var(--line)}
+.sm .r b{color:var(--ink);font-weight:400;white-space:nowrap}
+.sm .r small{display:block;font-size:11px;color:var(--mute);margin-top:1px}
+.sm .tt{border-bottom:none;padding-top:14px;margin-top:4px;border-top:1px solid var(--ink);font-size:16px;color:var(--ink)}
+.sm .tt b{font-weight:600}
+.agr{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:12.5px;color:var(--soft);cursor:pointer;padding:13px 15px;border:1px solid var(--line);border-radius:2px;background:var(--card)}
+.agr.need{border-color:var(--warn)}
+.agr input{width:auto;margin-top:2px;flex-shrink:0}
+.agr a{color:var(--acc);text-decoration:underline}
+.miss{margin-top:14px;padding:12px 15px;border:1px solid var(--line);border-left:2px solid var(--warn);background:#FDF8F7;border-radius:2px;font-size:12.5px;color:var(--soft)}
+.miss b{display:block;color:var(--warn);font-weight:500;margin-bottom:4px}
+.bn{display:flex;gap:9px;margin-top:24px}
+.bp{flex:1;background:var(--ink);color:#fff;border:none;border-radius:2px;padding:15px;cursor:pointer;font-family:var(--f);font-size:13px;font-weight:500;letter-spacing:.02em}
+.bp:hover{opacity:.87}
+.bp[disabled]{opacity:.3;cursor:not-allowed}
+.bs{background:var(--card);color:var(--soft);border:1px solid var(--line);border-radius:2px;padding:15px 24px;cursor:pointer;font-family:var(--f);font-size:13px;font-weight:500}
+.bs:hover{border-color:var(--ink);color:var(--ink)}
+.mod{position:fixed;inset:0;z-index:110;background:rgba(26,26,24,.55);display:none;align-items:center;justify-content:center;padding:24px}
+.mod.show{display:flex}
+.modbox{background:#fff;max-width:560px;width:100%;max-height:78vh;overflow-y:auto;border-radius:3px;padding:32px 34px}
+.modbox p{font-size:13px;color:var(--soft);margin-bottom:11px;line-height:1.7}
+.modbox .cl{margin-top:16px;width:100%;background:var(--ink);color:#fff;border:none;border-radius:2px;padding:13px;cursor:pointer;font-family:var(--f);font-size:13px;font-weight:500}
+.ok{text-align:center;padding-top:30px}
+.ok .ic{width:52px;height:52px;border-radius:50%;background:var(--acc);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.ok h2{font-size:25px;font-weight:300;margin-bottom:9px}
+.ok p{font-size:14px;color:var(--soft);max-width:40ch;margin:0 auto}
+.ok .rf{margin-top:22px;display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 20px;font-size:12.5px;letter-spacing:.05em}
+.ft{margin-top:36px;text-align:center;font-size:11px;color:var(--mute)}
+.ft a{color:var(--acc)}
+.load{padding:80px 0;text-align:center;color:var(--mute);font-size:13px}
+@media(max-width:600px){
+  .wrap{padding:28px 17px 46px}
+  h1{font-size:25px}
+  .r2{grid-template-columns:1fr}
+  .stp span{display:none}
+  .steps{justify-content:center}
+  .stp{flex:0 0 auto;padding-right:0}
+  .stp::after{flex:none;width:38px;margin:0 9px}
+}

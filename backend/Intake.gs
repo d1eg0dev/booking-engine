@@ -79,6 +79,11 @@ function doPost(e) {
   }
   try {
     var cuerpo = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+
+    // El workflow avisa aquí cómo acabó el alta. Sin esto la fila se queda en
+    // "publicando" para siempre, publique o no, y el estado acaba mintiendo.
+    if (cuerpo.accion === 'resultado') return resultado_(cuerpo);
+
     var cfg = cuerpo.config;
     if (!cfg || typeof cfg !== 'object') {
       return json_({ ok: false, error: 'No llegó la configuración.' });
@@ -104,7 +109,7 @@ function doPost(e) {
                  JSON.stringify(cfg)]);
 
     if (auto) {
-      dispararAlta_(slug, cfg, '');
+      dispararAlta_(id, slug, cfg, '');
       avisar_(id, nombre, slug, comisionista, correo, true);
     } else {
       avisar_(id, nombre, slug, comisionista, correo, false);
@@ -142,7 +147,7 @@ function doGet(e) {
     }
     var slug = datos[i][3];
     var cfg = JSON.parse(datos[i][8]);
-    dispararAlta_(slug, cfg, p.dominio || '');
+    dispararAlta_(datos[i][0], slug, cfg, p.dominio || '');
     h.getRange(i + 1, 7).setValue('publicando');
     return HtmlService.createHtmlOutput(
       '<p>Aprobada: <b>' + datos[i][2] + '</b>.</p>' +
@@ -151,8 +156,32 @@ function doGet(e) {
   return HtmlService.createHtmlOutput('<p>No encuentro esa alta.</p>');
 }
 
+/** Cierra la fila: vivo con su dirección, o falló con el motivo. */
+function resultado_(c) {
+  if (c.token !== prop_('SECRETO', true)) return json_({ ok: false, error: 'no autorizado' });
+  var id = (c.id || '').toString().trim();
+  if (!id) return json_({ ok: false, error: 'falta el id' });
+
+  var h = hoja_();
+  var datos = h.getDataRange().getValues();
+  for (var i = 1; i < datos.length; i++) {
+    if (datos[i][0] !== id) continue;
+    h.getRange(i + 1, 7).setValue(c.ok ? (c.vivo ? 'vivo' : 'publicando en GitHub')
+                                       : ('falló: ' + (c.error || 'sin motivo')).slice(0, 240));
+    if (c.url) h.getRange(i + 1, 8).setValue(c.url);
+    if (!c.ok) {
+      MailApp.sendEmail(prop_('AVISO_EMAIL', true),
+        'Falló el alta · ' + (datos[i][2] || id),
+        'El alta de ' + (datos[i][2] || id) + ' no se publicó.\n\n' +
+        (c.error || 'sin motivo') + '\n\nRevisa la pestaña Actions del repo del motor.\n');
+    }
+    return json_({ ok: true });
+  }
+  return json_({ ok: false, error: 'no encuentro esa alta' });
+}
+
 /** Le dice a GitHub que construya el sitio. */
-function dispararAlta_(slug, cfg, dominio) {
+function dispararAlta_(id, slug, cfg, dominio) {
   var repo = prop_('GITHUB_REPO', true);
   var r = UrlFetchApp.fetch('https://api.github.com/repos/' + repo + '/dispatches', {
     method: 'post',
@@ -163,7 +192,7 @@ function dispararAlta_(slug, cfg, dominio) {
     },
     payload: JSON.stringify({
       event_type: 'alta',
-      client_payload: { slug: slug, config: cfg, domain: dominio || '' }
+      client_payload: { id: id, slug: slug, config: cfg, domain: dominio || '' }
     }),
     muteHttpExceptions: true
   });

@@ -195,12 +195,24 @@ def token_de_git():
     return correr(['gh', 'auth', 'token'], permitir_fallo=True).stdout.strip()
 
 
-def arma_carpeta(slug, cfg, destino, dominio):
+def arma_carpeta(slug, cfg, destino, usuario, dominio):
+    """El repo del cliente lleva su config y una plantilla de nueve líneas.
+
+    El motor (motor.css, motor.js, pricing.js) vive en un solo sitio y todos
+    los clientes lo cargan de ahí. Antes cada repo se llevaba su copia, y eso
+    significaba que una corrección sólo alcanzaba a los clientes nuevos: los
+    viejos se quedaban atrás para siempre, porque nadie va a tocar trescientos
+    repos a mano.
+    """
     if destino.exists():
         raise Alto(f'{destino} ya existe. Bórrala o usa otro slug.')
     destino.mkdir(parents=True)
-    for f in ('index.html', 'pricing.js'):
-        shutil.copy(RAIZ / f, destino / f)
+    motor = f'https://{usuario}.github.io/booking-engine/'
+    plantilla = (RAIZ / 'plantilla.html').read_text(encoding='utf-8')
+    if '__MOTOR__' not in plantilla:
+        raise Alto('plantilla.html no trae el marcador __MOTOR__.')
+    (destino / 'index.html').write_text(
+        plantilla.replace('__MOTOR__', motor), encoding='utf-8')
     (destino / 'config.json').write_text(
         json.dumps(cfg, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     if dominio:
@@ -350,7 +362,7 @@ def main():
 
     paso(3, TOTAL, 'Armo la carpeta')
     destino = RAIZ.parent / a.slug
-    archivos = arma_carpeta(a.slug, limpia(cfg), destino, a.domain)
+    archivos = arma_carpeta(a.slug, limpia(cfg), destino, usuario, a.domain)
     print(f'      {destino}')
     print(f'      {", ".join(archivos)}')
 
