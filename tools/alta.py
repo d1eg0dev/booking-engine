@@ -327,7 +327,13 @@ def main():
         raise Alto('El config no está listo:\n  · ' + '\n  · '.join(errores))
     for av in avisos:
         print(f'      aviso: {av}')
-    if avisos and not a.force and not a.dry_run:
+    # Los avisos sólo detienen el alta cuando hay una persona delante que pueda
+    # decidir. Con --json el alta la corre el workflow, y ahí no hay nadie a
+    # quien preguntar: detenerse significa que el cliente llenó el formulario,
+    # dejó un campo opcional en blanco, y su sitio no existe sin que nadie se
+    # entere. Así que corre, y los avisos van en el resultado para que queden
+    # registrados y se puedan revisar después.
+    if avisos and not a.force and not a.json and not a.dry_run:
         print('\n      Hay avisos. Revisa arriba y vuelve a correr con --force si están bien.')
         return 2
     print(f'      {cfg["property"]["name"]} · {cfg["currency"]} '
@@ -372,7 +378,7 @@ def main():
         print('\n' + json.dumps({
             'ok': True, 'slug': a.slug, 'cliente': cfg['property']['name'],
             'url': url, 'repo': f'{usuario}/{a.slug}', 'vivo': vivo,
-            'dominio': a.domain or None,
+            'dominio': a.domain or None, 'avisos': avisos,
         }, ensure_ascii=False))
     return 0
 
