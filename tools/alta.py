@@ -115,10 +115,10 @@ def valida(cfg):
             if isinstance(v, dict) and not (v.get(idioma) or '').strip():
                 avisos.append(f'{campo}.{idioma} está vacío')
 
+    # "demo" es el estado normal de un alta nueva, no un problema: se informa
+    # al final, en los pasos que faltan, y no detiene nada.
     modo = busca(cfg, 'payment.mode')
-    if modo == 'demo':
-        avisos.append('payment.mode sigue en "demo": el sitio no va a cobrar')
-    elif modo == 'stripe' and not (cfg.get('backendUrl') or '').strip():
+    if modo == 'stripe' and not (cfg.get('backendUrl') or '').strip():
         avisos.append('payment.mode es "stripe" pero backendUrl está vacío; '
                       'hay que pegar la URL del Apps Script antes de cobrar')
 
