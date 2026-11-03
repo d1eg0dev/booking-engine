@@ -256,6 +256,11 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
     <label><span data-en="Link to your photos">Enlace a tus fotos</span><em data-en="Drive, Dropbox or WeTransfer. Check that the link is public.">Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
   </fieldset>
 
+  <fieldset>
+    <legend data-en="Who referred you">Quién te recomendó</legend>
+    <label><span data-en="Referral code">Código de referencia</span><em data-en="If someone sent you here, put their code. If not, leave it blank.">Si alguien te mandó, pon su código. Si no, déjalo en blanco.</em><input name="codigo" maxlength="24" placeholder="WD-XXXX"></label>
+  </fieldset>
+
 </form>
 
 <div class="bar">
@@ -263,7 +268,8 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
     <span id="status" data-en="When you're done, download the file and send it to us.">Al terminar, descarga el archivo y mándanoslo.</span>
     <span style="display:flex;gap:10px">
       <button class="btn ghost" type="button" id="preview" data-en="View the file">Ver el archivo</button>
-      <button class="btn" type="button" id="download" data-en="Download config.json">Descargar config.json</button>
+      <button class="btn ghost" type="button" id="download" data-en="Download config.json">Descargar config.json</button>
+      <button class="btn" type="button" id="publish" hidden data-en="Publish my page">Publicar mi página</button>
     </span>
   </div>
 </div>
@@ -461,7 +467,10 @@ const MSG = {
   declined:   ['No se guardó el archivo. Si fue sin querer, vuelve a intentarlo.', "The file wasn't saved. If that was a mistake, try again."],
   rate:       ['Espera unos segundos y vuelve a intentarlo.', 'Wait a few seconds and try again.'],
   big:        ['El archivo salió demasiado grande. Avísanos.', 'The file came out too large. Let us know.'],
-  nosave:     ['No se pudo guardar. Usa "Ver el archivo" y cópialo.', 'Could not save. Use "View the file" and copy it.']
+  nosave:     ['No se pudo guardar. Usa "Ver el archivo" y cópialo.', 'Could not save. Use "View the file" and copy it.'],
+  sending:    ['Enviando…', 'Sending…'],
+  sent:       ['Recibido. Te mandamos tu página por correo hoy mismo.', "Got it. We'll email you your page today."],
+  sendfail:   ['No se pudo enviar. Descarga el archivo y mándanoslo por correo.', "Couldn't send. Download the file and email it to us."]
 };
 const M = (k, n) => L(MSG[k]).replace('%s', n);
 
@@ -577,6 +586,39 @@ document.getElementById('download').addEventListener('click', async () => {
   URL.revokeObjectURL(a.href);
   done();
 });
+
+/* ---------- publicar ---------- */
+/* Pega aquí la URL de la aplicación web de Apps Script (backend/Intake.gs).
+   Mientras esté vacía, el formulario se comporta como antes: el cliente
+   descarga el archivo y lo manda. Con URL, aparece el botón de publicar. */
+const ALTA_URL = '';
+
+if (ALTA_URL){
+  const bp = document.getElementById('publish');
+  bp.hidden = false;
+  bp.addEventListener('click', async () => {
+    if (!check()) return;
+    bp.disabled = true;
+    status.className = ''; status.textContent = M('sending');
+    status.removeAttribute('data-en');
+    try {
+      /* text/plain evita el preflight CORS, que Apps Script no contesta. */
+      const r = await fetch(ALTA_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ config: build(), codigo: val('codigo') })
+      });
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error || 'sin detalle');
+      status.className = 'ok';
+      status.textContent = d.mensaje || M('sent');
+    } catch (e){
+      status.className = 'err';
+      status.textContent = M('sendfail');
+      bp.disabled = false;
+    }
+  });
+}
 
 applyPlan();
 applyLang();

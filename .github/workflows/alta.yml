@@ -1,0 +1,112 @@
+name: Alta de cliente
+
+# Se dispara desde el Apps Script que recibe el formulario, con:
+#   POST /repos/d1eg0dev/booking-engine/dispatches
+#   { "event_type": "alta", "client_payload": { "slug": "...", "config": {...} } }
+#
+# Necesita un secreto ALTA_TOKEN: un token personal con permiso para crear
+# repos. El GITHUB_TOKEN que da Actions no puede crear repos en la cuenta.
+
+on:
+  repository_dispatch:
+    types: [alta]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Nombre corto del cliente, por ejemplo casa-luna'
+        required: true
+      config:
+        description: 'El config.json completo, pegado'
+        required: true
+      domain:
+        description: 'Dominio propio (opcional)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Reunir los datos del alta
+        id: datos
+        env:
+          PAYLOAD: ${{ toJSON(github.event.client_payload) }}
+          IN_SLUG: ${{ inputs.slug }}
+          IN_CONFIG: ${{ inputs.config }}
+          IN_DOMAIN: ${{ inputs.domain }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, re, sys
+
+          payload = os.environ.get('PAYLOAD') or 'null'
+          try:
+              p = json.loads(payload) or {}
+          except json.JSONDecodeError:
+              p = {}
+
+          slug = (p.get('slug') or os.environ.get('IN_SLUG') or '').strip()
+          dominio = (p.get('domain') or os.environ.get('IN_DOMAIN') or '').strip()
+          cfg = p.get('config')
+          if cfg is None:
+              crudo = os.environ.get('IN_CONFIG') or ''
+              cfg = json.loads(crudo) if crudo.strip() else None
+
+          if not slug:
+              sys.exit('No vino el slug.')
+          if not re.fullmatch(r'[a-z0-9]([a-z0-9-]{1,38}[a-z0-9])', slug):
+              sys.exit(f'Slug inválido: {slug}')
+          if not isinstance(cfg, dict):
+              sys.exit('No vino el config, o no es un objeto.')
+
+          pathlib.Path('alta-config.json').write_text(
+              json.dumps(cfg, ensure_ascii=False), encoding='utf-8')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'slug={slug}\n')
+              f.write(f'dominio={dominio}\n')
+          print(f'Alta de {slug}' + (f' en {dominio}' if dominio else ''))
+          PY
+
+      - name: Publicar el sitio
+        id: alta
+        env:
+          GH_TOKEN: ${{ secrets.ALTA_TOKEN }}
+        run: |
+          set -o pipefail
+          ARGS=(tools/alta.py "${{ steps.datos.outputs.slug }}" --config alta-config.json --json)
+          if [ -n "${{ steps.datos.outputs.dominio }}" ]; then
+            ARGS+=(--domain "${{ steps.datos.outputs.dominio }}")
+          fi
+          python3 "${ARGS[@]}" | tee salida.txt
+          tail -1 salida.txt > resultado.json
+          echo "url=$(python3 -c "import json;print(json.load(open('resultado.json'))['url'])")" >> "$GITHUB_OUTPUT"
+
+      - name: Guardar el informe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alta-${{ steps.datos.outputs.slug }}
+          path: |
+            salida.txt
+            resultado.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "## Alta de ${{ steps.datos.outputs.slug }}"
+            if [ -s resultado.json ]; then
+              echo "Sitio: ${{ steps.alta.outputs.url }}"
+            else
+              echo "El alta no se completó. Revisa el informe adjunto."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

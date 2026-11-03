@@ -243,7 +243,10 @@ def espera(url, intentos=20, pausa=15, seco=False):
 def main():
     p = argparse.ArgumentParser(description='Alta de un cliente, de config a URL viva.')
     p.add_argument('slug', help='nombre corto del cliente, por ejemplo casa-luna')
-    p.add_argument('--config', required=True, help='config.json que salió del formulario')
+    p.add_argument('--config', required=True,
+                   help='config.json que salió del formulario, o - para leerlo de la entrada')
+    p.add_argument('--json', action='store_true',
+                   help='además del informe, imprime una línea JSON con el resultado')
     p.add_argument('--domain', help='dominio propio, por ejemplo reservas.casaluna.mx')
     p.add_argument('--private', action='store_true', help='repo privado')
     p.add_argument('--dry-run', action='store_true', help='enseña los pasos sin ejecutarlos')
@@ -256,13 +259,19 @@ def main():
     if a.domain and not DOMINIO_OK.match(a.domain):
         raise Alto(f'El dominio "{a.domain}" no tiene forma de dominio.')
 
-    ruta = pathlib.Path(a.config).expanduser()
-    if not ruta.is_file():
-        raise Alto(f'No encuentro {ruta}')
+    if a.config == '-':
+        crudo, origen = sys.stdin.read(), 'la entrada estándar'
+    else:
+        ruta = pathlib.Path(a.config).expanduser()
+        if not ruta.is_file():
+            raise Alto(f'No encuentro {ruta}')
+        crudo, origen = ruta.read_text(encoding='utf-8'), str(ruta)
+    if not crudo.strip():
+        raise Alto(f'No llegó nada por {origen}')
     try:
-        cfg = json.loads(ruta.read_text(encoding='utf-8'))
+        cfg = json.loads(crudo)
     except json.JSONDecodeError as e:
-        raise Alto(f'El config.json no es JSON válido: {e}')
+        raise Alto(f'El config de {origen} no es JSON válido: {e}')
 
     TOTAL = 5
     paso(1, TOTAL, 'Reviso el config')
@@ -310,6 +319,14 @@ def main():
         print('   2. Poner la llave de Stripe en las propiedades del Apps Script,')
         print('      nunca en el repo ni por mensaje')
         print('   3. Cambiar payment.mode a "stripe" y volver a subir')
+
+    if a.json:
+        # Una sola línea, la última, para que quien llame pueda leerla.
+        print('\n' + json.dumps({
+            'ok': True, 'slug': a.slug, 'cliente': cfg['property']['name'],
+            'url': url, 'repo': f'{usuario}/{a.slug}', 'vivo': vivo,
+            'dominio': a.domain or None,
+        }, ensure_ascii=False))
     return 0
 
 
