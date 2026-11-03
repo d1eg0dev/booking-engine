@@ -89,6 +89,21 @@ def valida(cfg):
     if isinstance(tarifa, (int, float)) and tarifa <= 0:
         errores.append('rates.defaultNightly tiene que ser mayor que cero')
 
+    # unit y plan los emite el formulario; un valor raro no rompe nada visible,
+    # sólo deja el sitio hablando de "noches" cuando se rentan autos.
+    unidad = cfg.get('unit', 'night')
+    if unidad not in ('night', 'day'):
+        errores.append(f'unit debería ser "night" o "day", y es "{unidad}"')
+    plan = cfg.get('plan')
+    if plan is not None and plan not in ('renta', 'compra'):
+        errores.append(f'plan debería ser "renta" o "compra", y es "{plan}"')
+    if plan == 'renta':
+        if cfg.get('extras'):
+            avisos.append('plan es "renta" pero el config trae extras; '
+                          'la renta va sobre la plantilla y no los muestra')
+        if busca(cfg, 'fees.petPerNight'):
+            avisos.append('plan es "renta" pero hay cargo por mascota; no se va a cobrar')
+
     idiomas = busca(cfg, 'languages') or []
     pred = busca(cfg, 'defaultLanguage')
     if idiomas and pred and pred not in idiomas:
