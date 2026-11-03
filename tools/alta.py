@@ -149,11 +149,13 @@ def revisa_entorno(seco):
         r = correr(['git', 'remote', 'get-url', 'origin'], cwd=RAIZ, permitir_fallo=True)
         m = re.search(r'github\.com[:/]([^/]+)/', r.stdout.strip())
         return m.group(1) if m else 'USUARIO'
-    r = correr(['gh', 'auth', 'status'], permitir_fallo=True)
-    if r.returncode:
-        raise Alto('gh no está autenticado. Corre:  gh auth login\n'
-                   'Si tienes GH_TOKEN puesto y es viejo, bórralo primero:  unset GH_TOKEN')
-    usuario = correr(['gh', 'api', 'user', '-q', '.login']).stdout.strip()
+    # Se comprueba con una llamada real, no con `gh auth status`: esa puede
+    # fallar por un GH_TOKEN viejo aunque la API responda por otro camino.
+    r = correr(['gh', 'api', 'user', '-q', '.login'], permitir_fallo=True)
+    usuario = r.stdout.strip()
+    if r.returncode or not usuario:
+        raise Alto('gh no puede hablar con GitHub. Corre:  gh auth login\n'
+                   'Si tienes un GH_TOKEN viejo en el entorno, bórralo antes:  unset GH_TOKEN')
     return usuario
 
 
@@ -184,17 +186,34 @@ def publica(slug, destino, usuario, privado, seco):
         else:
             correr(c, cwd=destino)
 
-    crear = ['gh', 'repo', 'create', slug,
-             '--private' if privado else '--public',
-             '--source', str(destino), '--push', '--disable-issues', '--disable-wiki']
+    # Se crea por REST y no con `gh repo create`, que usa GraphQL y no
+    # siempre está disponible.
+    crear = ['gh', 'api', '-X', 'POST', 'user/repos',
+             '-f', f'name={slug}',
+             '-F', f'private={"true" if privado else "false"}',
+             '-F', 'has_issues=false', '-F', 'has_wiki=false',
+             '-f', 'description=Booking Page · WD Studio']
+    remoto = ['git', 'remote', 'add', 'origin',
+              f'https://github.com/{usuario}/{slug}.git']
+    empujar = ['git', 'push', '-u', 'origin', 'main']
     pages = ['gh', 'api', '-X', 'POST', f'repos/{usuario}/{slug}/pages',
              '-f', 'source[branch]=main', '-f', 'source[path]=/']
     if seco:
-        print(f'      (prueba) {" ".join(crear)}')
-        print(f'      (prueba) {" ".join(pages)}')
+        for c in (crear, remoto, empujar, pages):
+            print(f'      (prueba) {" ".join(c)}')
         return f'https://{usuario}.github.io/{slug}/'
 
-    correr(crear, cwd=destino)
+    r = correr(crear, permitir_fallo=True)
+    if r.returncode:
+        salida = (r.stderr or r.stdout)
+        if 'already exists' in salida:
+            raise Alto(f'Ya existe un repo {usuario}/{slug}. Usa otro slug o bórralo.')
+        if 'bound to their configured repositories' in salida or 'GraphQL' in salida:
+            raise Alto('Este entorno no puede crear repos: está limitado a uno solo.\n'
+                       'Corre el alta desde tu Mac, donde gh tiene permiso completo.')
+        raise Alto(f'No pude crear el repo:\n{salida.strip()}')
+    correr(remoto, cwd=destino)
+    correr(empujar, cwd=destino)
     r = correr(pages, permitir_fallo=True)
     if r.returncode and 'already exists' not in (r.stderr + r.stdout):
         raise Alto(f'No pude activar Pages:\n{(r.stderr or r.stdout).strip()}')
