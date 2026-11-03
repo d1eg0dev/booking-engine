@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -38,11 +39,22 @@ def paso(n, total, texto):
     print(f'\n[{n}/{total}] {texto}', flush=True)
 
 
+# Tokens que nunca deben aparecer en un log ni en el informe que guarda Actions.
+SECRETOS: list[str] = []
+
+
+def oculta(texto):
+    for s in SECRETOS:
+        if s:
+            texto = texto.replace(s, '***')
+    return texto
+
+
 def correr(cmd, cwd=None, entrada=None, permitir_fallo=False):
     r = subprocess.run(cmd, cwd=cwd, input=entrada, capture_output=True, text=True)
     if r.returncode and not permitir_fallo:
-        salida = (r.stderr or r.stdout).strip()
-        raise Alto(f'Fallo: {" ".join(cmd)}\n{salida}')
+        salida = oculta((r.stderr or r.stdout).strip())
+        raise Alto(f'Fallo: {oculta(" ".join(cmd))}\n{salida}')
     return r
 
 
@@ -159,6 +171,26 @@ def revisa_entorno(seco):
     return usuario
 
 
+def token_de_git():
+    """El token con el que empujar el repo del cliente.
+
+    En la Mac, `gh auth login` instaló un ayudante de credenciales y `git push`
+    se autentica solo. Dentro de GitHub Actions ese ayudante no existe, y
+    actions/checkout sólo autentica el repo que descargó, no una carpeta nueva
+    que apunta a otro repo: ahí el push pide usuario, no hay nadie que lo
+    teclee, y el alta muere con el repo creado y vacío. Así que si hay token se
+    empuja con él en la URL; si no, se deja que el ayudante opine.
+
+    El token viaja como argumento, no al .git/config del cliente, y queda
+    tapado en cualquier mensaje de error.
+    """
+    for nombre in ('GH_TOKEN', 'GITHUB_TOKEN'):
+        t = (os.environ.get(nombre) or '').strip()
+        if t:
+            return t
+    return correr(['gh', 'auth', 'token'], permitir_fallo=True).stdout.strip()
+
+
 def arma_carpeta(slug, cfg, destino, dominio):
     if destino.exists():
         raise Alto(f'{destino} ya existe. Bórrala o usa otro slug.')
@@ -193,9 +225,15 @@ def publica(slug, destino, usuario, privado, seco):
              '-F', f'private={"true" if privado else "false"}',
              '-F', 'has_issues=false', '-F', 'has_wiki=false',
              '-f', 'description=Booking Page · WD Studio']
-    remoto = ['git', 'remote', 'add', 'origin',
-              f'https://github.com/{usuario}/{slug}.git']
-    empujar = ['git', 'push', '-u', 'origin', 'main']
+    url_limpia = f'https://github.com/{usuario}/{slug}.git'
+    token = '' if seco else token_de_git()
+    if token:
+        SECRETOS.append(token)
+        url_push = f'https://x-access-token:{token}@github.com/{usuario}/{slug}.git'
+    else:
+        url_push = url_limpia
+    remoto = ['git', 'remote', 'add', 'origin', url_limpia]
+    empujar = ['git', 'push', '-q', url_push, 'main:main']
     pages = ['gh', 'api', '-X', 'POST', f'repos/{usuario}/{slug}/pages',
              '-f', 'source[branch]=main', '-f', 'source[path]=/']
     if seco:
@@ -207,7 +245,16 @@ def publica(slug, destino, usuario, privado, seco):
     if r.returncode:
         salida = (r.stderr or r.stdout)
         if 'already exists' in salida:
-            raise Alto(f'Ya existe un repo {usuario}/{slug}. Usa otro slug o bórralo.')
+            # Un repo vacío es la huella de un alta que creó el repo y no pudo
+            # empujar. No es un cliente que ya exista: se reutiliza. Si tiene
+            # aunque sea un commit, se para, para no pisar a nadie.
+            c = correr(['gh', 'api', f'repos/{usuario}/{slug}/commits'],
+                       permitir_fallo=True)
+            vacio = 'Git Repository is empty' in (c.stdout + c.stderr)
+            if not vacio:
+                raise Alto(f'Ya existe un repo {usuario}/{slug} y tiene contenido.\n'
+                           'Usa otro slug, o bórralo en GitHub si fue una prueba.')
+            print(f'      {usuario}/{slug} ya existía vacío; lo reutilizo')
         if 'bound to their configured repositories' in salida or 'GraphQL' in salida:
             raise Alto('Este entorno no puede crear repos: está limitado a uno solo.\n'
                        'Corre el alta desde tu Mac, donde gh tiene permiso completo.')
