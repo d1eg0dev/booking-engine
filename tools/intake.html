@@ -773,6 +773,12 @@ const ALTA_URL = 'https://script.google.com/macros/s/AKfycbwHekgYbD_yPRyR2zBtV9q
 if (ALTA_URL){
   const bp = document.getElementById('publish');
   bp.hidden = false;
+  /* Con el botón de publicar, el texto de abajo ya no aplica: nadie tiene
+     que descargar ni mandar nada. */
+  status.textContent = LANG === 'en'
+    ? "When you're done, press Publish my page."
+    : 'Al terminar, dale a Publicar mi página.';
+  status.removeAttribute('data-en');
   bp.addEventListener('click', async () => {
     if (!check()) return;
     bp.disabled = true;
@@ -805,7 +811,9 @@ if (ALTA_URL){
       status.textContent = d.mensaje || M('sent');
     } catch (e){
       status.className = 'err';
-      status.textContent = M('sendfail');
+      /* El motivo, no sólo "no se pudo": sin esto, un fallo obliga a abrir
+         las herramientas del navegador para averiguar qué pasó. */
+      status.textContent = M('sendfail') + (e && e.message ? ' (' + e.message + ')' : '');
       bp.disabled = false;
     }
   });

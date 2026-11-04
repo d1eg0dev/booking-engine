@@ -101,7 +101,10 @@ function doPost(e) {
 
     var h = hoja_();
     var slug = slugLibre_(base, h);
-    var id = Utilities.getUuid().slice(0, 8);
+    // La letra delante es a propósito: un id de puros dígitos la hoja lo
+    // guarda como número, y uno como "1e234567" lo leería en notación
+    // científica. Con una letra siempre es texto.
+    var id = 'a' + Utilities.getUuid().replace(/-/g, '').slice(0, 7);
     var comisionista = (cuerpo.codigo || '').toString().trim().toUpperCase().slice(0, 24);
     var auto = prop_('AUTO') === 'true';
 
@@ -142,13 +145,13 @@ function doGet(e) {
   var h = hoja_();
   var datos = h.getDataRange().getValues();
   for (var i = 1; i < datos.length; i++) {
-    if (datos[i][0] !== p.aprobar) continue;
+    if (!mismoId_(datos[i][0], p.aprobar)) continue;
     if (datos[i][6] !== 'por aprobar') {
       return HtmlService.createHtmlOutput('<p>Esa alta ya está en estado: ' + datos[i][6] + '</p>');
     }
     var slug = datos[i][3];
     var cfg = JSON.parse(datos[i][8]);
-    dispararAlta_(datos[i][0], slug, cfg, p.dominio || '');
+    dispararAlta_(String(datos[i][0]), slug, cfg, p.dominio || '');
     h.getRange(i + 1, 7).setValue('publicando');
     return HtmlService.createHtmlOutput(
       '<p>Aprobada: <b>' + datos[i][2] + '</b>.</p>' +
@@ -241,9 +244,18 @@ function gh_(metodo, ruta, cuerpo) {
   return r.getContentText();
 }
 
+/* Un id como "47094205" sale todo en dígitos (pasa en una de cada 43, porque
+   son ocho caracteres hexadecimales) y la hoja lo guarda como número, no como
+   texto. Comparar con === contra la cadena fallaba justo en esas altas: ni se
+   podían aprobar desde el correo, ni recibían sus fotos, y nadie habría
+   entendido por qué unas sí y otras no. */
+function mismoId_(a, b) {
+  return String(a == null ? '' : a).trim() === String(b == null ? '' : b).trim();
+}
+
 function filaDe_(id) {
   var datos = hoja_().getDataRange().getValues();
-  for (var i = 1; i < datos.length; i++) if (datos[i][0] === id) return i + 1;
+  for (var i = 1; i < datos.length; i++) if (mismoId_(datos[i][0], id)) return i + 1;
   return 0;
 }
 
@@ -256,7 +268,7 @@ function resultado_(c) {
   var h = hoja_();
   var datos = h.getDataRange().getValues();
   for (var i = 1; i < datos.length; i++) {
-    if (datos[i][0] !== id) continue;
+    if (!mismoId_(datos[i][0], id)) continue;
     var estado = c.ok ? (c.vivo ? 'vivo' : 'publicando en GitHub')
                       : ('falló: ' + (c.error || 'sin motivo')).slice(0, 240);
     var fotos = 0;
