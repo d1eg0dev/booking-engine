@@ -7,29 +7,69 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--f);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;font-size:15px}
-.wrap{max-width:680px;margin:0 auto;padding:40px 24px 64px}
+/* El contenedor ya no limita nada: la cabecera, la portada y el pie van a
+   todo el ancho, y lo que se lee va dentro de .col. Se deja la clase porque
+   las páginas de clientes ya publicadas la traen en su plantilla. */
+.wrap{max-width:none;margin:0;padding:0}
+/* Un solo contenedor para todo. Lo que se lee se limita a 680, pero alineado
+   al borde izquierdo de la galería y no centrado: si la foto empieza en un
+   sitio y el párrafo en otro, se lee como un fallo de maquetación. */
+.col,.col-ancho{max-width:1120px;margin:0 auto;padding:0 24px}
+.col > *{max-width:688px}
+.col > .conf{max-width:860px}
+.sx{padding-top:clamp(52px,7vw,84px);scroll-margin-top:66px}
+.rot{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:500;margin-bottom:12px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
 .top img{max-height:34px;width:auto}
 .lang{display:flex;gap:4px}
 .lang button{border:1px solid var(--line);background:var(--card);color:var(--soft);font:500 11px/1 var(--f);letter-spacing:.12em;padding:7px 10px;border-radius:2px;cursor:pointer}
 .lang button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.bar{background:#FFF8E5;border:1px solid #F5D98B;color:#8A6D1F;font-size:12px;padding:9px 13px;border-radius:2px;margin-bottom:20px}
+.bar{background:#FFF8E5;border-bottom:1px solid #F5D98B;color:#8A6D1F;font-size:12px;padding:9px 20px;text-align:center}
 h1{font-weight:300;font-size:30px;line-height:1.15;letter-spacing:-.022em}
 h1 b{font-weight:500}
 .sub{margin-top:9px;font-size:14px;color:var(--soft)}
 /* Portada, descripción y galería. Todo esto desaparece solo cuando el config
    no los trae, para que una propiedad sin fotos no deje huecos grises. */
-.hero{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:2px;background:var(--acc-tint);margin-bottom:26px}
-.about{margin-top:16px;font-size:14.5px;line-height:1.65;color:var(--soft);white-space:pre-line}
-.gal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:24px}
+/* ── Cabecera ─────────────────────────────────────────────────────────── */
+.hdr{position:sticky;top:0;z-index:50;background:rgba(252,251,249,.9);
+  -webkit-backdrop-filter:saturate(1.7) blur(12px);backdrop-filter:saturate(1.7) blur(12px);
+  border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:18px}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);
+  font-size:14.5px;font-weight:500;letter-spacing:-.012em;min-width:0}
+.marca img{max-height:28px;width:auto;display:block}
+.marca span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.menu{display:flex;gap:24px;margin-left:auto}
+.menu a{font-size:13px;color:var(--soft);text-decoration:none}
+.menu a:hover{color:var(--ink)}
+.hdr .lang{margin-left:4px}
+
+/* ── Portada ──────────────────────────────────────────────────────────── */
+.port{position:relative;min-height:clamp(330px,54vh,540px);display:flex;align-items:flex-end;
+  overflow:hidden;background:var(--acc-tint)}
+.port img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.port::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 38%,rgba(0,0,0,.58) 100%)}
+.port-tx{position:relative;z-index:1;width:100%;max-width:1120px;margin:0 auto;padding:44px 24px}
+.port h1{color:#fff;font-weight:300;font-size:clamp(31px,5.4vw,54px);line-height:1.03;letter-spacing:-.03em}
+.port .sub{margin-top:11px;font-size:clamp(14.5px,1.5vw,17px);color:rgba(255,255,255,.9)}
+/* Sin foto la portada no finge una: se queda en papel, con el texto en tinta
+   y sin la altura reservada para una imagen que no existe. */
+.port.sinfoto{min-height:0;background:none;padding-top:clamp(44px,6vw,72px)}
+.port.sinfoto img,.port.sinfoto::after{display:none}
+.port.sinfoto h1{color:var(--ink)}
+.port.sinfoto .sub{color:var(--soft)}
+.about{font-size:clamp(15px,1.7vw,17px);line-height:1.72;color:var(--soft);white-space:pre-line;max-width:60ch}
+.gal{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
 .gal img{display:block;width:100%;grid-column:span 2;aspect-ratio:1/1;object-fit:cover;border-radius:2px;background:var(--acc-tint)}
 /* La rejilla va de tres en tres. Cuando sobra una foto ocupa el ancho, y
    cuando sobran dos se reparten la fila: así no queda un hueco al final. */
 .gal img:last-child:nth-child(3n+1){grid-column:span 6;aspect-ratio:16/9}
 .gal img:nth-last-child(2):nth-child(3n+1),
 .gal img:last-child:nth-child(3n+2){grid-column:span 3;aspect-ratio:4/3}
-.sec{margin-top:40px;padding-top:30px;border-top:1px solid var(--line);font-weight:300;font-size:21px;letter-spacing:-.015em}
-.steps{display:flex;align-items:center;margin:28px 0 26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sec{font-weight:300;font-size:clamp(24px,3.2vw,32px);letter-spacing:-.022em;margin-bottom:7px}
+.secsub{font-size:14.5px;color:var(--soft);margin-bottom:4px;max-width:52ch}
+.steps{display:flex;align-items:center;margin:30px 0 28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .stp{flex:1;display:flex;align-items:center;gap:9px;padding:15px 0}
 /* La línea es lo que convierte tres círculos sueltos en un avance. Sin ella
    los pasos flotan separados por un hueco vacío y se leen como un error. */
@@ -121,12 +161,39 @@ textarea{resize:vertical;min-height:72px}
 .ok h2{font-size:25px;font-weight:300;margin-bottom:9px}
 .ok p{font-size:14px;color:var(--soft);max-width:40ch;margin:0 auto}
 .ok .rf{margin-top:22px;display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 20px;font-size:12.5px;letter-spacing:.05em}
+/* ── Confianza y pie ──────────────────────────────────────────────────── */
+.conf{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}
+.conf div{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:17px 18px}
+.conf svg{width:19px;height:19px;stroke:var(--acc);fill:none;stroke-width:1.4;
+  stroke-linecap:round;stroke-linejoin:round;display:block;margin-bottom:10px}
+.conf b{display:block;font-size:13px;font-weight:500;margin-bottom:3px}
+.conf span{font-size:12px;color:var(--mute);line-height:1.55;display:block}
+.pie{margin-top:clamp(56px,7vw,90px);border-top:1px solid var(--line);background:var(--card)}
+.pie-in{max-width:1120px;margin:0 auto;padding:42px 24px 34px;display:flex;flex-wrap:wrap;
+  gap:34px 48px;justify-content:space-between}
+.pie h4{font-size:15px;font-weight:500;margin-bottom:9px;letter-spacing:-.01em}
+.pie p{font-size:12.5px;color:var(--mute);max-width:34ch;line-height:1.6}
+.pie .gr5{display:flex;flex-direction:column;gap:6px}
+.pie .gr5 b{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);
+  font-weight:500;margin-bottom:3px}
+.pie a,.pie button.lk{font-size:13px;color:var(--soft);text-decoration:none;background:none;
+  border:0;padding:0;text-align:left;font-family:var(--f);cursor:pointer}
+.pie a:hover,.pie button.lk:hover{color:var(--acc)}
+.pie-fin{border-top:1px solid var(--line)}
+.pie-fin div{max-width:1120px;margin:0 auto;padding:15px 24px;display:flex;flex-wrap:wrap;
+  gap:10px 20px;justify-content:space-between;font-size:11.5px;color:var(--mute)}
+.pie-fin a{color:var(--acc);text-decoration:none}
 .ft{margin-top:36px;text-align:center;font-size:11px;color:var(--mute)}
 .ft a{color:var(--acc)}
 .load{padding:80px 0;text-align:center;color:var(--mute);font-size:13px}
+@media(max-width:760px){
+  .menu{display:none}
+  .conf{grid-template-columns:1fr}
+}
 @media(max-width:600px){
-  .wrap{padding:28px 17px 46px}
-  h1{font-size:25px}
+  .col,.col-ancho{padding:0 17px}
+  .port-tx{padding:30px 17px}
+  .pie-in{gap:26px;padding:32px 17px 26px}
   .r2{grid-template-columns:1fr}
   .stp span{display:none}
   .steps{justify-content:center}

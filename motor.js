@@ -10,7 +10,13 @@ var T = {
     minStay:'Estancia mínima', minStayTxt:'Estas fechas requieren al menos {n} noches.', unavail:'Alguna de esas noches ya no está disponible. Elige otras fechas.',
     demo:'Modo demostración: no se hace ningún cargo.', confirmed:'Reserva confirmada', confirmedTxt:'Te enviamos la confirmación a {e}. Nos pondremos en contacto en menos de 24 horas.',
     demoDone:'Demostración: no se procesó ningún pago.', again:'Empezar de nuevo', processing:'Procesando…', error:'No pudimos procesar la reserva. Intenta de nuevo o escríbenos por WhatsApp.',
-    checking:'Confirmando tu pago…', notPaid:'No encontramos el pago de esta reserva. Si ya pagaste, escríbenos y lo revisamos.', direct:'Reserva directa' },
+    checking:'Confirmando tu pago…', notPaid:'No encontramos el pago de esta reserva. Si ya pagaste, escríbenos y lo revisamos.', direct:'Reserva directa',
+    navHouse:'La casa', navPhotos:'Fotos', reserveSub:'Elige tus fechas y confirma en unos minutos.',
+    cSecure:'Pago seguro', cSecureTxt:'El cobro lo procesa Stripe. Los datos de tu tarjeta no pasan por esta página.',
+    cDirect:'Reserva directa', cDirectTxt:'Sin comisiones de intermediarios. Tratas con quien cuida la casa.',
+    cRules:'Condiciones por escrito', cRulesTxt:'Cancelación y reglas de la casa, claras y antes de pagar.',
+    cAnswer:'Te contestamos', cAnswerTxt:'Escríbenos por WhatsApp si necesitas algo antes de reservar.',
+    contact:'Contacto', policies:'Políticas y condiciones', allRights:'Todos los derechos reservados.' },
   en: { reserve:'Reserve', dates:'Dates', extras:'Extras', details:'Details', month:['January','February','March','April','May','June','July','August','September','October','November','December'],
     dow:['Su','Mo','Tu','We','Th','Fr','Sa'], selected:'Selected', stay:'Your stay', unavailable:'Unavailable', perNight:'/ night', min:'min', nights:'nights', night:'night',
     guests:'Guests', pets:'Pets', none:'None', cont:'Continue', back:'Back', addTitle:'Add to your stay', addSub:'Optional. Charged with your reservation.',
@@ -21,7 +27,13 @@ var T = {
     minStay:'Minimum stay', minStayTxt:'These dates require at least {n} nights.', unavail:'Some of those nights are no longer available. Please pick other dates.',
     demo:'Demo mode: nothing is charged.', confirmed:'Reservation confirmed', confirmedTxt:'A confirmation has been sent to {e}. We will be in touch within 24 hours.',
     demoDone:'Demo only: no payment was processed.', again:'Start again', processing:'Processing…', error:'We could not process the reservation. Please try again or message us on WhatsApp.',
-    checking:'Confirming your payment…', notPaid:'We could not find the payment for this reservation. If you already paid, message us and we will check.', direct:'Direct booking' }
+    checking:'Confirming your payment…', notPaid:'We could not find the payment for this reservation. If you already paid, message us and we will check.', direct:'Direct booking',
+    navHouse:'The house', navPhotos:'Photos', reserveSub:'Pick your dates and confirm in a few minutes.',
+    cSecure:'Secure payment', cSecureTxt:'Payment is processed by Stripe. Your card details never touch this page.',
+    cDirect:'Direct booking', cDirectTxt:'No intermediary fees. You deal with the people who look after the house.',
+    cRules:'Terms in writing', cRulesTxt:'Cancellation and house rules, clear and before you pay.',
+    cAnswer:'A real reply', cAnswerTxt:'Message us on WhatsApp if you need anything before booking.',
+    contact:'Contact', policies:'Policies and terms', allRights:'All rights reserved.' }
 };
 /* Rentas por día (autos, yates, espacios): mismos cálculos, otras palabras. Se activa con "unit": "day" en config.json. */
 var TD = {
@@ -145,35 +157,83 @@ function submit(){
 
 function R(){
   var a = document.getElementById('app'), langs = C.languages || ['es'];
-  var top = '<div class="top">' + (C.property.logo ? '<img src="' + esc(C.property.logo) + '" alt="' + esc(C.property.name) + '">' : '<span></span>')
-    + (langs.length > 1 ? '<div class="lang">' + langs.map(function(l){ return '<button class="' + (l === L ? 'on' : '') + '" onclick="setLang(\'' + l + '\')">' + l.toUpperCase() + '</button>'; }).join('') + '</div>' : '') + '</div>';
-  var foot = C.brand && C.brand.poweredBy ? '<p class="ft">' + t('direct') + ' · <a href="https://wdstudio.agency" target="_blank" rel="noopener">WD Studio</a></p>' : '';
+  var ph = fotos(), about = (C.property.about ? nm(C.property.about) : '').trim();
+  var modo = (C.payment && C.payment.mode) || 'demo';
+  var wa = (C.contact && C.contact.whatsapp || '').replace(/[^0-9]/g, '');
+
+  var idioma = langs.length > 1 ? '<div class="lang">' + langs.map(function(l){
+    return '<button class="' + (l === L ? 'on' : '') + '" onclick="setLang(\'' + l + '\')">' + l.toUpperCase() + '</button>';
+  }).join('') + '</div>' : '';
+
+  var cabecera = ((modo === 'demo') ? '<div class="bar">' + t('demo') + '</div>' : '')
+    + '<header class="hdr" id="top"><div class="hdr-in">'
+    + '<a class="marca" href="#top">'
+    + (C.property.logo ? '<img src="' + esc(C.property.logo) + '" alt="" onerror="this.remove()">' : '')
+    + '<span>' + esc(C.property.name) + '</span></a>'
+    + '<nav class="menu">'
+    + (about ? '<a href="#lacasa">' + t('navHouse') + '</a>' : '')
+    + (ph.length > 1 ? '<a href="#fotos">' + t('navPhotos') + '</a>' : '')
+    + '<a href="#reservar">' + t('reserve') + '</a></nav>'
+    + idioma + '</div></header>';
+
+  // El pie repite lo que un huésped busca cuando duda: con quién trata, cómo
+  // escribirle y qué firma. Las políticas abren el mismo texto que acepta
+  // antes de pagar, para que pueda leerlas sin empezar una reserva.
+  var pie = '<footer class="pie"><div class="pie-in">'
+    + '<div><h4>' + esc(C.property.name) + '</h4>'
+    + (C.property.tagline ? '<p>' + esc(nm(C.property.tagline)) + '</p>' : '') + '</div>'
+    + '<div class="gr5"><b>' + t('contact') + '</b>'
+    + (C.contact && C.contact.email ? '<a href="mailto:' + esc(C.contact.email) + '">' + esc(C.contact.email) + '</a>' : '')
+    + (wa ? '<a href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WhatsApp</a>' : '')
+    + (C.property.website ? '<a href="' + esc(C.property.website) + '" target="_blank" rel="noopener">' + esc(C.property.website.replace(/^https?:\/\//, '')) + '</a>' : '')
+    + '</div>'
+    + '<div class="gr5"><b>' + t('navHouse') + '</b>'
+    + '<button class="lk" onclick="openMod(event)">' + t('policies') + '</button>'
+    + '<a href="#reservar">' + t('reserve') + '</a></div>'
+    + '</div><div class="pie-fin"><div>'
+    + '<span>© ' + new Date().getFullYear() + ' ' + esc(C.property.name) + '. ' + t('allRights') + '</span>'
+    + (C.brand && C.brand.poweredBy
+        ? '<span>' + t('direct') + ' · <a href="https://wdstudio.agency" target="_blank" rel="noopener">WD Studio</a></span>'
+        : '<span>' + t('direct') + '</span>')
+    + '</div></div></footer>';
 
   if(S.done){
-    a.innerHTML = top + '<div class="ok"><div class="ic">✓</div><h2>' + t('confirmed') + '</h2><p>' + esc(t('confirmedTxt').replace('{e}', S.done.email || S.em)) + '</p>'
-      + '<div class="rf">' + esc(S.done.ref) + '</div>' + (S.done.demo ? '<p style="margin-top:24px;font-size:12.5px">' + t('demoDone') + '<br><a href="#" onclick="location.reload();return false" style="color:var(--acc)">' + t('again') + '</a></p>' : '') + '</div>' + foot;
+    a.innerHTML = cabecera + '<section class="sx"><div class="col"><div class="ok"><div class="ic">✓</div><h2>' + t('confirmed') + '</h2><p>'
+      + esc(t('confirmedTxt').replace('{e}', S.done.email || S.em)) + '</p>'
+      + '<div class="rf">' + esc(S.done.ref) + '</div>'
+      + (S.done.demo ? '<p style="margin-top:24px;font-size:12.5px">' + t('demoDone')
+          + '<br><a href="#" onclick="location.reload();return false" style="color:var(--acc)">' + t('again') + '</a></p>' : '')
+      + '</div></div></section>' + pie;
     return;
   }
-  if(S.checking){ a.innerHTML = top + '<div class="load">' + (S.checking === 'fail' ? esc(t('notPaid')) : t('checking')) + '</div>'; return; }
+  if(S.checking){
+    a.innerHTML = cabecera + '<section class="sx"><div class="col"><div class="load">'
+      + (S.checking === 'fail' ? esc(t('notPaid')) : t('checking')) + '</div></div></section>' + pie;
+    return;
+  }
 
   var hasExtras = (C.extras || []).length > 0, labels = hasExtras ? [t('dates'), t('extras'), t('details')] : [t('dates'), t('details')];
   var cur = (!hasExtras && S.step === 2) ? 1 : S.step, st = '';
   labels.forEach(function(lb, i){ st += '<div class="stp' + (cur < i ? ' dim' : '') + (cur === i ? ' cur' : '') + '"><div class="dot' + (cur === i ? ' on' : cur > i ? ' hecho' : '') + '">' + (cur > i ? '✓' : i + 1) + '</div><span>' + lb + '</span></div>'; });
-  // La portada manda: el nombre de la propiedad es el título de la página y
-  // "Reservar" pasa a ser el encabezado de la sección del formulario. Si una
-  // imagen no carga se borra sola, porque un enlace de Drive pegado por el
-  // cliente no se puede incrustar y un icono roto se ve peor que nada.
-  var ph = fotos(), about = (C.property.about ? nm(C.property.about) : '').trim();
-  var h = top + ((C.payment && C.payment.mode === 'demo') ? '<div class="bar">' + t('demo') + '</div>' : '')
-    + (ph.length ? '<img class="hero" src="' + esc(ph[0]) + '" alt="' + esc(C.property.name)
-        + '" onerror="this.remove()">' : '')
-    + '<h1>' + esc(C.property.name) + '</h1>'
+
+  // La portada manda. Si la foto no carga, la sección se queda en papel con el
+  // texto en tinta en vez de reservar media pantalla a una imagen que no está.
+  var portada = '<section class="port' + (ph.length ? '' : ' sinfoto') + '">'
+    + (ph.length ? '<img src="' + esc(ph[0]) + '" alt="' + esc(C.property.name)
+        + '" onerror="this.closest(\'.port\').classList.add(\'sinfoto\')">' : '')
+    + '<div class="port-tx"><h1>' + esc(C.property.name) + '</h1>'
     + (C.property.tagline ? '<p class="sub">' + esc(nm(C.property.tagline)) + '</p>' : '')
-    + (about ? '<p class="about">' + esc(about) + '</p>' : '')
-    + (ph.length > 1 ? '<div class="gal">' + ph.slice(1, 7).map(function(u){
-        return '<img src="' + esc(u) + '" alt="' + esc(C.property.name) + '" loading="lazy" onerror="this.remove()">';
-      }).join('') + '</div>' : '')
-    + '<h2 class="sec">' + t('reserve') + '</h2>'
+    + '</div></section>';
+
+  var cuerpo = (about ? '<section class="sx" id="lacasa"><div class="col"><p class="rot">' + t('navHouse')
+        + '</p><p class="about">' + esc(about) + '</p></div></section>' : '')
+    + (ph.length > 1 ? '<section class="sx" id="fotos"><div class="col-ancho"><div class="gal">'
+        + ph.slice(1, 7).map(function(u){
+            return '<img src="' + esc(u) + '" alt="' + esc(C.property.name) + '" loading="lazy" onerror="this.remove()">';
+          }).join('') + '</div></div></section>' : '');
+
+  var h = '<h2 class="sec">' + t('reserve') + '</h2>'
+    + '<p class="secsub">' + t('reserveSub') + '</p>'
     + '<div class="steps">' + st + '</div>';
   var r = (S.ci && S.co) ? q() : null;
 
@@ -223,7 +283,27 @@ function R(){
       + (S.busy ? t('processing') : mode === 'whatsapp' ? t('request') : t('pay') + ' · ' + moneyCur(due)) + '</button></div>'
       + (mode === 'stripe' ? '<p style="margin-top:12px;font-size:11.5px;color:var(--mute);text-align:center">' + t('secure') + '</p>' : '');
   }
-  a.innerHTML = h + foot;
+  // Sólo se promete pago seguro cuando de verdad cobra Stripe: decirlo en
+  // modo demostración sería mentirle al huésped.
+  var ico = {
+    candado:'<svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>',
+    hoja:'<svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>',
+    enlace:'<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 4.5 16.8L21 21l-1.2-4.5A9 9 0 0 0 12 3z"/></svg>',
+    etiqueta:'<svg viewBox="0 0 24 24"><path d="M3 12.5 12.5 3H21v8.5L11.5 21z"/><circle cx="16.8" cy="7.2" r="1.3"/></svg>'
+  };
+  var tarjetas = [];
+  if(modo === 'stripe') tarjetas.push([ico.candado, t('cSecure'), t('cSecureTxt')]);
+  tarjetas.push([ico.etiqueta, t('cDirect'), t('cDirectTxt')]);
+  tarjetas.push([ico.hoja, t('cRules'), t('cRulesTxt')]);
+  if(tarjetas.length < 3 && wa) tarjetas.push([ico.enlace, t('cAnswer'), t('cAnswerTxt')]);
+  var confianza = '<section class="sx"><div class="col"><div class="conf">'
+    + tarjetas.slice(0, 3).map(function(x){
+        return '<div>' + x[0] + '<b>' + x[1] + '</b><span>' + x[2] + '</span></div>';
+      }).join('') + '</div></div></section>';
+
+  a.innerHTML = cabecera + portada + cuerpo
+    + '<section class="sx" id="reservar"><div class="col">' + h + '</div></section>'
+    + confianza + pie;
   if(S.step === 2) sync();
 }
 
