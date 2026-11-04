@@ -17,6 +17,27 @@ body{background:var(--paper);color:var(--ink);font-family:var(--f);font-weight:3
 .col,.col-ancho{max-width:1120px;margin:0 auto;padding:0 24px}
 .col > *{max-width:688px}
 .col > .conf{max-width:860px}
+/* La sección de reserva ocupa toda la rejilla: dentro va a dos columnas y
+   no tendría sentido limitarla al ancho de lectura. */
+.col.libre > *{max-width:none}
+
+/* ── Reserva en dos columnas ──────────────────────────────────────────── */
+.reserva{display:grid;gap:clamp(26px,3vw,44px);align-items:start}
+@media(min-width:900px){
+  /* El precio tiene que estar a la vista mientras se eligen las fechas: es
+     la decisión que el huésped está tomando. Pegajoso, para que no se pierda
+     al bajar por el calendario. */
+  .reserva{grid-template-columns:minmax(0,1fr) 334px}
+  .rz-side{position:sticky;top:74px}
+}
+.rz-side .sm,.rz-side .miss{margin-top:0}
+.rz-side .sm + .miss,.rz-side .miss + .bn,.rz-side .sm + .bn{margin-top:14px}
+.rz-side .bn{margin-top:16px}
+.rz-side .agr{margin-top:14px}
+.vacia{background:var(--card);border:1px dashed var(--line);border-radius:3px;padding:19px 20px}
+.vacia b{display:block;font-size:19px;font-weight:400;letter-spacing:-.01em}
+.vacia em{font-style:normal;font-size:12px;color:var(--mute);display:block;margin-top:3px}
+.vacia p{margin-top:13px;padding-top:13px;border-top:1px solid var(--line);font-size:12.5px;color:var(--soft)}
 .sx{padding-top:clamp(52px,7vw,84px);scroll-margin-top:66px}
 .rot{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);font-weight:500;margin-bottom:12px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}

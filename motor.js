@@ -16,6 +16,7 @@ var T = {
     cDirect:'Reserva directa', cDirectTxt:'Sin comisiones de intermediarios. Tratas con quien cuida la casa.',
     cRules:'Condiciones por escrito', cRulesTxt:'Cancelación y reglas de la casa, claras y antes de pagar.',
     cAnswer:'Te contestamos', cAnswerTxt:'Escríbenos por WhatsApp si necesitas algo antes de reservar.',
+    pickDates:'Elige tus fechas y aquí aparece el total, sin sorpresas.', from:'Desde',
     contact:'Contacto', policies:'Políticas y condiciones', allRights:'Todos los derechos reservados.' },
   en: { reserve:'Reserve', dates:'Dates', extras:'Extras', details:'Details', month:['January','February','March','April','May','June','July','August','September','October','November','December'],
     dow:['Su','Mo','Tu','We','Th','Fr','Sa'], selected:'Selected', stay:'Your stay', unavailable:'Unavailable', perNight:'/ night', min:'min', nights:'nights', night:'night',
@@ -33,6 +34,7 @@ var T = {
     cDirect:'Direct booking', cDirectTxt:'No intermediary fees. You deal with the people who look after the house.',
     cRules:'Terms in writing', cRulesTxt:'Cancellation and house rules, clear and before you pay.',
     cAnswer:'A real reply', cAnswerTxt:'Message us on WhatsApp if you need anything before booking.',
+    pickDates:'Pick your dates and the total appears here, with no surprises.', from:'From',
     contact:'Contact', policies:'Policies and terms', allRights:'All rights reserved.' }
 };
 /* Rentas por día (autos, yates, espacios): mismos cálculos, otras palabras. Se activa con "unit": "day" en config.json. */
@@ -235,7 +237,9 @@ function R(){
   var h = '<h2 class="sec">' + t('reserve') + '</h2>'
     + '<p class="secsub">' + t('reserveSub') + '</p>'
     + '<div class="steps">' + st + '</div>';
-  var r = (S.ci && S.co) ? q() : null;
+  // cab es el encabezado de la sección, que va a todo el ancho por encima de
+  // las dos columnas; h se reinicia para que recoja sólo el contenido del paso.
+  var r = (S.ci && S.co) ? q() : null, izq = '', der = '', cab = h; h = '';
 
   if(S.step === 0){
     var first = new Date(S.y, S.m, 1).getDay(), days = new Date(S.y, S.m + 1, 0).getDate(), td = today();
@@ -257,8 +261,19 @@ function R(){
     h += '<div class="r2" style="margin-top:20px"><div class="fl"><label class="lb">' + t('guests') + '</label><select onchange="S.g=+this.value;R()">' + gOpts + '</select></div>';
     if(C.fees.maxPets){ var pOpts = ''; for(var p = 0; p <= C.fees.maxPets; p++) pOpts += '<option value="' + p + '"' + (S.pets === p ? ' selected' : '') + '>' + (p || t('none')) + '</option>'; h += '<div class="fl"><label class="lb">' + t('pets') + '</label><select onchange="S.pets=+this.value;R()">' + pOpts + '</select></div>'; }
     h += '</div>';
-    if(r){ if(r.ok) h += summary(); else if(r.error === 'minNights') h += '<div class="miss"><b>' + t('minStay') + '</b>' + t('minStayTxt').replace('{n}', r.minNights) + '</div>'; else if(r.error === 'unavailable') h += '<div class="miss">' + t('unavail') + '</div>'; }
-    h += '<div class="bn"><button class="bp" onclick="go(' + (hasExtras ? 1 : 2) + ')"' + (r && r.ok ? '' : ' disabled') + '>' + t('cont') + '</button></div>';
+    izq = h; h = '';
+    if(r && r.ok) der = summary();
+    else {
+      // Sin fechas no hay total, pero sí hay una cifra que el huésped quiere:
+      // desde cuánto sale la noche. Un hueco vacío aquí no ayuda a decidir.
+      var base = BookingPricing.seasonFor(C, today());
+      der = '<div class="vacia"><b>' + t('from') + ' ' + moneyCur(Math.round(base.nightly)) + '</b>'
+        + '<em>' + t('perNight') + ' · ' + t('min') + ' ' + base.minNights + ' ' + t('nights') + '</em>'
+        + '<p>' + t('pickDates') + '</p></div>'
+        + (r && r.error === 'minNights' ? '<div class="miss"><b>' + t('minStay') + '</b>' + t('minStayTxt').replace('{n}', r.minNights) + '</div>'
+           : r && r.error === 'unavailable' ? '<div class="miss">' + t('unavail') + '</div>' : '');
+    }
+    der += '<div class="bn"><button class="bp" onclick="go(' + (hasExtras ? 1 : 2) + ')"' + (r && r.ok ? '' : ' disabled') + '>' + t('cont') + '</button></div>';
   }
   if(S.step === 1){
     h += '<h2>' + t('addTitle') + '</h2><p class="h2s">' + t('addSub') + '</p>';
@@ -266,7 +281,8 @@ function R(){
       var on = !!S.ad[x.id], unit = x.unit === 'night' ? t('perNight') : x.unit === 'guest' ? t('perGuest') : t('perStay');
       h += '<button class="ad' + (on ? ' on' : '') + '" onclick="S.ad[\'' + x.id + '\']=!S.ad[\'' + x.id + '\'];R()"><div class="bx">' + (on ? '✓' : '') + '</div><div class="tx"><b>' + esc(nm(x.name)) + '</b><span>' + esc(nm(x.desc)) + '</span></div><div class="pr">' + money(x.price) + ' ' + unit + '</div></button>';
     });
-    h += summary() + '<div class="bn"><button class="bs" onclick="go(0)">' + t('back') + '</button><button class="bp" onclick="go(2)">' + t('cont') + '</button></div>';
+    izq = h; h = '';
+    der = summary() + '<div class="bn"><button class="bs" onclick="go(0)">' + t('back') + '</button><button class="bp" onclick="go(2)">' + t('cont') + '</button></div>';
   }
   if(S.step === 2){
     var mode = (C.payment && C.payment.mode) || 'demo', due = r && r.ok ? r.dueNow : 0;
@@ -275,7 +291,11 @@ function R(){
       + '<div class="fl"><label class="lb">' + t('email') + ' *</label><input type="email" value="' + esc(S.em) + '" oninput="setF(\'em\',this.value)" autocomplete="email"></div></div>'
       + '<div class="fl"><label class="lb">' + t('phone') + ' *</label><input type="tel" value="' + esc(S.ph) + '" oninput="setF(\'ph\',this.value)" autocomplete="tel"></div>'
       + '<div class="fl"><label class="lb">' + t('notes') + '</label><textarea oninput="S.nt=this.value" placeholder="' + esc(t('notesPh')) + '">' + esc(S.nt) + '</textarea></div>'
-      + summary()
+      ;
+    izq = h; h = '';
+    // La casilla del contrato va junto al botón de pagar, no al final del
+    // formulario: es lo último que se acepta antes de soltar el dinero.
+    der = summary()
       + '<label class="agr" id="agrBox"><input type="checkbox"' + (S.ag ? ' checked' : '') + ' onchange="setF(\'ag\',this.checked)"><span>' + t('accept') + ' *</span></label>'
       + '<div class="miss" id="missBox" style="display:none"></div>'
       + (S.err ? '<div class="miss">' + esc(S.err) + '</div>' : '')
@@ -302,7 +322,9 @@ function R(){
       }).join('') + '</div></div></section>';
 
   a.innerHTML = cabecera + portada + cuerpo
-    + '<section class="sx" id="reservar"><div class="col">' + h + '</div></section>'
+    + '<section class="sx" id="reservar"><div class="col libre">' + cab
+    + '<div class="reserva"><div class="rz-main">' + izq + '</div>'
+    + '<aside class="rz-side">' + der + '</aside></div></div></section>'
     + confianza + pie;
   if(S.step === 2) sync();
 }
