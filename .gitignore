@@ -1,2 +1,5 @@
 __pycache__/
 .DS_Store
+
+# credencial de clasp, nunca se sube
+.clasprc.json
