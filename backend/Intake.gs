@@ -23,6 +23,26 @@
  * El token de GitHub vive sólo aquí. Nunca en el repo ni en el navegador.
  */
 
+/**
+ * Córrela una vez desde el editor, con el botón Ejecutar, y acepta los
+ * permisos que pida.
+ *
+ * Al añadir el guardado de fotos el script empezó a usar Drive, y eso es un
+ * permiso nuevo que la autorización anterior no cubría. Google no lo concede
+ * solo: hasta que alguien lo acepta, las fotos fallan con "No tienes permiso
+ * para llamar a DriveApp". Esto toca las tres cosas que el script necesita
+ * —la hoja, Drive y el correo— para que la pantalla de permisos las pida
+ * todas de una vez y no haya que volver.
+ */
+function autoriza() {
+  var h = hoja_();
+  var c = carpetaFotos_('prueba-de-permisos');
+  var correo = Session.getEffectiveUser().getEmail();
+  c.setTrashed(true);
+  Logger.log('Hoja: ' + h.getName() + ' · Drive: ok · Correo: ' + correo);
+  return 'Listo. Ya puedes volver a probar el formulario.';
+}
+
 function prop_(nombre, obligatorio) {
   var v = PropertiesService.getScriptProperties().getProperty(nombre);
   if (!v && obligatorio) throw new Error('Falta la propiedad del script: ' + nombre);
