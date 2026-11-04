@@ -49,6 +49,12 @@ function foto(u){
 }
 function fotos(){ return (C.property.photos || []).map(foto).filter(Boolean); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+/* Con el código de moneda al lado. "$4,200" no le dice nada a un huésped
+   que no sabe si cobras en pesos o en dólares, y el símbolo es el mismo en
+   los dos. Va donde se decide el gasto —totales y botón de pago— y no en
+   cada celda del calendario, donde no cabe y sería ruido. */
+function moneyCur(n){ return money(n) + ' ' + (C.currency || 'USD'); }
+
 function money(n){
   // narrowSymbol para que MXN salga "$333" y no "MX$333" cuando el locale no
   // es mexicano. Si el navegador es viejo y no lo admite, tira RangeError y se
@@ -108,8 +114,8 @@ function summary(){
   if(r.pets) h += '<div class="r"><span>' + t('petFee') + '</span><b>' + money(r.pets) + '</b></div>';
   r.extras.forEach(function(x){ h += '<div class="r"><span>' + esc(x.name) + '</span><b>' + money(x.amount) + '</b></div>'; });
   if(r.tax) h += '<div class="r"><span>' + t('tax') + '</span><b>' + money(r.tax) + '</b></div>';
-  h += '<div class="r tt"><span>' + t('total') + '</span><b>' + money(r.total) + '</b></div>';
-  if(r.dueNow < r.total) h += '<div class="r"><span>' + t('dueNow') + '</span><b>' + money(r.dueNow) + '</b></div><div class="r" style="border:none"><span>' + t('rest') + '</span><b>' + money(r.total - r.dueNow) + '</b></div>';
+  h += '<div class="r tt"><span>' + t('total') + '</span><b>' + moneyCur(r.total) + '</b></div>';
+  if(r.dueNow < r.total) h += '<div class="r"><span>' + t('dueNow') + '</span><b>' + moneyCur(r.dueNow) + '</b></div><div class="r" style="border:none"><span>' + t('rest') + '</span><b>' + moneyCur(r.total - r.dueNow) + '</b></div>';
   return h + '</div>';
 }
 
@@ -125,7 +131,7 @@ function submit(){
   if(mode === 'whatsapp'){
     var lines = [C.property.name + ' · ' + t('reserve'), t('checkin') + ': ' + S.ci, t('checkout') + ': ' + S.co, t('guests') + ': ' + S.g];
     r.extras.forEach(function(x){ lines.push('+ ' + x.name); });
-    lines.push(t('total') + ': ' + money(r.total), S.nm + ' · ' + S.em + ' · ' + S.ph); if(S.nt) lines.push(S.nt);
+    lines.push(t('total') + ': ' + moneyCur(r.total), S.nm + ' · ' + S.em + ' · ' + S.ph); if(S.nt) lines.push(S.nt);
     if(C.backendUrl) fetch(backend('action=lead'), { method:'POST', body:JSON.stringify(payload()) }).catch(function(){});
     window.open('https://wa.me/' + C.contact.whatsapp.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
     return;
@@ -152,7 +158,7 @@ function R(){
 
   var hasExtras = (C.extras || []).length > 0, labels = hasExtras ? [t('dates'), t('extras'), t('details')] : [t('dates'), t('details')];
   var cur = (!hasExtras && S.step === 2) ? 1 : S.step, st = '';
-  labels.forEach(function(lb, i){ st += '<div class="stp' + (cur < i ? ' dim' : '') + (cur === i ? ' cur' : '') + '"><div class="dot' + (cur === i ? ' on' : cur > i ? ' ok' : '') + '">' + (cur > i ? '✓' : i + 1) + '</div><span>' + lb + '</span></div>'; });
+  labels.forEach(function(lb, i){ st += '<div class="stp' + (cur < i ? ' dim' : '') + (cur === i ? ' cur' : '') + '"><div class="dot' + (cur === i ? ' on' : cur > i ? ' hecho' : '') + '">' + (cur > i ? '✓' : i + 1) + '</div><span>' + lb + '</span></div>'; });
   // La portada manda: el nombre de la propiedad es el título de la página y
   // "Reservar" pasa a ser el encabezado de la sección del formulario. Si una
   // imagen no carga se borra sola, porque un enlace de Drive pegado por el
@@ -181,9 +187,12 @@ function R(){
       if(past) c += ' off'; else if(bk) c += ' bk'; else if(k === S.ci || k === S.co) c += ' sel'; else if(S.ci && S.co && k > S.ci && k < S.co) c += ' rng';
       h += '<button class="' + c + '" onclick="pick(\'' + k + '\')"' + (past || bk ? ' disabled' : '') + '>' + d + (bk || past ? '' : '<i>' + money(Math.round(s.nightly)) + '</i>') + '</button>';
     }
-    h += '</div><div class="lg"><span><s style="background:var(--ink)"></s>' + t('selected') + '</span><span><s style="background:var(--acc-tint)"></s>' + t('stay') + '</span><span><s style="background:#FBF4F3"></s>' + t('unavailable') + '</span></div></div>';
+    h += '</div><div class="lg"><span><s style="background:var(--ink)"></s>' + t('selected') + '</span><span><s style="background:var(--acc-tint)"></s>' + t('stay') + '</span><span><s style="background:#FBF4F3"></s>' + t('unavailable') + '</span>'
+      // En el paso 1 no hay total todavía, así que la moneda se dice aquí,
+      // que es donde el huésped ve los primeros precios.
+      + '<span style="margin-left:auto">' + (C.currency || 'USD') + '</span></div></div>';
     var ss = (C.rates.seasons || []).filter(function(x){ return x.to >= td; });
-    if(ss.length){ h += '<div class="tbl">'; ss.forEach(function(x){ h += '<div class="r"><span><b>' + esc(nm(x.name)) + '</b> <em>· ' + t('min') + ' ' + x.minNights + ' ' + t('nights') + '</em></span><b>' + money(x.nightly) + ' ' + t('perNight') + '</b></div>'; }); h += '</div>'; }
+    if(ss.length){ h += '<div class="tbl">'; ss.forEach(function(x){ h += '<div class="r"><span><b>' + esc(nm(x.name)) + '</b> <em>· ' + t('min') + ' ' + x.minNights + ' ' + t('nights') + '</em></span><b>' + moneyCur(x.nightly) + ' ' + t('perNight') + '</b></div>'; }); h += '</div>'; }
     var gOpts = ''; for(var g = 1; g <= (C.property.maxGuests || 10); g++) gOpts += '<option value="' + g + '"' + (S.g === g ? ' selected' : '') + '>' + g + '</option>';
     h += '<div class="r2" style="margin-top:20px"><div class="fl"><label class="lb">' + t('guests') + '</label><select onchange="S.g=+this.value;R()">' + gOpts + '</select></div>';
     if(C.fees.maxPets){ var pOpts = ''; for(var p = 0; p <= C.fees.maxPets; p++) pOpts += '<option value="' + p + '"' + (S.pets === p ? ' selected' : '') + '>' + (p || t('none')) + '</option>'; h += '<div class="fl"><label class="lb">' + t('pets') + '</label><select onchange="S.pets=+this.value;R()">' + pOpts + '</select></div>'; }
@@ -211,7 +220,7 @@ function R(){
       + '<div class="miss" id="missBox" style="display:none"></div>'
       + (S.err ? '<div class="miss">' + esc(S.err) + '</div>' : '')
       + '<div class="bn"><button class="bs" onclick="go(' + (hasExtras ? 1 : 0) + ')">' + t('back') + '</button><button class="bp" id="payBtn" onclick="submit()">'
-      + (S.busy ? t('processing') : mode === 'whatsapp' ? t('request') : t('pay') + ' · ' + money(due)) + '</button></div>'
+      + (S.busy ? t('processing') : mode === 'whatsapp' ? t('request') : t('pay') + ' · ' + moneyCur(due)) + '</button></div>'
       + (mode === 'stripe' ? '<p style="margin-top:12px;font-size:11.5px;color:var(--mute);text-align:center">' + t('secure') + '</p>' : '');
   }
   a.innerHTML = h + foot;
