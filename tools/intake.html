@@ -736,32 +736,43 @@ function enganchaBuscar(){
   });
 })();
 
+function marca(i, estado){
+  const t = document.querySelector(`.tira[data-i="${i}"]`);
+  if (!t) return;
+  t.classList.toggle('sube', estado === 'sube');
+  let p = t.querySelector('.pct');
+  if (estado === 'sube'){
+    if (!p){ p = document.createElement('div'); p.className = 'pct'; t.appendChild(p); }
+    p.textContent = LANG === 'en' ? 'sending…' : 'enviando…';
+  } else if (p) p.remove();
+}
+
 /* Una foto por petición: Apps Script no traga un envío de veinte megas, y
-   así una que falle no se lleva por delante a las demás. */
-function mandaFoto(id, i){
-  return new Promise((ok, mal) => {
-    const x = new XMLHttpRequest();
-    x.open('POST', ALTA_URL);
-    x.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
-    x.upload.onprogress = e => {
-      if (!e.lengthComputable) return;
-      const t = document.querySelector(`.tira[data-i="${i}"]`);
-      if (t){ t.classList.add('sube'); let p = t.querySelector('.pct');
-        if (!p){ p = document.createElement('div'); p.className = 'pct'; t.appendChild(p); }
-        p.textContent = Math.round(e.loaded / e.total * 100) + '%'; }
-    };
-    x.onload = () => {
-      let d = {};
-      try { d = JSON.parse(x.responseText); } catch (e){}
-      if (!d.ok) return mal(new Error(d.error || 'foto ' + (i + 1)));
-      const t = document.querySelector(`.tira[data-i="${i}"]`);
-      if (t){ t.classList.remove('sube'); const p = t.querySelector('.pct'); if (p) p.remove(); }
-      ok();
-    };
-    x.onerror = () => mal(new Error('se cortó la conexión en la foto ' + (i + 1)));
-    x.send(JSON.stringify({ accion: 'foto', id, n: i + 1, total: FOTOS.length,
-                            datos: FOTOS[i].datos }));
-  });
+   así una que falle no se lleva por delante a las demás.
+
+   Con fetch y no con XMLHttpRequest a propósito. Con XHR se puede enseñar el
+   porcentaje exacto escuchando upload.onprogress, pero registrar ese
+   escuchador convierte la petición en no-simple para CORS y el navegador
+   manda antes un OPTIONS, que Apps Script no contesta: la subida se cae
+   entera. Vale más que suba sin porcentaje a que no suba. */
+async function mandaFoto(id, i){
+  marca(i, 'sube');
+  let r;
+  try {
+    r = await fetch(ALTA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ accion: 'foto', id, n: i + 1, total: FOTOS.length,
+                             datos: FOTOS[i].datos })
+    });
+  } catch (e){
+    marca(i, 'listo');
+    throw new Error('se cortó la conexión en la foto ' + (i + 1));
+  }
+  let d = {};
+  try { d = await r.json(); } catch (e){}
+  marca(i, 'listo');
+  if (!d.ok) throw new Error(d.error || 'no se pudo guardar la foto ' + (i + 1));
 }
 
 /* ---------- publicar ---------- */
