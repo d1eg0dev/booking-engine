@@ -1,0 +1,83 @@
+{
+  "property": {
+    "name": "Casa Candelabros",
+    "tagline": {
+      "es": "Sobre el acantilado, en la costa de Oaxaca",
+      "en": "On the cliff, on the Oaxaca coast"
+    },
+    "about": {
+      "es": "Una casa de terracota abierta al Pacífico, con alberca que se asoma al mar y palapa para comer a la sombra.\nLa playa está a cinco minutos a pie; el pueblo, a diez en coche.",
+      "en": "A terracotta house open to the Pacific, with a pool that looks out over the sea and a palapa for lunch in the shade.\nThe beach is five minutes on foot; the village, ten by car."
+    },
+    "logo": "",
+    "website": "",
+    "maxGuests": 8,
+    "checkIn": "15:00",
+    "checkOut": "12:00",
+    "photos": [
+      "fotos/01.jpg",
+      "fotos/02.jpg",
+      "fotos/03.jpg",
+      "fotos/04.jpg",
+      "fotos/05.jpg",
+      "fotos/06.jpg",
+      "fotos/07.jpg"
+    ]
+  },
+  "plan": "renta",
+  "brand": {
+    "ink": "#1A1A18",
+    "accent": "#2D5F56",
+    "paper": "#FCFBF9",
+    "font": "Inter",
+    "poweredBy": true
+  },
+  "languages": [
+    "es",
+    "en"
+  ],
+  "defaultLanguage": "es",
+  "unit": "night",
+  "currency": "MXN",
+  "locale": "es-MX",
+  "rates": {
+    "defaultNightly": 7800,
+    "defaultMinNights": 2,
+    "seasons": [
+      {
+        "name": {
+          "es": "Temporada alta",
+          "en": "High season"
+        },
+        "from": "2026-12-15",
+        "to": "2027-01-06",
+        "nightly": 11500,
+        "minNights": 4
+      }
+    ]
+  },
+  "fees": {
+    "cleaning": 1800,
+    "petPerNight": 0,
+    "maxPets": 0,
+    "taxPercent": 16
+  },
+  "extras": [],
+  "payment": {
+    "mode": "demo",
+    "chargePercent": 50
+  },
+  "availability": {
+    "icalUrls": [],
+    "blockedDates": []
+  },
+  "backendUrl": "",
+  "contact": {
+    "email": "hola@wdstudio.agency",
+    "whatsapp": "+523122411693"
+  },
+  "policy": {
+    "es": "<p><b>Reserva.</b> Se confirma al recibir el anticipo del 50%. El resto se paga a la llegada.</p><p><b>Cancelación.</b> Más de 60 días antes de la llegada se reembolsa el 100%. Entre 30 y 60 días, el 50%. Con menos de 30 días no hay reembolso.</p><p><b>Entrada y salida.</b> Entrada desde las 15:00. Salida antes de las 12:00.</p><p><b>Reglas.</b> No se permiten eventos sin aprobación por escrito. Horario de silencio desde las 22:00.</p>",
+    "en": "<p><b>Reservation.</b> Confirmed on receipt of the 50% deposit. The balance is paid on arrival.</p><p><b>Cancellation.</b> More than 60 days before arrival, 100% is refunded. Between 30 and 60 days, 50%. Under 30 days, non-refundable.</p><p><b>Check-in and check-out.</b> Check-in from 15:00. Check-out by 12:00.</p><p><b>House rules.</b> No events without written approval. Quiet hours from 22:00.</p>"
+  }
+}
