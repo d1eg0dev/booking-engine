@@ -93,6 +93,13 @@ select{width:100%;font:300 15px var(--body);color:var(--ink);background:transpar
 
 /* Muestra del producto */
 .media{margin-top:52px;border:1px solid var(--g200);background:#fff}
+.media video{display:block;width:100%;height:auto;background:var(--bone)}
+.media .v-angosta{display:none}
+@media(max-width:640px){
+  .media .v-ancha{display:none}
+  /* A su tamaño nativo: estirar 390 px a pantalla completa lo deja borroso. */
+  .media .v-angosta{display:block;margin:0 auto;max-width:390px}
+}
 .media figcaption{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);
   padding:14px 18px;border-top:1px solid var(--g200)}
 
@@ -185,7 +192,39 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     </div>
   </section>
 
-  <section class="bone" id="cuenta">
+  <section class="bone" id="producto">
+    <div class="container">
+      <p class="label">El producto</p>
+      <h2 class="heading">Así reserva tu huésped.</h2>
+      <p class="lead">Elige fechas, ve el precio desglosado y paga. Sin registro, sin apps,
+        sin salir de tu página.</p>
+      <figure class="media">
+        <!-- Dos vídeos y no uno: en el teléfono, una grabación de escritorio
+             encogida no se lee. Y de cada uno van webm y mp4, porque Safari en
+             iPhone no reproduce webm con fiabilidad y ahí entra media
+             audiencia. Sólo se descarga el que toca: el otro está oculto y
+             ninguno precarga hasta que entra en pantalla. -->
+        <video class="v-ancha" muted loop playsinline preload="none"
+               poster="media/demo-escritorio.jpg" width="1280" height="800"
+               aria-label="Recorrido por la página: la casa, las fotos, elegir fechas y ver el precio.">
+          <source src="media/demo-escritorio.webm" type="video/webm">
+          <source src="media/demo-escritorio.mp4" type="video/mp4">
+        </video>
+        <video class="v-angosta" muted loop playsinline preload="none"
+               poster="media/demo-movil.jpg" width="390" height="844"
+               aria-label="Lo mismo en un teléfono: elegir fechas y ver el precio.">
+          <source src="media/demo-movil.webm" type="video/webm">
+          <source src="media/demo-movil.mp4" type="video/mp4">
+        </video>
+        <figcaption>Casa del Mar · página de ejemplo</figcaption>
+      </figure>
+      <div class="hero-actions">
+        <a class="btn btn-ghost" href="../demo/" target="_blank" rel="noopener">Abrir el ejemplo y reservar</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="cuenta">
     <div class="container">
       <p class="label">Haz la cuenta</p>
       <h2 class="heading">Con tus números, no con un ejemplo.</h2>
@@ -229,24 +268,6 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     </div>
   </section>
 
-  <section id="producto">
-    <div class="container">
-      <p class="label">El producto</p>
-      <h2 class="heading">Así reserva tu huésped.</h2>
-      <p class="lead">Elige fechas, ve el precio desglosado y paga. Sin registro, sin apps,
-        sin salir de tu página.</p>
-      <figure class="media">
-        <picture>
-          <source media="(max-width:640px)" srcset="muestra-movil.png" width="1170" height="2100">
-          <img src="muestra.png" alt="Calendario con el precio de cada noche y, al lado, el resumen de la estancia con el total." width="2240" height="1520" loading="lazy">
-        </picture>
-        <figcaption>Casa del Mar · página de ejemplo</figcaption>
-      </figure>
-      <div class="hero-actions">
-        <a class="btn btn-ghost" href="../demo/" target="_blank" rel="noopener">Abrir el ejemplo y reservar</a>
-      </div>
-    </div>
-  </section>
 
   <section class="bone">
     <div class="container">
@@ -392,6 +413,31 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
 </footer>
 
 <script>
+/* El vídeo arranca cuando entra en pantalla y se para al salir: así no gasta
+   datos ni batería de quien nunca llega hasta ahí. Y si el visitante pidió
+   menos movimiento en su sistema, no se reproduce solo: se le deja el cartel
+   y los controles para que decida. */
+(function video(){
+  var quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vids = [].slice.call(document.querySelectorAll('.media video'));
+  if (!vids.length) return;
+  if (quieto){ vids.forEach(function(v){ v.controls = true; }); return; }
+  if (!('IntersectionObserver' in window)){
+    vids.forEach(function(v){ v.autoplay = true; v.play().catch(function(){}); });
+    return;
+  }
+  var obs = new IntersectionObserver(function(ent){
+    ent.forEach(function(e){
+      var v = e.target;
+      if (e.isIntersecting){
+        if (v.preload === 'none') v.preload = 'auto';
+        v.play().catch(function(){ v.controls = true; });
+      } else v.pause();
+    });
+  }, { threshold: 0.25 });
+  vids.forEach(function(v){ obs.observe(v); });
+})();
+
 (function(){
   'use strict';
 
