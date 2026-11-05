@@ -287,7 +287,7 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
       <input type="file" id="archivos" accept="image/jpeg,image/png,image/webp" multiple hidden>
       <p><span data-en="Drag your photos here, or">Arrastra tus fotos aquí, o</span>
         <button type="button" class="enlace" id="buscar" data-en="browse">búscalas</button></p>
-      <em data-en="Between 8 and 15, landscape. The first one is the cover. We resize them for you.">Entre 8 y 15, horizontales. La primera es la portada. Nosotros las ajustamos de tamaño.</em>
+      <em data-en="Seven photos: a cover and six for the gallery. Landscape. The first one is the cover. We resize them for you.">Siete fotos: una de portada y seis para la galería. Horizontales. La primera es la portada. Nosotros las ajustamos de tamaño.</em>
     </div>
     <div class="tiras" id="tiras"></div>
     <p class="fotos-info" id="fotos-info" hidden></p>
@@ -640,7 +640,10 @@ document.getElementById('download').addEventListener('click', async () => {
    una foto de celular pesa 8 MB y llega a unos 300 KB. Sin esto no caben
    en el límite de Apps Script, tardan una eternidad desde un móvil, y la
    página del huésped acaba pesando veinte megas. */
-const MAX_LADO = 1800, CALIDAD = 0.82, MAX_FOTOS = 15;
+/* Siete y no más: la página usa una de portada y seis en la galería, así que
+   pedir quince significaría tirar ocho fotos que el cliente se tomó la
+   molestia de mandar. */
+const MAX_LADO = 1800, CALIDAD = 0.82, MAX_FOTOS = 7;
 let FOTOS = [];
 
 async function achica(file){
@@ -687,8 +690,10 @@ function pintaFotos(){
   if (FOTOS.length){
     const mb = (pesoFotos() / 1048576).toFixed(1);
     info.textContent = LANG === 'en'
-      ? `${FOTOS.length} photos · ${mb} MB after resizing` + (FOTOS.length < 8 ? ' · we recommend at least 8' : '')
-      : `${FOTOS.length} fotos · ${mb} MB ya ajustadas` + (FOTOS.length < 8 ? ' · recomendamos al menos 8' : '');
+      ? `${FOTOS.length} of 7 · ${mb} MB after resizing`
+        + (FOTOS.length === 7 ? '' : ` · ${7 - FOTOS.length} to go`)
+      : `${FOTOS.length} de 7 · ${mb} MB ya ajustadas`
+        + (FOTOS.length === 7 ? '' : ` · faltan ${7 - FOTOS.length}`);
   }
 }
 
