@@ -1,0 +1,101 @@
+name: Desplegar el Apps Script
+
+# Cada vez que cambia backend/Intake.gs, se sube al proyecto de Apps Script y
+# se vuelve a desplegar la misma implementación, así que la URL /exec no
+# cambia nunca. Antes esto era copiar y pegar en el editor, y ya pasó lo que
+# tenía que pasar: un cambio mío desplegado dos minutos tarde, y una mañana
+# entera creyendo que el código que corría era el del repositorio.
+#
+# Secreto que necesita:
+#   CLASPRC   el contenido de ~/.clasprc.json, de una sesión de clasp 2.
+#             En la Mac:  npx @google/clasp@2.5.0 login
+#                         cat ~/.clasprc.json | pbcopy
+#             Es una credencial de tu cuenta de Google: va a los secretos del
+#             repositorio y a ningún otro sitio.
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/Intake.gs', '.github/workflows/apps-script.yml']
+  workflow_dispatch:
+
+# El id del despliegue es la cadena que va entre /macros/s/ y /exec en la URL
+# del web app. Reutilizarlo es lo que mantiene la dirección: sin -i, clasp
+# crea un despliegue nuevo con otra URL y el formulario deja de hablar con él.
+env:
+  SCRIPT_ID: 1YjCr_A7yKPcH99kdtO4M5VfpKRyMnhYgF27tclnecJ6uztipu2ZtlPyg
+  DEPLOY_ID: AKfycbwHekgYbD_yPRyR2zBtV9qOIBaYcLY3QbULMdWuGx3KL6eE_tTdEOjr558pe-IWYB1t
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar clasp
+        run: npm install -g @google/clasp@2.5.0
+
+      - name: Poner la credencial
+        env:
+          CLASPRC: ${{ secrets.CLASPRC }}
+        run: |
+          if [ -z "$CLASPRC" ]; then
+            echo "::error::Falta el secreto CLASPRC. Mira la cabecera de este archivo."
+            exit 1
+          fi
+          printf '%s' "$CLASPRC" > "$HOME/.clasprc.json"
+          # clasp 2 la busca en el home; algunas versiones también aquí.
+          mkdir -p "$HOME/.config/clasp" && cp "$HOME/.clasprc.json" "$HOME/.config/clasp/.clasprc.json"
+          node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.clasprc.json','utf8'))" \
+            || { echo "::error::CLASPRC no es un JSON válido."; exit 1; }
+
+      - name: Traer lo que hay en el servidor
+        working-directory: /tmp
+        run: |
+          mkdir -p proyecto && cd proyecto
+          printf '{"scriptId":"%s","rootDir":"."}' "$SCRIPT_ID" > .clasp.json
+          # Se baja primero para conservar el manifiesto tal cual está: subir
+          # un appsscript.json inventado puede cambiar quién ejecuta el web app
+          # y quién tiene acceso, y eso rompe el formulario sin avisar.
+          clasp pull
+          ls -la
+
+      - name: Sustituir el código
+        working-directory: /tmp/proyecto
+        run: |
+          # El archivo puede llamarse Código.gs, Code.gs o Intake.gs según cómo
+          # se creara. Se sustituye el que haya, en vez de añadir uno nuevo y
+          # acabar con todas las funciones duplicadas.
+          mapfile -t FUENTES < <(find . -maxdepth 1 \( -name '*.gs' -o -name '*.js' \) -printf '%f\n' | sort)
+          echo "Archivos de código en el servidor: ${FUENTES[*]:-ninguno}"
+          if [ "${#FUENTES[@]}" -eq 0 ]; then
+            DESTINO="Intake.gs"
+          elif [ "${#FUENTES[@]}" -eq 1 ]; then
+            DESTINO="${FUENTES[0]}"
+          else
+            echo "::error::Hay ${#FUENTES[@]} archivos de código en el proyecto (${FUENTES[*]})."
+            echo "::error::No sé cuál sustituir. Déjalo en uno solo y vuelve a lanzarlo."
+            exit 1
+          fi
+          echo "Sustituyo $DESTINO"
+          cp "$GITHUB_WORKSPACE/backend/Intake.gs" "$DESTINO"
+          node --check "$DESTINO" || { echo "::error::El código no compila."; exit 1; }
+
+      - name: Subir y desplegar
+        working-directory: /tmp/proyecto
+        run: |
+          clasp push --force
+          clasp deploy -i "$DEPLOY_ID" -d "auto ${GITHUB_SHA::7}"
+          echo "### Apps Script desplegado" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit \`${GITHUB_SHA::7}\` · el /exec sigue siendo el mismo." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Borrar la credencial
+        if: always()
+        run: rm -f "$HOME/.clasprc.json" "$HOME/.config/clasp/.clasprc.json"

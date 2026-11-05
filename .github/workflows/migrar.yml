@@ -1,0 +1,64 @@
+name: Migrar clientes al motor compartido
+
+# Pasa los repos de clientes antiguos a la plantilla ligera, la que carga el
+# motor desde este repositorio en vez de llevarse una copia congelada.
+#
+# Corre aquí y no en la Mac para que no dependa de que nadie tenga el portátil
+# abierto ni las credenciales puestas. Es un botón: Actions · este workflow ·
+# Run workflow.
+#
+# Usa el mismo secreto ALTA_TOKEN que el alta.
+
+on:
+  workflow_dispatch:
+    inputs:
+      clientes:
+        description: 'Slugs separados por espacios. Vacío = todos.'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Sólo enseñar qué cambiaría'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  migrar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Migrar
+        env:
+          GH_TOKEN: ${{ secrets.ALTA_TOKEN }}
+        run: |
+          set -o pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Falta el secreto ALTA_TOKEN."
+            exit 1
+          fi
+          ARGS=(tools/migrar.py)
+          if [ -n "${{ inputs.clientes }}" ]; then
+            # shellcheck disable=SC2206
+            ARGS+=(${{ inputs.clientes }})
+          else
+            ARGS+=(--todos)
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS+=(--dry-run); fi
+          python3 "${ARGS[@]}" 2>&1 | tee salida.txt
+
+      - name: Resumen
+        if: always()
+        run: |
+          {
+            echo "## Migración"
+            echo '```'
+            tail -40 salida.txt 2>/dev/null || echo "sin salida"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
