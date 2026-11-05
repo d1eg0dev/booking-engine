@@ -39,6 +39,18 @@ function doPost(e) {
 
 /* ---------- configuración ---------- */
 function prop(k) { return PropertiesService.getScriptProperties().getProperty(k) || ''; }
+/* Con Stripe Connect el cobro se crea sobre la cuenta del propietario: la
+   clave es la de la plataforma y la cabecera dice de quién es el dinero.
+   Stripe le liquida a él; por aquí no pasa. Sin stripeAccount se comporta
+   como antes, con la clave propia del cliente, para no romper a quien ya
+   estuviera cobrando así. */
+function cabecerasStripe_(cfg) {
+  var h = { Authorization: 'Bearer ' + prop('STRIPE_SECRET_KEY') };
+  var cuenta = cfg && cfg.payment && cfg.payment.stripeAccount;
+  if (cuenta) h['Stripe-Account'] = cuenta;
+  return h;
+}
+
 function config() {
   var cache = CacheService.getScriptCache(), hit = cache.get('cfg');
   if (hit) return JSON.parse(hit);
@@ -119,7 +131,7 @@ function createBooking(b) {
     'line_items[0][price_data][product_data][description]': q.nights + ' noches · ' + b.guests + ' huéspedes · ' + ref
   };
   var res = UrlFetchApp.fetch('https://api.stripe.com/v1/checkout/sessions', {
-    method: 'post', headers: { Authorization: 'Bearer ' + prop('STRIPE_SECRET_KEY') }, payload: params, muteHttpExceptions: true
+    method: 'post', headers: cabecerasStripe_(cfg), payload: params, muteHttpExceptions: true
   });
   var s = JSON.parse(res.getContentText());
   if (!s.url) return { error: (s.error && s.error.message) || 'stripe' };
@@ -151,8 +163,10 @@ function findRow(col, value) {
 
 function confirmSession(sid) {
   if (!sid) return { paid: false };
+  // La sesión vive en la cuenta del propietario, así que hay que preguntarle
+  // a esa cuenta: sin la cabecera, Stripe contesta que no existe.
   var res = UrlFetchApp.fetch('https://api.stripe.com/v1/checkout/sessions/' + encodeURIComponent(sid), {
-    headers: { Authorization: 'Bearer ' + prop('STRIPE_SECRET_KEY') }, muteHttpExceptions: true
+    headers: cabecerasStripe_(config()), muteHttpExceptions: true
   });
   var s = JSON.parse(res.getContentText());
   if (s.payment_status !== 'paid') return { paid: false };

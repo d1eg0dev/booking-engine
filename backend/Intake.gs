@@ -154,8 +154,101 @@ function doPost(e) {
 }
 
 /** El enlace de aprobar del correo cae aquí. */
+/* ── Conectar Stripe ─────────────────────────────────────────────────────
+   El propietario le da a un botón, autoriza en Stripe y vuelve. Nosotros
+   nunca vemos su clave secreta y su dinero nunca pasa por nuestra cuenta:
+   los cobros se crean sobre SU cuenta desde la plataforma, y Stripe le
+   liquida a él. La comisión de aplicación es cero: el ingreso es la
+   suscripción, no un porcentaje de sus reservas.
+
+   Propiedades del script, una sola vez:
+     STRIPE_CLIENT_ID   ca_...   (Stripe → Connect → Configuración)
+     STRIPE_SECRET      sk_...   (la de la plataforma, no la de nadie más)
+   Y en Stripe, el URI de redirección autorizado tiene que ser la URL /exec
+   de este script, exactamente.                                           */
+
+/** Firma el slug para que nadie pueda conectar una cuenta a otro cliente. */
+function firma_(slug) {
+  var b = Utilities.computeHmacSha256Signature(slug, prop_('SECRETO', true));
+  return b.map(function (x) { return ('0' + (x < 0 ? x + 256 : x).toString(16)).slice(-2); }).join('');
+}
+
+function vaA_(url, texto) {
+  return HtmlService.createHtmlOutput(
+    '<p style="font:15px/1.6 -apple-system,sans-serif">' + texto + '</p>' +
+    '<script>location.href=' + JSON.stringify(url) + '</script>' +
+    '<p style="font:13px/1.6 -apple-system,sans-serif"><a href="' + url + '">Continuar</a></p>');
+}
+
+function conectar_(slug) {
+  var fila = filaPorSlug_(slug);
+  if (!fila) return HtmlService.createHtmlOutput('<p>No encuentro esa propiedad.</p>');
+  var url = 'https://connect.stripe.com/oauth/authorize'
+    + '?response_type=code&scope=read_write'
+    + '&client_id=' + encodeURIComponent(prop_('STRIPE_CLIENT_ID', true))
+    + '&state=' + encodeURIComponent(slug + '.' + firma_(slug));
+  return vaA_(url, 'Te llevamos a Stripe para conectar tu cuenta…');
+}
+
+function regresoStripe_(p) {
+  if (p.error) {
+    return HtmlService.createHtmlOutput('<p>Stripe canceló la conexión: ' + (p.error_description || p.error) + '</p>');
+  }
+  var partes = (p.state || '').split('.');
+  var slug = partes[0] || '';
+  if (!slug || partes[1] !== firma_(slug)) {
+    return HtmlService.createHtmlOutput('<p>El enlace no es válido. Vuelve a empezar desde tu correo.</p>');
+  }
+  var r = UrlFetchApp.fetch('https://connect.stripe.com/oauth/token', {
+    method: 'post',
+    payload: { grant_type: 'authorization_code', code: p.code || '' },
+    headers: { Authorization: 'Bearer ' + prop_('STRIPE_SECRET', true) },
+    muteHttpExceptions: true
+  });
+  var d = JSON.parse(r.getContentText() || '{}');
+  if (!d.stripe_user_id) {
+    return HtmlService.createHtmlOutput('<p>Stripe no aceptó la conexión: '
+      + ((d.error_description || d.error || 'sin detalle')) + '</p>');
+  }
+  // Sólo se guarda el identificador de su cuenta. El token de acceso no hace
+  // falta para cobrar en su nombre y guardarlo sería una llave de más.
+  ponStripeEnConfig_(slug, d.stripe_user_id);
+  var fila = filaPorSlug_(slug);
+  if (fila) hoja_().getRange(fila, 7).setValue('vivo, cobrando');
+  MailApp.sendEmail(prop_('AVISO_EMAIL', true), 'Stripe conectado · ' + slug,
+    slug + ' conectó su cuenta de Stripe (' + d.stripe_user_id + ').\n' +
+    'Su página ya cobra de verdad.\n');
+  return HtmlService.createHtmlOutput(
+    '<p style="font:15px/1.6 -apple-system,sans-serif"><b>Listo.</b> Tu cuenta de Stripe quedó conectada '
+    + 'y tu página ya puede cobrar. El dinero de cada reserva entra directo a tu cuenta.</p>');
+}
+
+/** Deja la cuenta conectada en el config del repo del cliente. */
+function ponStripeEnConfig_(slug, cuenta) {
+  var dueno = prop_('GITHUB_REPO', true).split('/')[0];
+  var ruta = 'repos/' + dueno + '/' + slug + '/contents/config.json';
+  var actual = JSON.parse(gh_('GET', ruta));
+  var cfg = JSON.parse(Utilities.newBlob(Utilities.base64Decode(actual.content)).getDataAsString());
+  cfg.payment = cfg.payment || {};
+  cfg.payment.mode = 'stripe';
+  cfg.payment.stripeAccount = cuenta;
+  gh_('PUT', ruta, {
+    message: 'Conecta Stripe en ' + slug,
+    sha: actual.sha,
+    content: Utilities.base64Encode(Utilities.newBlob(JSON.stringify(cfg, null, 2) + '\n').getBytes())
+  });
+}
+
+function filaPorSlug_(slug) {
+  var datos = hoja_().getDataRange().getValues();
+  for (var i = 1; i < datos.length; i++) if (String(datos[i][3]).trim() === String(slug).trim()) return i + 1;
+  return 0;
+}
+
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  if (p.conectar) return conectar_(p.conectar);
+  if (p.code || p.error) return regresoStripe_(p);
   if (!p.aprobar) {
     return HtmlService.createHtmlOutput('<p>Recepción de altas de Booking Page.</p>');
   }
@@ -305,6 +398,21 @@ function resultado_(c) {
         'Falló el alta · ' + (datos[i][2] || id),
         'El alta de ' + (datos[i][2] || id) + ' no se publicó.\n\n' +
         (c.error || 'sin motivo') + '\n\nRevisa la pestaña Actions del repo del motor.\n');
+    } else {
+      // El aviso llega aquí, a ti, y no al cliente: el enlace de conectar
+      // Stripe se lo reenvías tú con tus palabras. Si algún día quieres que
+      // salga solo hacia el cliente, es cambiar el destinatario.
+      var enlace = ScriptApp.getService().getUrl() + '?conectar=' + encodeURIComponent(datos[i][3]);
+      MailApp.sendEmail(prop_('AVISO_EMAIL', true),
+        'Alta publicada · ' + (datos[i][2] || id),
+        (datos[i][2] || id) + ' ya está en línea.\n\n' +
+        'Sitio: ' + (c.url || '') + '\n' +
+        'Fotos publicadas: ' + fotos + '\n' +
+        'Correo del cliente: ' + (datos[i][5] || '') + '\n\n' +
+        'Para que cobre de verdad, el propietario tiene que conectar su Stripe.\n' +
+        'Reenvíale este enlace:\n' + enlace + '\n\n' +
+        'Mientras no lo haga, la página sigue en modo demostración y no cobra.\n' +
+        ((c.avisos && c.avisos.length) ? '\nRevisar:\n · ' + c.avisos.join('\n · ') + '\n' : ''));
     }
     return json_({ ok: true, fotos: fotos });
   }
