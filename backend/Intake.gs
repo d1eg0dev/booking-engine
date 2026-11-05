@@ -72,6 +72,51 @@ function columna_(h, nombre) {
   return n;
 }
 
+/* ── Quién puede publicar ────────────────────────────────────────────────
+   Dos puertas: haber pagado en Stripe, o traer uno de los códigos que se
+   reparten para las primeras veinte propiedades.
+
+   Se comprueba aquí y no en el navegador. El formulario esconde el botón a
+   quien no ha pagado, pero eso es cortesía, no seguridad: cualquiera puede
+   editar la dirección o mandar la petición a mano. Si esto no estuviera, el
+   producto sería gratis para quien supiera mirar.
+
+   Propiedad del script:
+     CODIGOS   los códigos válidos, separados por comas. Vacío = ninguno vale.
+     ABIERTO   ponlo en true para aceptar altas sin pagar (pruebas).          */
+
+function accesoValido_(acceso) {
+  if (prop_('ABIERTO') === 'true') return { ok: true, nota: 'abierto' };
+  if (!acceso || !acceso.tipo) return { ok: false, error: 'Falta elegir un plan.' };
+
+  if (acceso.tipo === 'codigo') {
+    var lista = prop_('CODIGOS').split(',').map(function (c) {
+      return c.trim().toUpperCase();
+    }).filter(String);
+    var dado = String(acceso.ref || '').trim().toUpperCase();
+    if (dado && lista.indexOf(dado) !== -1) return { ok: true, nota: 'código ' + dado };
+    return { ok: false, error: 'Ese código no es válido.' };
+  }
+
+  if (acceso.tipo === 'pago') {
+    var sid = String(acceso.ref || '').trim();
+    if (!/^cs_[A-Za-z0-9_]+$/.test(sid)) return { ok: false, error: 'El pago no se reconoce.' };
+    // Se le pregunta a Stripe. Volver con un identificador en la dirección no
+    // prueba nada: esa dirección la puede escribir cualquiera.
+    var r = UrlFetchApp.fetch('https://api.stripe.com/v1/checkout/sessions/' + encodeURIComponent(sid), {
+      headers: { Authorization: 'Bearer ' + prop_('STRIPE_SECRET', true) },
+      muteHttpExceptions: true
+    });
+    if (r.getResponseCode() !== 200) return { ok: false, error: 'No pudimos confirmar el pago.' };
+    var s = JSON.parse(r.getContentText() || '{}');
+    if (s.payment_status !== 'paid' && s.status !== 'complete') {
+      return { ok: false, error: 'Ese pago todavía no está confirmado.' };
+    }
+    return { ok: true, nota: 'pago ' + sid.slice(0, 18), correo: (s.customer_details || {}).email || '' };
+  }
+  return { ok: false, error: 'Falta elegir un plan.' };
+}
+
 /** Convierte "Casa Larios" en "casa-larios". */
 function slugify_(texto) {
   var s = (texto || '').toString().toLowerCase()
@@ -130,6 +175,9 @@ function doPost(e) {
     var base = slugify_(nombre);
     if (!base) return json_({ ok: false, error: 'El nombre no sirve para formar una dirección.' });
 
+    var acc = accesoValido_(cfg._intake && cfg._intake.acceso);
+    if (!acc.ok) return json_({ ok: false, error: acc.error });
+
     var h = hoja_();
     var slug = slugLibre_(base, h);
     // La letra delante es a propósito: un id de puros dígitos la hoja lo
@@ -145,6 +193,8 @@ function doPost(e) {
 
     // La aceptación se guarda con su versión y su hora: "aceptó las
     // condiciones" sin decir cuáles ni cuándo no prueba nada.
+    h.getRange(h.getLastRow(), columna_(h, 'acceso')).setValue(acc.nota || '');
+
     var ac = cuerpo.config && cuerpo.config._intake && cuerpo.config._intake.condiciones;
     if (ac && ac.version) {
       h.getRange(h.getLastRow(), columna_(h, 'condiciones'))

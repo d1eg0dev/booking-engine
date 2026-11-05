@@ -97,6 +97,11 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
 .acepto input{width:auto;margin-top:3px;flex-shrink:0}
 [hidden]{display:none!important}
 
+.acc{border:1px solid var(--line);border-radius:7px;padding:15px 17px;font-size:13.5px;
+  color:var(--mute);line-height:1.6;margin-bottom:18px;background:var(--field-alt)}
+.acc b{color:var(--ink);font-weight:500}
+.acc.ok{border-color:var(--accent);background:var(--card)}
+
 /* Subida de fotos */
 .drop{
   border:1.5px dashed var(--line);border-radius:9px;padding:30px 20px;text-align:center;
@@ -315,6 +320,14 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
   </fieldset>
 
   <fieldset>
+    <legend data-en="Your plan">Tu plan</legend>
+    <div class="acc" id="acceso-caja"></div>
+    <label><span data-en="Access code">Código de acceso</span>
+      <em data-en="Only if we gave you one. Leave it empty otherwise.">Sólo si te dimos uno. Si no, déjalo vacío.</em>
+      <input name="acceso" id="acceso" autocomplete="off" placeholder="XXXX-XXXX"></label>
+  </fieldset>
+
+  <fieldset>
     <legend data-en="Who referred you">Quién te recomendó</legend>
     <label><span data-en="Referral code">Código de referencia</span><em data-en="If someone sent you here, put their code. If not, leave it blank.">Si alguien te mandó, pon su código. Si no, déjalo en blanco.</em><input name="codigo" maxlength="24" placeholder="WD-XXXX"></label>
   </fieldset>
@@ -361,7 +374,8 @@ function applyLang(){
 }
 
 document.querySelectorAll('#lang button').forEach(b =>
-  b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang(); }));
+  b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang();
+    if (typeof pintaAcceso === 'function') pintaAcceso(); }));
 
 /* ---------- politicas ---------- */
 const POL = {
@@ -544,6 +558,9 @@ function problems(){
   if (!isRent()) readBlocks('extra').forEach((x, i) => { if (!x.name.es && !x.name.en) bad.push(M('extraName', i + 1)); });
   const ac = document.getElementById('acepto');
   if (ac && !ac.checked) bad.push(LANG === 'en' ? 'accept the service terms' : 'aceptar las condiciones del servicio');
+  if (!acceso()) bad.push(LANG === 'en'
+    ? 'choose a plan or enter your access code'
+    : 'elegir plan o poner tu código de acceso');
   return bad;
 }
 
@@ -556,6 +573,8 @@ function build(){
       plan: val('plan'),
       photosUrl: val('photos') || null,
       fotos: FOTOS.length,
+      acceso: acceso(),
+      plan: PLAN_URL || null,
       condiciones: (document.getElementById('acepto') || {}).checked
         ? { version: COND_VERSION, aceptadoEn: new Date().toISOString() } : null,
       hasStripe: val('has_stripe') === 'si',
@@ -656,6 +675,50 @@ document.getElementById('download').addEventListener('click', async () => {
   done();
 });
 
+/* ---------- acceso ---------- */
+/* Se llega aquí de dos maneras: pagando en Stripe, que devuelve al
+   formulario con el identificador de la sesión, o con un código de los que
+   reparte Diego para las primeras veinte propiedades.
+
+   Esto de aquí sólo decide qué se enseña. La comprobación que cuenta la hace
+   el Apps Script: pregunta a Stripe si esa sesión está pagada de verdad y
+   mira el código contra su lista. Fiarse del navegador sería dejar la puerta
+   abierta a cualquiera que sepa editar una dirección. */
+const PARAMS = new URLSearchParams(location.search);
+const SESION = (PARAMS.get('sesion') || PARAMS.get('session_id') || '').trim();
+const PLAN_URL = (PARAMS.get('plan') || '').trim();
+let CODIGO_OK = '';
+
+function acceso(){
+  return SESION ? { tipo: 'pago', ref: SESION }
+       : CODIGO_OK ? { tipo: 'codigo', ref: CODIGO_OK }
+       : null;
+}
+
+function pintaAcceso(){
+  const caja = document.getElementById('acceso-caja');
+  if (!caja) return;
+  const a = acceso();
+  caja.className = a ? 'acc ok' : 'acc';
+  caja.innerHTML = a
+    ? (a.tipo === 'pago'
+        ? '<b>' + (LANG === 'en' ? 'Payment received.' : 'Pago recibido.') + '</b> '
+          + (LANG === 'en' ? 'You can publish when you finish.' : 'Puedes publicar al terminar.')
+        : '<b>' + (LANG === 'en' ? 'Code applied.' : 'Código aplicado.') + '</b> '
+          + (LANG === 'en' ? 'Six months at no cost.' : 'Seis meses sin costo.'))
+    : (LANG === 'en'
+        ? '<b>You are not paid up yet.</b> Fill everything in and pick a plan when you publish, or enter your code below.'
+        : '<b>Todavía no hay plan contratado.</b> Llena todo y elige plan al publicar, o pon aquí tu código.');
+}
+
+function aplicaCodigo(){
+  // "acceso" y no "codigo": codigo ya era el del comisionista que te
+  // recomendó, y son dos cosas distintas que no deben compartir campo.
+  const v = (val('acceso') || '').toUpperCase().trim();
+  CODIGO_OK = v.length >= 4 ? v : '';
+  pintaAcceso();
+}
+
 /* ---------- fotos ---------- */
 /* El cliente arrastra sus fotos y aquí mismo se achican antes de salir:
    una foto de celular pesa 8 MB y llega a unos 300 KB. Sin esto no caben
@@ -738,6 +801,14 @@ function enganchaBuscar(){
   const b = document.getElementById('buscar');
   if (b) b.onclick = e => { e.stopPropagation(); document.getElementById('archivos').click(); };
 }
+
+(function accesoWidget(){
+  const c = document.getElementById('acceso');
+  if (c) c.addEventListener('input', aplicaCodigo);
+  pintaAcceso();
+  // Si vino pagando, el código sobra: se esconde para no confundir.
+  if (SESION && c) c.closest('label').hidden = true;
+})();
 
 (function fotosWidget(){
   const drop = document.getElementById('drop'), inp = document.getElementById('archivos');

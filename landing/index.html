@@ -148,6 +148,24 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
 .faq details[open] summary::after{content:'—';font-size:1rem}
 .faq p{color:var(--g700);font-size:15px;max-width:66ch;padding-bottom:28px;margin-top:-6px}
 
+/* Comparación */
+.comp{width:100%;border-collapse:collapse;margin-top:46px;font-size:14.5px}
+.comp th,.comp td{text-align:left;vertical-align:top;padding:18px 20px 18px 0;
+  border-top:1px solid var(--g300)}
+.comp thead th{border-top:0;font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--g500);font-weight:500;padding-bottom:10px}
+.comp tbody th{font-weight:400;color:var(--ink);width:22%}
+.comp td{color:var(--g700);width:39%}
+.comp td.gana{color:var(--ink)}
+@media(max-width:760px){
+  .comp,.comp tbody,.comp tr,.comp th,.comp td{display:block;width:auto}
+  .comp thead{display:none}
+  .comp tr{border-top:1px solid var(--g300);padding:18px 0}
+  .comp th,.comp td{border:0;padding:0 0 7px}
+  .comp tbody th{font-weight:500}
+  .comp td::before{content:attr(data-de) ' · ';color:var(--g500)}
+}
+
 footer{padding:56px 0;border-top:1px solid var(--g200)}
 .pie{display:flex;justify-content:space-between;gap:16px 36px;flex-wrap:wrap;
   font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
@@ -186,7 +204,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
         español e inglés. Tú pones el precio y tú cobras íntegro: nosotros no nos quedamos
         un porcentaje de ninguna reserva.</p>
       <div class="hero-actions">
-        <a class="btn btn-solid" href="#empezar">Crear mi página</a>
+        <a class="btn btn-solid" href="#precio">Crear mi página</a>
         <a class="btn btn-ghost" href="#cuenta">Ver la cuenta</a>
       </div>
     </div>
@@ -299,6 +317,42 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
 
   <section>
     <div class="container">
+      <p class="label">Al lado de un portal</p>
+      <h2 class="heading">Dónde gana cada uno.</h2>
+      <p class="lead">Lo escribimos completo, incluso la fila que perdemos. Si te vendiéramos
+        lo contrario, lo descubrirías en el segundo mes.</p>
+      <table class="comp">
+        <thead>
+          <tr><th scope="col">&nbsp;</th><th scope="col">Un portal</th><th scope="col">Tu página</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Clientes nuevos</th>
+            <td class="gana" data-de="Un portal">Te los trae. Es lo que pagas y vale lo que cuesta.</td>
+            <td data-de="Tu página">No te trae ninguno. Convierte a quien ya te busca.</td></tr>
+          <tr><th scope="row">Lo que te cuesta</th>
+            <td data-de="Un portal">Un porcentaje de cada reserva, siempre.</td>
+            <td class="gana" data-de="Tu página">Una cuota fija, factures lo que factures.</td></tr>
+          <tr><th scope="row">Los datos del huésped</th>
+            <td data-de="Un portal">Son del portal.</td>
+            <td class="gana" data-de="Tu página">Son tuyos: nombre, correo y teléfono.</td></tr>
+          <tr><th scope="row">La marca</th>
+            <td data-de="Un portal">Eres una ficha dentro de su catálogo.</td>
+            <td class="gana" data-de="Tu página">Tu nombre, tus fotos y tu dominio.</td></tr>
+          <tr><th scope="row">Cuándo cobras</th>
+            <td data-de="Un portal">Según su calendario de liquidaciones.</td>
+            <td class="gana" data-de="Tu página">El mismo día, a tu cuenta.</td></tr>
+          <tr><th scope="row">Si algo falla</th>
+            <td class="gana" data-de="Un portal">Tienen soporte y políticas para todo.</td>
+            <td data-de="Tu página">Respondes tú, con nuestra ayuda en lo técnico.</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">Por eso casi nadie se sale del portal: lo sensato es tener los dos, y
+        mandar a tu página a los que ya te conocen.</p>
+    </div>
+  </section>
+
+  <section class="bone">
+    <div class="container">
       <p class="label">Cómo funciona</p>
       <h2 class="heading">Tres pasos y estás cobrando.</h2>
       <ol class="pasos">
@@ -312,6 +366,24 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     </div>
   </section>
 
+  <section>
+    <div class="container">
+      <p class="label">Antes de empezar</p>
+      <h2 class="heading">Lo que te vamos a pedir.</h2>
+      <p class="lead">Nada que no tengas ya. Si lo juntas antes, el formulario son cinco
+        minutos de verdad.</p>
+      <ol class="pasos">
+        <li><div><h3>Siete fotos horizontales</h3><p>Las más grandes que tengas, directo del
+          teléfono o de la cámara. Nosotros las ajustamos de tamaño.</p></div></li>
+        <li><div><h3>Tus tarifas y tus reglas</h3><p>Precio por noche, mínimo de noches,
+          limpieza, y qué pasa si alguien cancela.</p></div></li>
+        <li><div><h3>Una cuenta de Stripe</h3><p>Si no la tienes, se abre en diez minutos con
+          tu RFC y tu cuenta de banco. Es gratis y es tuya: nosotros sólo nos conectamos para
+          que tu página pueda cobrar.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
   <section class="bone" id="precio">
     <div class="container">
       <p class="label">Precio</p>
@@ -321,13 +393,13 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
           <p class="label">Mensual</p>
           <p class="cifra" id="p-mes"></p>
           <small>al mes, se cancela cuando quieras</small>
-          <a class="btn btn-ghost" href="#empezar">Empezar</a>
+          <a class="btn btn-ghost" href="alta/" data-pago="mes">Empezar</a>
         </div>
         <div class="plan destacado">
           <p class="label">Anual · pagas diez meses</p>
           <p class="cifra" id="p-ano"></p>
           <small id="p-ano-nota"></small>
-          <a class="btn btn-line" href="#empezar">Empezar</a>
+          <a class="btn btn-line" href="alta/" data-pago="ano">Empezar</a>
         </div>
       </div>
       <ul class="incluye">
@@ -417,6 +489,17 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
    datos ni batería de quien nunca llega hasta ahí. Y si el visitante pidió
    menos movimiento en su sistema, no se reproduce solo: se le deja el cartel
    y los controles para que decida. */
+/* Los dos enlaces de pago de Stripe. Mientras estén vacíos, los botones
+   llevan al formulario como hasta ahora, para no dejar la página rota; en
+   cuanto se peguen aquí, se paga primero y el formulario se llena después. */
+(function pago(){
+  var PAGO = { mes: '', ano: '' };
+  [].forEach.call(document.querySelectorAll('[data-pago]'), function(a){
+    var plan = a.dataset.pago;
+    a.href = PAGO[plan] || ('alta/?plan=' + plan);
+  });
+})();
+
 (function video(){
   var quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var vids = [].slice.call(document.querySelectorAll('.media video'));
