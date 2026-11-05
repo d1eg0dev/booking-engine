@@ -61,6 +61,17 @@ function hoja_() {
   return h;
 }
 
+/** Da con una columna por su nombre, y la crea al final si no existía.
+    Las hojas que ya existen no se enteran de una columna nueva solas, y
+    perder la aceptación de un cliente por eso sería un mal día. */
+function columna_(h, nombre) {
+  var cab = h.getRange(1, 1, 1, Math.max(1, h.getLastColumn())).getValues()[0];
+  for (var i = 0; i < cab.length; i++) if (String(cab[i]).trim() === nombre) return i + 1;
+  var n = cab.length + 1;
+  h.getRange(1, n).setValue(nombre);
+  return n;
+}
+
 /** Convierte "Casa Larios" en "casa-larios". */
 function slugify_(texto) {
   var s = (texto || '').toString().toLowerCase()
@@ -132,6 +143,14 @@ function doPost(e) {
                  auto ? 'publicando' : 'por aprobar', '',
                  JSON.stringify(cfg)]);
 
+    // La aceptación se guarda con su versión y su hora: "aceptó las
+    // condiciones" sin decir cuáles ni cuándo no prueba nada.
+    var ac = cuerpo.config && cuerpo.config._intake && cuerpo.config._intake.condiciones;
+    if (ac && ac.version) {
+      h.getRange(h.getLastRow(), columna_(h, 'condiciones'))
+       .setValue('v' + ac.version + ' · ' + (ac.aceptadoEn || new Date().toISOString()));
+    }
+
     if (auto) {
       dispararAlta_(id, slug, cfg, '');
       avisar_(id, nombre, slug, comisionista, correo, true);
@@ -180,9 +199,34 @@ function vaA_(url, texto) {
     '<p style="font:13px/1.6 -apple-system,sans-serif"><a href="' + url + '">Continuar</a></p>');
 }
 
-function conectar_(slug) {
+function conectar_(slug, acepto) {
   var fila = filaPorSlug_(slug);
   if (!fila) return HtmlService.createHtmlOutput('<p>No encuentro esa propiedad.</p>');
+
+  // Lo del dinero se lee antes de autorizar, no se descubre en el primer
+  // cobro. Es la queja número uno contra cualquier pasarela.
+  if (!acepto) {
+    var sigue = ScriptApp.getService().getUrl()
+      + '?conectar=' + encodeURIComponent(slug) + '&acepto=1';
+    return HtmlService.createHtmlOutput(
+      '<div style="font:15px/1.65 -apple-system,sans-serif;max-width:560px;margin:40px auto;padding:0 20px;color:#1A1A18">'
+      + '<h2 style="font-weight:400;font-size:22px;margin-bottom:6px">Antes de conectar tu Stripe</h2>'
+      + '<p style="color:#55524D;margin-bottom:18px">Tres cosas sobre el dinero de tus reservas.</p>'
+      + '<p style="margin-bottom:12px"><b>Cobras tú.</b> El pago de cada huésped entra directo a tu cuenta de Stripe. '
+      + 'WD Studio no lo recibe, no lo retiene y no puede moverlo.</p>'
+      + '<p style="margin-bottom:12px"><b>No te cobramos comisión por reservar.</b> Nuestro ingreso es la cuota mensual del servicio, '
+      + 'nada más. Cero por ciento de tus reservas.</p>'
+      + '<p style="margin-bottom:12px"><b>Stripe sí te cobra a ti.</b> Por procesar cada pago, alrededor de 3.6% más 3 pesos '
+      + 'por transacción en México; en otros países varía. Esa comisión es de Stripe y la descuenta de tu depósito.</p>'
+      + '<p style="margin-bottom:22px;color:#55524D;font-size:13.5px">Puedes desconectarnos cuando quieras desde tu panel de Stripe, '
+      + 'en Configuración · Aplicaciones conectadas.</p>'
+      + '<p><a href="' + sigue + '" style="display:inline-block;background:#1A1A18;color:#fff;text-decoration:none;'
+      + 'padding:13px 22px;border-radius:7px;font-size:14px">Acepto y conecto mi Stripe</a></p></div>');
+  }
+
+  var hj = hoja_();
+  hj.getRange(fila, columna_(hj, 'stripe aceptado')).setValue(new Date().toISOString());
+
   var url = 'https://connect.stripe.com/oauth/authorize'
     + '?response_type=code&scope=read_write'
     + '&client_id=' + encodeURIComponent(prop_('STRIPE_CLIENT_ID', true))
@@ -247,7 +291,7 @@ function filaPorSlug_(slug) {
 
 function doGet(e) {
   var p = (e && e.parameter) || {};
-  if (p.conectar) return conectar_(p.conectar);
+  if (p.conectar) return conectar_(p.conectar, p.acepto === '1');
   if (p.code || p.error) return regresoStripe_(p);
   if (!p.aprobar) {
     return HtmlService.createHtmlOutput('<p>Recepción de altas de Booking Page.</p>');

@@ -88,6 +88,13 @@ summary{cursor:pointer;font-size:13.5px;color:var(--accent)}
 pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);padding:16px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.5;margin-top:12px;max-height:380px}
 .swatch{display:flex;gap:8px;align-items:center}
 .swatch input[type=color]{width:46px;height:40px;padding:3px;cursor:pointer}
+.cond{margin-top:10px;max-height:300px;overflow-y:auto;border:1px solid var(--line);
+  border-radius:7px;padding:16px 18px;background:var(--field-alt)}
+.cond p{font-size:13px;line-height:1.65;margin-bottom:11px;color:var(--mute)}
+.cond p:last-child{margin-bottom:0}
+.cond b{color:var(--ink);font-weight:500}
+.acepto{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px;cursor:pointer}
+.acepto input{width:auto;margin-top:3px;flex-shrink:0}
 [hidden]{display:none!important}
 
 /* Subida de fotos */
@@ -295,6 +302,16 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
       <summary data-en="I'd rather send them by link">Prefiero mandarlas por enlace</summary>
       <label><span data-en="Link to your photos">Enlace a tus fotos</span><em data-en="Drive, Dropbox or WeTransfer. Check that the link is public.">Drive, Dropbox o WeTransfer. Revisa que el enlace sea público.</em><input name="photos" type="url" placeholder="https://"></label>
     </details>
+  </fieldset>
+
+  <fieldset>
+    <legend data-en="Service terms">Condiciones del servicio</legend>
+    <details>
+      <summary data-en="Read the terms">Leer las condiciones</summary>
+      <div id="cond-texto" class="cond"></div>
+    </details>
+    <label class="acepto"><input type="checkbox" id="acepto">
+      <span data-en="I have read and accept the service terms.">He leído y acepto las condiciones del servicio.</span></label>
   </fieldset>
 
   <fieldset>
@@ -525,6 +542,8 @@ function problems(){
     if ((s.from && !s.to) || (!s.from && s.to)) bad.push(M('seasonHalf', i + 1));
   });
   if (!isRent()) readBlocks('extra').forEach((x, i) => { if (!x.name.es && !x.name.en) bad.push(M('extraName', i + 1)); });
+  const ac = document.getElementById('acepto');
+  if (ac && !ac.checked) bad.push(LANG === 'en' ? 'accept the service terms' : 'aceptar las condiciones del servicio');
   return bad;
 }
 
@@ -537,6 +556,8 @@ function build(){
       plan: val('plan'),
       photosUrl: val('photos') || null,
       fotos: FOTOS.length,
+      condiciones: (document.getElementById('acepto') || {}).checked
+        ? { version: COND_VERSION, aceptadoEn: new Date().toISOString() } : null,
       hasStripe: val('has_stripe') === 'si',
       filledAt: new Date().toISOString().slice(0,10),
       formLanguage: LANG,
@@ -779,6 +800,39 @@ async function mandaFoto(id, i){
   marca(i, 'listo');
   if (!d.ok) throw new Error(d.error || 'no se pudo guardar la foto ' + (i + 1));
 }
+
+/* ---------- condiciones del servicio ---------- */
+/* La versión va con la aceptación a la hoja. Si el texto cambia, cambia la
+   fecha: así se sabe siempre qué aceptó cada cliente, y no "las condiciones"
+   en abstracto, que el día de una discusión no sirve de nada. */
+const COND_VERSION = '2026-11-05';
+const CONDICIONES = [
+  ['Qué incluye',
+   'Una página de reservas propia para tu propiedad: calendario, cálculo de precios, cobro en línea, textos en español e inglés, alojamiento y las mejoras que vayamos publicando. No somos una agencia de viajes y no gestionamos tu propiedad.'],
+  ['Cuánto cuesta',
+   '79 USD al mes, el mismo precio en todos los países, cobrado por adelantado. Si eres de los veinte primeros, tienes seis meses sin costo; antes del primer cobro te avisamos con 30 días y puedes cancelar sin pagar nada.'],
+  ['El dinero de tus reservas es tuyo',
+   'Los pagos de tus huéspedes entran directo a tu cuenta de Stripe. WD Studio no cobra ninguna comisión sobre tus reservas y no toca ese dinero en ningún momento. Stripe sí cobra sus propias comisiones por procesar cada pago: en México, alrededor de 3.6% más 3 pesos por transacción, y en otros países varía. Esa comisión la cobra Stripe, no nosotros.'],
+  ['Si dejas de pagar',
+   'Te avisamos. A los 15 días de impago la página se suspende y deja de aceptar reservas nuevas; las reservas ya confirmadas no se ven afectadas, porque viven en tu Stripe y en tu correo. Guardamos tu información 60 días por si quieres volver, y después se borra.'],
+  ['Tus fotos y tus textos son tuyos',
+   'Nos autorizas a publicarlos en tu página. Podemos enseñar tu página como ejemplo de nuestro trabajo; si prefieres que no, dínoslo por escrito y dejamos de hacerlo.'],
+  ['El dominio',
+   'Mientras no tengas uno propio, tu página vive en un subdominio nuestro. Si compras tu dominio, es tuyo: lo conectamos, y si algún día te vas, se queda contigo.'],
+  ['Cancelar',
+   'Cuando quieras, escribiendo a hola@wdstudio.agency. El servicio sigue hasta el final del mes que ya pagaste y te entregamos tu configuración y tus fotos.'],
+  ['Lo que no cubrimos',
+   'No respondemos por lo que ocurra entre tú y tus huéspedes, ni por decisiones de Stripe sobre tu cuenta, ni por caídas de servicios de terceros. Hacemos lo razonable para que tu página esté siempre en línea, pero no garantizamos disponibilidad ininterrumpida.'],
+  ['Cambios',
+   'Si cambiamos estas condiciones o el precio, te avisamos con 30 días de antelación. Si no te parece, puedes cancelar antes de que apliquen.']
+];
+
+(function pintaCondiciones(){
+  const c = document.getElementById('cond-texto');
+  if (!c) return;
+  c.innerHTML = CONDICIONES.map(([t, b], i) =>
+    `<p><b>${i + 1}. ${t}.</b> ${b}</p>`).join('');
+})();
 
 /* ---------- publicar ---------- */
 /* Pega aquí la URL de la aplicación web de Apps Script (backend/Intake.gs).
