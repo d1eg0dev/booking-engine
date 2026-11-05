@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Booking Page · Tu página de reservas directas</title>
+<meta name="description" content="Tu propia página de reservas: calendario, temporadas y cobro directo a tu cuenta de Stripe. 79 USD al mes, sin comisión por reserva.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1A1A18; --soft:#55524D; --mute:#93908A;
+  --line:#E5E2DC; --paper:#FCFBF9; --card:#FFFFFF;
+  --keep:#2D5F56; --keep-tint:#EDF1EF; --lose:#A8564C;
+  --f:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--f);
+  -webkit-font-smoothing:antialiased}
+.col{max-width:1080px;margin:0 auto;padding:0 28px}
+.col > *{max-width:680px}
+.lee{max-width:62ch}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--keep);outline-offset:3px;border-radius:2px}
+
+/* Cabecera */
+.hdr{position:sticky;top:0;z-index:40;background:rgba(252,251,249,.9);
+  -webkit-backdrop-filter:saturate(1.7) blur(12px);backdrop-filter:saturate(1.7) blur(12px);
+  border-bottom:1px solid var(--line)}
+.hdr-in{max-width:1080px;margin:0 auto;padding:13px 28px;display:flex;align-items:baseline;gap:12px}
+.marca{font-size:15px;font-weight:500;letter-spacing:-.015em;text-decoration:none}
+.marca em{font-style:normal;font-weight:400;color:var(--mute);font-size:12.5px;margin-left:7px}
+.hdr .bp{margin-left:auto;align-self:center}
+
+/* Botones */
+.bp,.bs{display:inline-block;font:500 14px var(--f);text-decoration:none;cursor:pointer;
+  border-radius:3px;padding:12px 20px;border:1px solid transparent;transition:opacity .15s}
+.bp{background:var(--ink);color:#fff}
+.bp:hover{opacity:.84}
+.bs{border-color:var(--line);color:var(--soft);background:var(--card)}
+.bs:hover{border-color:var(--mute);color:var(--ink)}
+
+/* Portada */
+.port{padding:clamp(56px,9vw,112px) 0 clamp(40px,5vw,60px)}
+h1{font-weight:200;font-size:clamp(33px,5.6vw,60px);line-height:1.04;letter-spacing:-.033em;
+  max-width:16ch}
+.entra{margin-top:22px;font-size:clamp(16px,1.9vw,19px);line-height:1.6;color:var(--soft);max-width:54ch}
+
+/* La resta */
+.cuenta{max-width:none;margin-top:clamp(40px,5vw,64px);border-top:1px solid var(--line);
+  padding-top:clamp(32px,4vw,48px);display:grid;gap:clamp(28px,4vw,56px)}
+@media(min-width:880px){.cuenta{grid-template-columns:minmax(0,320px) minmax(0,1fr)}}
+.mandos{display:flex;flex-direction:column;gap:22px}
+.mando label{display:block;font-size:13px;color:var(--soft);margin-bottom:9px}
+.mando b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--keep);height:22px}
+.segm{display:flex;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;width:fit-content}
+.segm button{background:var(--card);border:0;border-right:1px solid var(--line);
+  font:400 13px var(--f);color:var(--soft);padding:8px 14px;cursor:pointer}
+.segm button:last-child{border-right:0}
+.segm button[aria-pressed=true]{background:var(--ink);color:#fff}
+.moneda{margin-top:4px}
+
+.res dt{font-size:13.5px;color:var(--soft)}
+.res dd{font-weight:200;letter-spacing:-.035em;font-variant-numeric:tabular-nums;line-height:1}
+.pierdes dd{font-size:clamp(42px,7.4vw,76px);color:var(--lose)}
+.cuesta{margin-top:26px}
+.cuesta dd{font-size:clamp(26px,3.6vw,36px);color:var(--ink)}
+.queda{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.queda dd{font-size:clamp(30px,4.4vw,46px);color:var(--keep)}
+.aviso{margin-top:26px;font-size:13px;line-height:1.6;color:var(--mute);max-width:46ch}
+
+/* Secciones */
+section{padding-top:clamp(64px,8vw,104px)}
+h2{font-weight:200;font-size:clamp(26px,3.7vw,40px);line-height:1.1;letter-spacing:-.028em;max-width:18ch}
+.bajada{margin-top:14px;color:var(--soft);font-size:16.5px}
+
+/* Muestra del producto */
+.muestra{max-width:none;margin-top:34px;border:1px solid var(--line);border-radius:4px;
+  overflow:hidden;background:var(--card)}
+.muestra img{display:block;width:100%}
+.pie-img{font-size:12.5px;color:var(--mute);padding:11px 15px;border-top:1px solid var(--line)}
+
+/* Pasos: esto sí es una secuencia, por eso van numerados */
+ol.pasos{list-style:none;counter-reset:p;margin-top:34px;display:grid;gap:2px}
+ol.pasos li{counter-increment:p;display:grid;grid-template-columns:34px 1fr;gap:16px;
+  padding:22px 0;border-top:1px solid var(--line);align-items:baseline}
+ol.pasos li::before{content:counter(p);font-size:13px;color:var(--mute);
+  font-variant-numeric:tabular-nums}
+ol.pasos b{display:block;font-weight:500;font-size:17px;letter-spacing:-.012em}
+ol.pasos span{display:block;margin-top:5px;color:var(--soft);font-size:15px}
+
+/* Lo que no hace */
+.no{margin-top:30px;display:grid;gap:2px}
+.no div{padding:20px 0;border-top:1px solid var(--line)}
+.no b{display:block;font-weight:500;font-size:16.5px;margin-bottom:5px}
+.no p{color:var(--soft);font-size:15px;max-width:58ch}
+
+/* Precio */
+.precio{margin-top:30px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.precio strong{font-weight:200;font-size:clamp(44px,6.6vw,68px);letter-spacing:-.035em;line-height:1}
+.precio span{color:var(--soft);font-size:16px}
+.incluye{margin-top:28px;display:grid;gap:9px}
+.incluye li{list-style:none;padding-left:21px;position:relative;color:var(--soft);font-size:15px}
+.incluye li::before{content:'';position:absolute;left:0;top:9px;width:9px;height:9px;
+  border-radius:50%;border:1px solid var(--keep)}
+.veinte{margin-top:30px;padding:20px 22px;background:var(--keep-tint);border-radius:4px;
+  font-size:15px;color:var(--ink);max-width:56ch}
+
+/* Preguntas */
+.faq{margin-top:30px}
+.faq details{border-top:1px solid var(--line);padding:18px 0}
+.faq summary{cursor:pointer;font-weight:500;font-size:16.5px;list-style:none;
+  display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--mute);font-weight:300;font-size:21px;line-height:1}
+.faq details[open] summary::after{content:'–'}
+.faq p{margin-top:11px;color:var(--soft);font-size:15px;max-width:60ch}
+
+/* Cierre */
+.cierre{margin-top:clamp(70px,9vw,120px);border-top:1px solid var(--line);
+  padding:clamp(52px,7vw,84px) 0}
+.cierre h2{max-width:14ch}
+.acciones{margin-top:28px;display:flex;gap:11px;flex-wrap:wrap}
+footer{border-top:1px solid var(--line);padding:30px 0 40px;font-size:12.5px;color:var(--mute)}
+footer a{color:var(--soft);text-decoration:none}
+footer a:hover{color:var(--keep)}
+.fin{display:flex;gap:10px 22px;flex-wrap:wrap;justify-content:space-between;max-width:none}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:600px){
+  .col,.hdr-in{padding-left:19px;padding-right:19px}
+  .hdr .bp{padding:9px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <a class="marca" href="#">Booking Page<em>de WD Studio</em></a>
+    <a class="bp" href="#empezar">Empezar</a>
+  </div>
+</header>
+
+<main>
+  <div class="col port">
+    <h1>El huésped que repite no debería costarte una comisión.</h1>
+    <p class="entra">Booking Page es tu propia página de reservas: calendario, tarifas por
+      temporada y cobro directo a tu cuenta. El dinero entra donde tiene que entrar, sin que
+      nadie se quede un porcentaje por el camino.</p>
+
+    <div class="cuenta">
+      <form class="mandos" id="mandos" autocomplete="off">
+        <div class="mando">
+          <label for="tarifa">Tu tarifa por noche · <b id="v-tarifa"></b></label>
+          <input type="range" id="tarifa" min="400" max="12000" step="100" value="3800">
+        </div>
+        <div class="mando">
+          <label for="noches">Noches al mes que ya reservarías sin el portal · <b id="v-noches"></b></label>
+          <input type="range" id="noches" min="1" max="30" step="1" value="10">
+        </div>
+        <div class="mando">
+          <label>Comisión del portal</label>
+          <div class="segm" id="com" role="group">
+            <button type="button" data-c="15" aria-pressed="true">15%</button>
+            <button type="button" data-c="18" aria-pressed="false">18%</button>
+            <button type="button" data-c="20" aria-pressed="false">20%</button>
+          </div>
+        </div>
+        <div class="mando moneda">
+          <label>Moneda</label>
+          <div class="segm" id="mon" role="group">
+            <button type="button" data-m="MXN" aria-pressed="true">Pesos</button>
+            <button type="button" data-m="USD" aria-pressed="false">Dólares</button>
+          </div>
+        </div>
+      </form>
+
+      <dl class="res" aria-live="polite">
+        <div class="pierdes">
+          <dt>Al año entregas en comisiones</dt>
+          <dd id="r-pierdes"></dd>
+        </div>
+        <div class="cuesta">
+          <dt>Booking Page cuesta al año</dt>
+          <dd id="r-cuesta"></dd>
+        </div>
+        <div class="queda">
+          <dt>Diferencia</dt>
+          <dd id="r-queda"></dd>
+        </div>
+        <p class="aviso">Esta cuenta solo mide las reservas que ya llegarían a ti: huéspedes
+          que repiten, recomendados, gente que te escribe por Instagram. Un portal sí te trae
+          clientes nuevos, y ese valor no está en esta resta.</p>
+      </dl>
+    </div>
+  </div>
+
+  <section class="col">
+    <h2>Así se ve la página de tu propiedad.</h2>
+    <p class="bajada">Tus fotos, tu nombre, tus colores. En español e inglés.</p>
+    <figure class="muestra">
+      <!-- En un teléfono, una captura de escritorio encogida no se lee: se
+           sirve la del propio teléfono, que además es como la va a ver el
+           huésped la mayoría de las veces. -->
+      <picture>
+        <source media="(max-width:640px)" srcset="muestra-movil.png" width="1170" height="2100">
+        <img src="muestra.png" alt="Página de reservas de ejemplo: el calendario con el precio de cada noche y, al lado, el resumen de la estancia con el total." width="2240" height="1520" loading="lazy">
+      </picture>
+      <figcaption class="pie-img">Página de ejemplo. Las fotos son de muestra.</figcaption>
+    </figure>
+  </section>
+
+  <section class="col">
+    <h2>Tres pasos y estás cobrando.</h2>
+    <ol class="pasos">
+      <li><div><b>Llenas un formulario</b><span>Nombre, fotos, tarifas y tus reglas de la casa.
+        Cinco minutos.</span></div></li>
+      <li><div><b>Te mandamos tu página</b><span>Lista y en línea el mismo día, con su dirección
+        propia. No tienes que instalar ni configurar nada.</span></div></li>
+      <li><div><b>Conectas tu Stripe</b><span>Un botón. Desde ahí, cada reserva se cobra y el
+        dinero entra directo a tu cuenta.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="col">
+    <h2>Lo que Booking Page no hace.</h2>
+    <p class="bajada">Para que no te lleves una sorpresa en el segundo mes.</p>
+    <div class="no">
+      <div>
+        <b>No te traemos huéspedes</b>
+        <p>No somos un portal. No hay buscador ni tráfico que te mande gente. Esto sirve para
+          que quien ya te encuentra reserve sin intermediario, no para conseguir clientes
+          nuevos. Si hoy dependes del portal para llenar, sigue dependiendo de él.</p>
+      </div>
+      <div>
+        <b>No tocamos tu dinero</b>
+        <p>El pago del huésped entra directo a tu cuenta de Stripe. No pasa por nosotros, no
+          lo retenemos y no podemos moverlo. Stripe te cobra su comisión por procesar, que en
+          México ronda el 3.6% más 3 pesos por transacción.</p>
+      </div>
+      <div>
+        <b>No gestionamos tu propiedad</b>
+        <p>No contestamos a tus huéspedes, no coordinamos limpiezas ni llaves. Te damos la
+          página y el cobro; la casa sigue siendo tuya y el trato con el huésped también.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="col">
+    <h2>Un precio, sin porcentaje.</h2>
+    <div class="precio">
+      <strong>79 USD</strong><span>al mes · mismo precio en todos los países</span>
+    </div>
+    <ul class="incluye">
+      <li>Tu página, alojada y en línea</li>
+      <li>Calendario con temporadas, mínimo de noches y bloqueos</li>
+      <li>Cobro con Stripe, directo a tu cuenta</li>
+      <li>Español e inglés, con tus políticas en los dos idiomas</li>
+      <li>Sincronización por iCal con Airbnb y Booking, para no duplicar reservas</li>
+      <li>Las mejoras que publiquemos, sin costo extra</li>
+    </ul>
+    <p class="veinte">Las primeras veinte propiedades entran con <b>seis meses sin costo</b>.
+      Avisamos con treinta días antes del primer cobro, y hasta entonces se puede cancelar sin
+      pagar nada.</p>
+  </section>
+
+  <section class="col">
+    <h2>Preguntas.</h2>
+    <div class="faq">
+      <details>
+        <summary>¿Dónde cae el dinero de mis reservas?</summary>
+        <p>En tu cuenta de Stripe, directo, el mismo día en que el huésped paga. Nosotros no
+          lo recibimos en ningún momento. Stripe descuenta su comisión por procesar el pago y
+          te deposita el resto en tu banco según el calendario que tú configures.</p>
+      </details>
+      <details>
+        <summary>¿Necesito tener un dominio propio?</summary>
+        <p>No. Tu página sale con una dirección nuestra desde el primer día. Si después
+          compras tu dominio, lo conectamos y es tuyo: si algún día te vas, se queda contigo.</p>
+      </details>
+      <details>
+        <summary>Ya estoy en Airbnb. ¿Tengo que salirme?</summary>
+        <p>No, y no te lo recomendamos si el portal te está llenando el calendario. Se
+          sincronizan las fechas por iCal en las dos direcciones, así que no se duplican
+          reservas. Lo normal es mandar a tu página a los que ya te conocen y dejar el portal
+          para la gente nueva.</p>
+      </details>
+      <details>
+        <summary>¿Puedo cancelar?</summary>
+        <p>Cuando quieras, por correo. El servicio sigue hasta el final del mes que ya
+          pagaste, y te entregamos tu configuración y tus fotos para que te las lleves.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa si dejo de pagar?</summary>
+        <p>Te avisamos. A los quince días la página deja de aceptar reservas nuevas. Las que
+          ya estaban confirmadas no se tocan, porque viven en tu Stripe y en tu correo.
+          Guardamos tu información sesenta días por si quieres volver.</p>
+      </details>
+    </div>
+  </section>
+
+  <div class="col cierre" id="empezar">
+    <h2>Empieza con tu propiedad.</h2>
+    <p class="bajada">El formulario son cinco minutos y tu página sale hoy.</p>
+    <div class="acciones">
+      <a class="bp" href="../tools/intake.html">Crear mi página</a>
+      <a class="bs" href="mailto:hola@wdstudio.agency?subject=Booking%20Page">Escribir antes de decidir</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="col fin">
+    <span>Booking Page · WD Studio Agency</span>
+    <span><a href="mailto:hola@wdstudio.agency">hola@wdstudio.agency</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  /* Tipo de cambio citado, no inventado: si alguien hace la cuenta con su
+     banco y no le cuadra, la página pierde toda su credibilidad justo en el
+     punto que la sostiene. */
+  var FX = { MXN: 18.75, USD: 1 };
+  var FX_NOTA = 'Tipo de cambio 1 USD = 18.75 MXN, consultado el 6 de noviembre de 2026.';
+  var CUOTA_USD = 79;
+
+  var est = { tarifa: 3800, noches: 10, com: 15, mon: 'MXN' };
+  var AVISO = document.querySelector('.aviso'), BASE_AVISO = AVISO.textContent.trim();
+  var $ = function(id){ return document.getElementById(id); };
+
+  function dinero(n, mon){
+    return n.toLocaleString(mon === 'MXN' ? 'es-MX' : 'en-US',
+      { style: 'currency', currency: mon, currencyDisplay: 'narrowSymbol', maximumFractionDigits: 0 });
+  }
+
+  /* Los topes del deslizador cambian con la moneda: 12.000 dólares la noche
+     no es una tarifa, es un error de lectura. */
+  function rangos(antes){
+    var t = $('tarifa'), v = +t.value;
+    // La tarifa se convierte al cambiar de moneda. Sin esto, 3.800 pesos la
+    // noche se convierten en 3.800 dólares, que no es una tarifa sino un
+    // malentendido, y la cuenta de abajo deja de significar nada.
+    if (antes && antes !== est.mon) v = v * FX[est.mon] / FX[antes];
+    if (est.mon === 'MXN'){ t.min = 400; t.max = 12000; t.step = 100; v = Math.round(v / 100) * 100; }
+    else { t.min = 20; t.max = 650; t.step = 5; v = Math.round(v / 5) * 5; }
+    t.value = Math.min(+t.max, Math.max(+t.min, v));
+    est.tarifa = +t.value;
+  }
+
+  function pinta(){
+    var anual = est.tarifa * est.noches * 12;
+    var pierdes = anual * est.com / 100;
+    var cuesta = CUOTA_USD * 12 * FX[est.mon];
+
+    $('v-tarifa').textContent = dinero(est.tarifa, est.mon);
+    $('v-noches').textContent = est.noches + (est.noches === 1 ? ' noche' : ' noches');
+    $('r-pierdes').textContent = dinero(pierdes, est.mon);
+    $('r-cuesta').textContent = dinero(cuesta, est.mon)
+      + (est.mon === 'MXN' ? ' (948 USD)' : '');
+    $('r-queda').textContent = (pierdes >= cuesta ? '' : '−') + dinero(Math.abs(pierdes - cuesta), est.mon);
+    $('r-queda').style.color = pierdes >= cuesta ? 'var(--keep)' : 'var(--lose)';
+
+    AVISO.textContent = BASE_AVISO + (est.mon === 'MXN' ? ' ' + FX_NOTA : '');
+  }
+
+  $('tarifa').addEventListener('input', function(){ est.tarifa = +this.value; pinta(); });
+  $('noches').addEventListener('input', function(){ est.noches = +this.value; pinta(); });
+
+  function grupo(id, campo, cast){
+    $(id).addEventListener('click', function(e){
+      var b = e.target.closest('button');
+      if (!b) return;
+      [].forEach.call(this.querySelectorAll('button'), function(x){
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      var antes = est.mon;
+      est[campo] = cast(b.dataset[campo === 'com' ? 'c' : 'm']);
+      if (campo === 'mon') rangos(antes);
+      pinta();
+    });
+  }
+  grupo('com', 'com', Number);
+  grupo('mon', 'mon', String);
+
+  rangos();
+  pinta();
+})();
+</script>
+</body>
+</html>
