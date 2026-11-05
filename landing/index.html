@@ -468,9 +468,9 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     <div class="container">
       <p class="label">Empezar</p>
       <h2 class="heading">Tu página puede estar en línea hoy.</h2>
-      <p class="sub">El formulario son cinco minutos.</p>
+      <p class="sub">Eliges plan, pagas, y el formulario son cinco minutos.</p>
       <div class="hero-actions">
-        <a class="btn btn-line" href="../tools/intake.html">Crear mi página</a>
+        <a class="btn btn-line" href="#precio">Elegir plan y empezar</a>
         <a class="btn btn-line" href="mailto:hola@wdstudio.agency?subject=Booking%20Page">Escribir antes</a>
       </div>
     </div>
@@ -493,7 +493,14 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
    llevan al formulario como hasta ahora, para no dejar la página rota; en
    cuanto se peguen aquí, se paga primero y el formulario se llena después. */
 (function pago(){
-  var PAGO = { mes: '', ano: '' };
+  // Enlaces de pago de Stripe. Al terminar, Stripe devuelve al formulario con
+  // ?sesion=cs_… y el Apps Script comprueba contra Stripe que ese pago existe
+  // antes de dar de alta nada. Cambiar un enlace aquí no abre ninguna puerta:
+  // la comprobación la hace el servidor, no esta página.
+  var PAGO = {
+    mes: 'https://buy.stripe.com/bJedR97oR5jc9IXdpr2Nq00',
+    ano: 'https://buy.stripe.com/14A8wP8sV7rkcV97132Nq01'
+  };
   [].forEach.call(document.querySelectorAll('[data-pago]'), function(a){
     var plan = a.dataset.pago;
     a.href = PAGO[plan] || ('alta/?plan=' + plan);

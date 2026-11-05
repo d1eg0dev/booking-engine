@@ -34,8 +34,10 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 DESTINO = 'booking-page'
 
 # Dentro de la landing, el demo y el formulario quedan colgando de ella.
-ENLACES = [('href="../demo/"', 'href="demo/"'),
-           ('href="../tools/intake.html"', 'href="alta/"')]
+# El demo vive un nivel arriba en el repositorio y al lado en el sitio. El
+# formulario ya se enlaza como alta/, que es la ruta que tendrá publicado, así
+# que no hay nada que reescribir para él.
+ENLACES = [('href="../demo/"', 'href="demo/"')]
 
 
 class Alto(Exception):
