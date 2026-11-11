@@ -495,6 +495,24 @@ var COLS_RESERVAS = ['Creada', 'Referencia', 'Estado', 'Nombre', 'Correo', 'Tel�
   'Recuperación enviada', 'URL de regreso'];
 
 /**
+ * La carpeta de un cliente, dentro de una raíz común. Se busca por slug y no
+ * por nombre de propiedad: el nombre lo escribe el cliente y puede repetirse
+ * o llevar acentos, el slug es único y ya lo usamos para el repo y el
+ * subdominio. Si mañana hay doscientos clientes, esto es lo que hace que se
+ * puedan encontrar.
+ */
+function carpetaCliente_(slug, nombre) {
+  var RAIZ = 'Booking Page · Clientes';
+  var it = DriveApp.getFoldersByName(RAIZ);
+  var raiz = it.hasNext() ? it.next() : DriveApp.createFolder(RAIZ);
+  var sub = raiz.getFoldersByName(slug);
+  if (sub.hasNext()) return sub.next();
+  var nueva = raiz.createFolder(slug);
+  try { nueva.setDescription(nombre || slug); } catch (err) {}
+  return nueva;
+}
+
+/**
  * Crea la hoja de cálculo con la que el propietario lleva su casa, y se la
  * comparte. Son dos pestañas con dos trabajos distintos: Reservas la escribe
  * el motor y él la lee; Bloqueos la escribe él y la lee el motor.
@@ -502,7 +520,7 @@ var COLS_RESERVAS = ['Creada', 'Referencia', 'Estado', 'Nombre', 'Correo', 'Tel�
  * Sin esto, un cliente que paga tiene una página que cobra y ninguna forma
  * de ver qué tiene reservado ni de cerrar una semana porque viene su familia.
  */
-function creaHojaCliente_(nombre, correo, idioma) {
+function creaHojaCliente_(nombre, correo, idioma, slug) {
   var en = String(idioma || '').toLowerCase().indexOf('en') === 0;
   var ss = SpreadsheetApp.create((nombre || 'Booking Page') + (en ? ' · Bookings' : ' · Reservas'));
 
@@ -536,10 +554,18 @@ function creaHojaCliente_(nombre, correo, idioma) {
        : 'EJEMPLO · borra esta fila. Las dos fechas se bloquean, inicio y fin incluidos.'
   ]]).setFontColor('#9A9488').setFontStyle('italic');
 
+  var archivo = DriveApp.getFileById(ss.getId());
+
+  // A su carpeta. SpreadsheetApp.create la deja en la raíz del Drive, y con
+  // veinte clientes eso es un cajón de sastre donde no se encuentra nada.
+  if (slug) {
+    try { archivo.moveTo(carpetaCliente_(slug, nombre)); } catch (err) {}
+  }
+
   // El propietario edita; no se le hace dueño para que la hoja no se vaya
   // con él si cancela antes de que terminemos de configurarle el motor.
   if (correo) {
-    try { DriveApp.getFileById(ss.getId()).addEditor(correo); } catch (err) {}
+    try { archivo.addEditor(correo); } catch (err) {}
   }
   return ss;
 }
@@ -699,7 +725,7 @@ function resultado_(c) {
       // crea a mano, que es mejor que perder una página ya publicada.
       var hojaUrl = '';
       try {
-        var cl = creaHojaCliente_(datos[i][2] || '', datos[i][5] || '', idioma);
+        var cl = creaHojaCliente_(datos[i][2] || '', datos[i][5] || '', idioma, datos[i][3]);
         hojaUrl = cl.getUrl();
         h.getRange(i + 1, columna_(h, 'hoja del cliente')).setValue(hojaUrl);
       } catch (err) {
