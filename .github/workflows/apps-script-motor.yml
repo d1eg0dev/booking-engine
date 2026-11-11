@@ -49,6 +49,17 @@ jobs:
             echo "::error::Mira la cabecera de este archivo para saber qué poner."
             exit 1
           fi
+          # Pegar un id desde el navegador arrastra a veces un retorno de carro
+          # o un espacio invisible. Viaja hasta la API de Apps Script y vuelve
+          # como "Invalid deployment ID", que no se parece en nada a la causa.
+          # Se limpian aquí y los pasos siguientes usan ya la versión limpia.
+          for v in SCRIPT_ID DEPLOY_ID; do
+            limpio=$(printf '%s' "${!v}" | tr -d '[:space:]')
+            if [ "$limpio" != "${!v}" ]; then
+              echo "::warning::$v traía espacios o saltos de línea; los quito."
+            fi
+            echo "$v=$limpio" >> "$GITHUB_ENV"
+          done
 
       - name: Instalar clasp
         run: npm install -g @google/clasp@2.5.0
@@ -64,9 +75,8 @@ jobs:
 
       - name: Traer lo que hay en el servidor
         working-directory: /tmp
-        env:
-          SCRIPT_ID: ${{ vars.MOTOR_SCRIPT_ID }}
         run: |
+          # SCRIPT_ID y DEPLOY_ID vienen ya limpios del paso de comprobación.
           mkdir -p motor && cd motor
           printf '{"scriptId":"%s","rootDir":"."}' "$SCRIPT_ID" > .clasp.json
           # Se baja primero para conservar el manifiesto: subir uno inventado
@@ -94,8 +104,6 @@ jobs:
 
       - name: Subir y desplegar
         working-directory: /tmp/motor
-        env:
-          DEPLOY_ID: ${{ vars.MOTOR_DEPLOY_ID }}
         run: |
           clasp push --force
           clasp deploy -i "$DEPLOY_ID" -d "auto ${GITHUB_SHA::7}"
