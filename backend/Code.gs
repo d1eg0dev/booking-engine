@@ -28,11 +28,16 @@ var SHEET_BLOCKS = 'Bloqueos';
 var HEADERS = ['Creada', 'Referencia', 'Estado', 'Nombre', 'Correo', 'Teléfono', 'Entrada', 'Salida', 'Noches', 'Huéspedes', 'Mascotas', 'Extras', 'Total', 'Cobrado hoy', 'Moneda', 'Idioma', 'Notas', 'Stripe session', 'Recuperación enviada', 'URL de regreso'];
 
 /* ---------- entradas ---------- */
+/* El cliente viaja como ?cliente= y no como ?c=. Google se reserva «c» en las
+   URLs /macros/s/ y responde su propia página de error con un 400 antes de
+   que la petición llegue al script, así que no hay forma de depurarlo desde
+   aquí: el registro de ejecuciones se queda vacío. Si alguna vez hay que
+   acortarlo, probar el nombre nuevo en el navegador antes de publicarlo. */
 function doGet(e) {
   var a = (e.parameter.action || '');
   try {
     if (!a) return json({ ok: true });            // sonda de vida, sin cliente
-    abre_(e.parameter.c);
+    abre_(e.parameter.cliente);
     if (a === 'availability') return json({ blocked: blockedDates() });
     if (a === 'confirm') return json(confirmSession(e.parameter.session_id));
     return json({ ok: true });
@@ -48,7 +53,7 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    abre_(e.parameter.c);
+    abre_(e.parameter.cliente);
     var body = JSON.parse(e.postData.contents || '{}');
     if (a === 'book') return json(createBooking(body));
     if (a === 'lead') return json(createLead(body));

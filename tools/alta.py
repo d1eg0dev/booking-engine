@@ -225,10 +225,12 @@ def arma_carpeta(slug, cfg, destino, usuario, dominio):
     (destino / 'index.html').write_text(
         plantilla.replace('__MOTOR__', motor), encoding='utf-8')
     # La página pregunta disponibilidad y crea reservas contra el backend
-    # compartido, diciéndole con ?c= quién es. motor.js ya sabe añadir el
-    # resto de parámetros a esta dirección, así que no hay que tocar nada más.
+    # compartido, diciéndole con ?cliente= quién es. motor.js ya sabe añadir
+    # el resto de parámetros a esta dirección, así que no hay que tocar nada
+    # más. El nombre no puede ser «c»: Google lo tiene reservado en las URLs
+    # /macros/s/ y devuelve un 400 suyo sin llegar nunca al script.
     if MOTOR_EXEC:
-        cfg['backendUrl'] = f'{MOTOR_EXEC}?c={slug}'
+        cfg['backendUrl'] = f'{MOTOR_EXEC}?cliente={slug}'
     (destino / 'config.json').write_text(
         json.dumps(cfg, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     if dominio:
