@@ -67,6 +67,9 @@ def main():
     p.add_argument('--repo', required=True, help='carpeta del repo wdstudio.agency')
     p.add_argument('--dry-run', action='store_true', help='enseña qué cambiaría')
     p.add_argument('--no-push', action='store_true', help='deja el commit sin empujar')
+    p.add_argument('--borrar-sobrantes', action='store_true',
+                   help='borra del destino lo que no venga de esta carpeta. '
+                        'Sin esto se conserva, que es lo que quieres casi siempre')
     a = p.parse_args()
 
     repo = pathlib.Path(a.repo).expanduser().resolve()
@@ -115,17 +118,34 @@ def main():
         marca = ' ' if f in antes and fuera.exists() and \
             filecmp.cmp(fuera / f, tmp / f, shallow=False) else '*'
         print(f'  {marca} {f}')
+    # Lo que hay en el destino y no viene de aquí. Antes esto se borraba sin
+    # preguntar, porque la carpeta entera se reemplazaba. El 11 de noviembre
+    # eso se llevó por delante /booking-page/en/, una versión en inglés que
+    # se había hecho directamente en el repositorio del sitio y que esta
+    # carpeta no conoce. Publicar no puede significar borrar lo que no
+    # conoces: ahora se conserva, se avisa, y hace falta pedirlo expreso.
     sobran = [f for f in antes if f not in nuevos]
     for f in sobran:
-        print(f'  - {f}  (se borra)')
+        print(f'  - {f}  ({"se borra" if a.borrar_sobrantes else "se conserva"})')
 
     if a.dry_run:
         shutil.rmtree(tmp)
         print('\nPrueba en seco: no se tocó nada.')
         return 0
 
-    shutil.rmtree(fuera, ignore_errors=True)
-    tmp.rename(fuera)
+    fuera.mkdir(parents=True, exist_ok=True)
+    for f in nuevos:
+        destino_f = fuera / f
+        destino_f.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(tmp / f, destino_f)
+    if a.borrar_sobrantes:
+        for f in sobran:
+            (fuera / f).unlink(missing_ok=True)
+    shutil.rmtree(tmp)
+    if sobran and not a.borrar_sobrantes:
+        print(f'\n  Aviso: {len(sobran)} archivo(s) del destino no vienen de '
+              'esta carpeta y se dejaron en su sitio.')
+        print('  Si de verdad sobran, vuelve a correrlo con --borrar-sobrantes.')
 
     correr(['git', 'add', '-A', DESTINO], cwd=repo)
     if correr(['git', 'diff', '--cached', '--quiet'], cwd=repo, permitir_fallo=True).returncode == 0:

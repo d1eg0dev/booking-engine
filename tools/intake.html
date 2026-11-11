@@ -213,7 +213,7 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
           <option value="en" data-en="English">Inglés</option>
         </select></label>
       <label><span data-en="Currency you charge in">Moneda en que cobras</span>
-        <select name="cur"><option>USD</option><option>MXN</option><option>EUR</option><option>CAD</option></select></label>
+        <select name="cur"><option>USD</option><option>MXN</option><option>EUR</option><option>CAD</option><option>GBP</option><option>AUD</option><option>SGD</option></select></label>
     </div>
   </fieldset>
 
@@ -282,7 +282,7 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
     <legend data-en="Contact">Contacto</legend>
     <div class="row row-2">
       <label><span data-en="Email where you receive bookings">Correo donde recibes las reservas</span><input name="c_email" type="email" required placeholder="reservas@tusitio.com" data-ph-en="bookings@yoursite.com"></label>
-      <label><span data-en="WhatsApp">WhatsApp</span><em data-en="With country code.">Con código de país.</em><input name="c_wa" placeholder="+52 312 000 0000"></label>
+      <label><span data-en="WhatsApp">WhatsApp</span><em data-en="With country code.">Con código de país.</em><input name="c_wa" placeholder="+52 312 000 0000" data-ph-en="+44 7700 900000"></label>
     </div>
   </fieldset>
 
@@ -371,10 +371,12 @@ function applyLang(){
     b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
   syncPolicyDefaults();
   rebuildBlockLabels();
+  if (typeof pintaCondiciones === 'function') pintaCondiciones();
 }
 
 document.querySelectorAll('#lang button').forEach(b =>
   b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang();
+    try { localStorage.setItem('bp_lang', LANG); } catch (e) {}
     if (typeof pintaAcceso === 'function') pintaAcceso();
     if (typeof repintaBarra === 'function') repintaBarra(); }));
 
@@ -606,7 +608,7 @@ function build(){
     defaultLanguage: langs.includes(val('deflang')) ? val('deflang') : langs[0],
     unit: val('unit') || 'night',
     currency: val('cur'),
-    locale: val('cur') === 'MXN' ? 'es-MX' : 'en-US',
+    locale: ({ MXN: 'es-MX', GBP: 'en-GB', AUD: 'en-AU', SGD: 'en-SG' })[val('cur')] || 'en-US',
     rates: { defaultNightly: num('r_def'), defaultMinNights: parseInt(val('r_min')) || 1, seasons: readBlocks('season') },
     fees: { cleaning: num('f_clean'), petPerNight: isRent() ? 0 : num('f_pet'),
             maxPets: isRent() ? 0 : (parseInt(val('f_maxpet')) || 0), taxPercent: num('f_tax') },
@@ -899,12 +901,35 @@ const CONDICIONES = [
    'Si cambiamos estas condiciones o el precio, te avisamos con 30 días de antelación. Si no te parece, puedes cancelar antes de que apliquen.']
 ];
 
-(function pintaCondiciones(){
+/* Las mismas condiciones en inglés. Misma versión: dicen lo mismo. */
+const CONDICIONES_EN = [
+  ['What is included',
+   'Your own booking page for your property: calendar, price calculation, online payment, text in English and Spanish, hosting and the improvements we release. We are not a travel agency and we do not manage your property.'],
+  ['What it costs',
+   '79 USD a month, the same price in every country, charged in advance. If you are one of the first twenty, you get six months at no cost; we give you 30 days\' notice before the first charge and you can cancel without paying anything.'],
+  ['The money from your bookings is yours',
+   'Your guests\' payments go straight into your Stripe account. WD Studio charges no commission on your bookings and never touches that money. Stripe does charge its own fee for processing each payment, which depends on your country. That fee is charged by Stripe, not by us.'],
+  ['If you stop paying',
+   'We let you know. After 15 days without payment the page is suspended and stops accepting new bookings; bookings already confirmed are not affected, because they live in your Stripe and your inbox. We keep your information for 60 days in case you want to come back, and then it is deleted.'],
+  ['Your photos and text are yours',
+   'You authorise us to publish them on your page. We may show your page as an example of our work; if you would rather we didn\'t, tell us in writing and we will stop.'],
+  ['The domain',
+   'Until you have your own, your page lives on one of our subdomains. If you buy your own domain, it is yours: we connect it, and if you ever leave, it stays with you.'],
+  ['Cancelling',
+   'Whenever you like, by writing to hola@wdstudio.agency. The service runs until the end of the month you have already paid for and we hand over your setup and your photos.'],
+  ['What we do not cover',
+   'We are not responsible for what happens between you and your guests, for Stripe\'s decisions about your account, or for outages of third-party services. We do what is reasonable to keep your page online, but we do not guarantee uninterrupted availability.'],
+  ['Changes',
+   'If we change these terms or the price, we give you 30 days\' notice. If you don\'t agree, you can cancel before they apply.']
+];
+
+function pintaCondiciones(){
   const c = document.getElementById('cond-texto');
   if (!c) return;
-  c.innerHTML = CONDICIONES.map(([t, b], i) =>
+  c.innerHTML = (LANG === 'en' ? CONDICIONES_EN : CONDICIONES).map(([t, b], i) =>
     `<p><b>${i + 1}. ${t}.</b> ${b}</p>`).join('');
-})();
+}
+pintaCondiciones();
 
 /* Al quitarle el data-en a la barra, applyLang ya no puede traducirla: hay
    que repintarla a mano al cambiar de idioma. Sólo cuando está en reposo,
@@ -940,6 +965,7 @@ if (ALTA_URL){
      valida, así que no basta con cambiarlo una vez aquí. */
   MSG.ready = ['Al terminar, dale a Publicar mi página.',
                "When you're done, press Publish my page."];
+  status.dataset.publicar = '1';
   status.removeAttribute('data-en');
   repintaBarra();
   bp.addEventListener('click', async () => {
@@ -982,8 +1008,22 @@ if (ALTA_URL){
   });
 }
 
+/* Idioma de entrada: ?lang=en en la dirección, o el que dejó el landing en
+   inglés antes de mandar a Stripe (Stripe devuelve aquí sin decir de dónde
+   venía el cliente). Si no hay ninguno, español como siempre. */
+(function idiomaInicial(){
+  let q = (PARAMS.get('lang') || '').toLowerCase();
+  if (!q) { try { q = localStorage.getItem('bp_lang') || ''; } catch (e) {} }
+  if (q === 'en') {
+    LANG = 'en';
+    if (f.deflang) f.deflang.value = 'en';
+    if (status.dataset.publicar) repintaBarra();
+  }
+})();
+
 applyPlan();
 applyLang();
+pintaAcceso();
 </script>
 </body>
 </html>

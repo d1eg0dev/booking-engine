@@ -230,6 +230,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
   .container,.nav-in{padding-left:22px;padding-right:22px}
   section{padding:72px 0}
   .nav-link{display:none}
+  .nav-lang{display:inline;gap:0}
 }
 </style>
 </head>
@@ -242,6 +243,10 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
       <a class="nav-link" href="#cuenta">La cuenta</a>
       <a class="nav-link" href="#producto">El producto</a>
       <a class="nav-link" href="#precio">Precio</a>
+      <!-- El inglés es otra página, en /en/, no un interruptor dentro de
+           ésta: así cada versión tiene su dirección y se puede mandar por
+           separado a un cliente de fuera. -->
+      <a class="nav-link nav-lang" href="en/" lang="en">EN</a>
       <a class="nav-cta" href="#empezar">Empezar</a>
     </div>
   </div>
