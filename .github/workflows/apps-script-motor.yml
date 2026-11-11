@@ -84,6 +84,12 @@ jobs:
           # deja a todos los clientes sin reservas sin avisar.
           clasp pull
           ls -la
+          # El manifiesto dice si el proyecto está publicado como aplicación
+          # web y con qué acceso. Sin la sección webapp, el despliegue existe
+          # pero la URL no sirve nada y Google contesta un 400 que no explica
+          # por qué. Queda en el log para no tener que adivinarlo.
+          echo "--- appsscript.json ---"; cat appsscript.json
+          echo "--- despliegues ---"; clasp deployments || true
 
       - name: Sustituir el código
         working-directory: /tmp/motor
