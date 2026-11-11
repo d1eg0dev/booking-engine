@@ -54,7 +54,7 @@ nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--g200)}
 .nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:68px;display:flex;
   justify-content:space-between;align-items:center;gap:28px}
-.nav-logo{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.nav-logo{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;white-space:nowrap}
 .nav-logo span{color:var(--g500);font-weight:300}
 .nav-right{display:flex;align-items:center;gap:34px}
 .nav-link{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--g700);transition:color .3s}
@@ -75,7 +75,7 @@ section{padding:120px 0}
 .centro{text-align:center}
 .centro .col,.centro .lead,.centro .sub{margin-left:auto;margin-right:auto}
 .centro .hero-actions{justify-content:center}
-.centro .incluye{margin-left:auto;margin-right:auto;text-align:left}
+.centro .incluye{margin-left:0;margin-right:auto;text-align:left}
 /* Centrar la cabecera de una sección es una cosa; centrar una lista
    numerada, una tabla o un acordeón es romperlos. Todo lo que tiene
    estructura vuelve a la izquierda. */
@@ -98,6 +98,10 @@ section{padding:120px 0}
     rgba(255,255,255,.22) 80%,rgba(255,255,255,.05) 100%)}
 .hero > *{position:relative;z-index:1}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:44px}
+/* Una frase que se parte en dos pierde el golpe, así que en escritorio va
+   entera. En el teléfono no cabe en una línea a ningún tamaño legible, y
+   forzarla desbordaba la página de lado: ahí fluye. */
+@media(min-width:620px){.nowrap{white-space:nowrap}}
 @media(max-width:700px){
   /* En vertical la foto queda detrás de todo el texto, así que el velo
      sube de opacidad: leer manda sobre decorar. */
@@ -198,6 +202,13 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
 .faq details[open] summary::after{content:'—';font-size:1rem}
 .faq p{color:var(--g700);font-size:15px;max-width:66ch;padding-bottom:28px;margin-top:-6px}
 
+/* La línea que cierra la comparación es el argumento, no una nota al pie:
+   se lee en grande y con el filo verde que usa la tabla. */
+.remate{margin-top:46px;max-width:780px;padding:26px 0 26px 28px;
+  border-left:3px solid var(--verde);font-family:var(--display);
+  font-size:clamp(1.3rem,2.6vw,1.75rem);line-height:1.38;color:var(--ink)}
+@media(max-width:700px){.remate{padding-left:20px;margin-top:34px}}
+
 /* Comparación */
 .comp{width:100%;border-collapse:collapse;margin-top:46px;font-size:14.5px}
 .comp th,.comp td{text-align:left;vertical-align:top;padding:18px 20px 18px 0;
@@ -222,7 +233,9 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
   .comp td.gana::before{color:var(--verde-oscuro)}
 }
 
-footer{padding:56px 0;border-top:1px solid var(--g200)}
+footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
+.derechos{margin-top:30px;padding-top:22px;border-top:1px solid var(--g200)}
+.derechos small{font-size:12px;letter-spacing:.04em;color:var(--g500)}
 .pie{display:flex;justify-content:space-between;gap:16px 36px;flex-wrap:wrap;
   font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
 .pie a:hover{color:var(--ink)}
@@ -250,12 +263,12 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
   color:var(--g500);padding:9px 16px;transition:background .2s,color .2s}
 .reel-idioma button[aria-pressed=true]{background:var(--verde);color:#fff}
 .reel-idioma button:hover[aria-pressed=false]{color:var(--ink);background:var(--bone)}
-.reel-sonido{appearance:none;border:1px solid var(--g300);background:transparent;
+.reel-sonido{appearance:none;border:1px solid var(--verde);background:var(--verde);
   cursor:pointer;font-family:var(--body);font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--g500);padding:9px 16px;
+  text-transform:uppercase;color:#fff;padding:9px 16px;
   transition:background .2s,color .2s,border-color .2s}
-.reel-sonido:hover{color:var(--ink);border-color:var(--ink)}
-.reel-sonido[aria-pressed=true]{border-color:var(--verde);color:var(--verde-oscuro)}
+.reel-sonido:hover{background:var(--verde-oscuro);border-color:var(--verde-oscuro)}
+.reel-sonido[aria-pressed=true]{background:transparent;color:var(--g500);border-color:var(--g300)}
 /* En el teléfono sí va de lado a lado: ahí el ancho es lo único que hay. */
 @media(max-width:700px){
   .reel-caja{padding:0}
@@ -317,6 +330,12 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
 }
 @media(max-width:860px){
   .container,.nav-in{padding-left:22px;padding-right:22px}
+  .nav-logo{font-size:11.5px;letter-spacing:.1em}
+  /* El logo en una línea empujaba el botón fuera de la pantalla. Por debajo
+     de 520 px se retira el sufijo: "Booking Page" sigue entero, que es lo
+     que importa, y deja de desbordar. */
+  .nav-in{gap:12px}
+  .nav-right{flex-shrink:1;min-width:0}
   section{padding:72px 0}
   .nav-link{display:none}
   .nav-lang{display:inline;gap:0}
@@ -347,7 +366,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     <div class="container">
       <p class="label">Reserva directa</p>
       <h1 class="display">Tu propiedad, con su propia página de reservas.</h1>
-      <p class="sub">El huésped reserva contigo y te paga a ti.</p>
+      <p class="sub nowrap">El huésped reserva contigo y te paga a ti.</p>
       <p class="lead">Calendario con temporadas, cobro con tarjeta directo a tu cuenta, en
         español e inglés. Tú pones el precio y tú cobras íntegro: nosotros no nos quedamos
         un porcentaje de ninguna reserva.</p>
@@ -520,8 +539,8 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
             <td data-de="Tu página">Respondes tú, con nuestra ayuda en lo técnico.</td></tr>
         </tbody>
       </table>
-      <p class="nota">Por eso casi nadie se sale del portal: lo sensato es tener los dos, y
-        mandar a tu página a los que ya te conocen.</p>
+      <p class="remate">Por eso casi nadie se sale del portal: lo sensato es tener los dos,
+        y mandar a tu página a los que ya te conocen.</p>
     </div>
   </section>
 
@@ -543,6 +562,9 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
           dirección propia. No instalas ni configuras nada.</p></div></li>
         <li><div><h3>Conectas tu Stripe</h3><p>Un botón. Desde ahí, cada reserva se cobra y
           el dinero entra a tu cuenta.</p></div></li>
+        <li><div><h3>Empiezas a recibir reservas directas</h3><p>Mandas tu enlace por WhatsApp,
+          lo pones en tu Instagram o lo dejas en un código QR dentro de la casa. Quien ya te
+          conoce reserva contigo, sin comisión de nadie.</p></div></li>
       </ol>
     </div>
   </section>
@@ -673,6 +695,9 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     <span>Booking Page · WD Studio Agency</span>
     <a href="mailto:hola@wdstudio.agency">hola@wdstudio.agency</a>
   </div>
+  <div class="container derechos">
+    <small>&copy; 2026 WD Studio Agency. Todos los derechos reservados.</small>
+  </div>
 </footer>
 
 <script>
@@ -760,12 +785,27 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
   /* El navegador sólo deja arrancar solo lo que está en silencio. El botón
      es la única forma honesta de ofrecer el audio: nadie quiere que una
      página le hable sin avisar. */
-  if (son) son.addEventListener('click', function(){
-    v.muted = !v.muted;
-    son.setAttribute('aria-pressed', String(!v.muted));
-    son.textContent = v.muted ? 'Con sonido' : 'Silenciar';
-    if (v.muted === false) v.play().catch(function(){});
-  });
+  function sonido(encender, desdeElPrincipio){
+    v.muted = !encender;
+    if (son){
+      son.setAttribute('aria-pressed', String(encender));
+      son.textContent = encender ? 'Silenciar' : 'Con sonido';
+    }
+    if (encender){
+      /* Si ya iba por la mitad, se vuelve al principio: oír la segunda
+         mitad de una narración no se entiende. */
+      if (desdeElPrincipio && v.currentTime > 1) v.currentTime = 0;
+      v.play().catch(function(){});
+    }
+  }
+  if (son) son.addEventListener('click', function(){ sonido(v.muted, true); });
+
+  /* El primer clic sobre el vídeo también lo enciende. Es el gesto que
+     cualquiera hace al querer oír algo, y además es la interacción que el
+     navegador exige para dejar sonar el audio. */
+  var caja = document.querySelector('.reel-video');
+  if (caja) caja.addEventListener('click', function(){ sonido(v.muted, true); });
+  if (caja) caja.style.cursor = 'pointer';
 
   if (quieto){ v.controls = true; return; }
   if (!('IntersectionObserver' in window)){ v.preload = 'auto'; v.play().catch(function(){}); return; }
