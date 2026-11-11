@@ -852,6 +852,7 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
     return Math.round(n).toLocaleString(loc || 'en-US', { style:'currency', currency:mon,
       currencyDisplay:'narrowSymbol', maximumFractionDigits:0 });
   }
+  function moneda(n, mon, l){ return dinero(n, mon, l) + ' ' + mon; }
   function loc(mon){
     for (var i = 0; i < MONEDAS.length; i++) if (MONEDAS[i][0] === mon) return MONEDAS[i][2];
     return 'en-US';
@@ -910,10 +911,13 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       $('r-ahorro').textContent = dinero(comision, est.mon, L);
     }
 
-    $('p-mes').textContent = conv ? dinero(MES_USD * FX[est.mon], est.mon, L) : MES_USD + ' USD';
-    $('p-ano').textContent = conv ? dinero(ANO_USD * FX[est.mon], est.mon, L) : ANO_USD + ' USD';
+    /* Con el código de moneda detrás. El símbolo corto no basta: 79 dólares y
+       1.481 pesos salen los dos como «$…», y en la caja del precio es justo
+       donde nadie debería tener que adivinar cuál está viendo. */
+    $('p-mes').textContent = conv ? moneda(MES_USD * FX[est.mon], est.mon, L) : MES_USD + ' USD';
+    $('p-ano').textContent = conv ? moneda(ANO_USD * FX[est.mon], est.mon, L) : ANO_USD + ' USD';
     $('p-ano-nota').textContent = conv
-      ? 'a year · you save ' + dinero((MES_USD * 12 - ANO_USD) * FX[est.mon], est.mon, L)
+      ? 'a year · you save ' + moneda((MES_USD * 12 - ANO_USD) * FX[est.mon], est.mon, L)
       : 'a year · you save ' + (MES_USD * 12 - ANO_USD) + ' USD';
 
     var base = 'This only counts bookings that would reach you anyway: repeat guests, '
