@@ -118,6 +118,49 @@ jobs:
             echo "Commit \`${GITHUB_SHA::7}\` · la URL de los clientes no cambia."
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # La URL que atiende a los clientes no se puede deducir del id de la
+      # implementación: hay que preguntársela a Google. Y si no coincide con
+      # MOTOR_EXEC, cada alta publica una dirección muerta en el config.json
+      # del cliente sin que nada falle por ningún lado.
+      - name: Comprobar la URL que atiende
+        env:
+          EXEC: ${{ vars.MOTOR_EXEC }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.parse, urllib.request
+
+          cred = json.loads(pathlib.Path(os.environ['HOME'], '.clasprc.json').read_text())
+          tok = cred.get('token') or cred.get('tokens', {}).get('default') or {}
+          datos = urllib.parse.urlencode({
+              'client_id': tok.get('client_id') or cred.get('oauth2ClientSettings', {}).get('clientId'),
+              'client_secret': tok.get('client_secret') or cred.get('oauth2ClientSettings', {}).get('clientSecret'),
+              'refresh_token': tok['refresh_token'],
+              'grant_type': 'refresh_token',
+          }).encode()
+          with urllib.request.urlopen('https://oauth2.googleapis.com/token', datos) as r:
+              acceso = json.load(r)['access_token']
+
+          url = ('https://script.googleapis.com/v1/projects/'
+                 f"{os.environ['SCRIPT_ID']}/deployments/{os.environ['DEPLOY_ID']}")
+          pet = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + acceso})
+          with urllib.request.urlopen(pet) as r:
+              d = json.load(r)
+
+          print(json.dumps(d, indent=2, ensure_ascii=False))
+          reales = [e['webApp']['url'] for e in d.get('entryPoints', []) if e.get('webApp')]
+          if not reales:
+              print('::error::Esta implementación no publica ninguna aplicación web.')
+              raise SystemExit(1)
+          real = reales[0]
+          print('URL que atiende:', real)
+          esperada = (os.environ.get('EXEC') or '').strip()
+          if esperada != real:
+              print(f'::error::MOTOR_EXEC no coincide. Tiene {esperada or "(vacío)"} '
+                    f'y Google atiende en {real}')
+              raise SystemExit(1)
+          print('MOTOR_EXEC coincide.')
+          PY
+
       - name: Borrar la credencial
         if: always()
         run: rm -f "$HOME/.clasprc.json" "$HOME/.config/clasp/.clasprc.json"
