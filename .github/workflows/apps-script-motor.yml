@@ -1,0 +1,109 @@
+name: Desplegar el motor de reservas
+
+# El backend compartido de reservas: backend/Code.gs. Uno solo para todos los
+# clientes, que resuelve de quién es cada petición por el slug. Antes era un
+# proyecto de Apps Script por propiedad, creado y desplegado a mano, y eso era
+# el cuello de botella del alta.
+#
+# Es el mismo mecanismo que apps-script.yml, pero apuntando a otro proyecto.
+# Son dos web apps distintas a propósito: una recibe altas y la otra atiende
+# reservas. Si compartieran proyecto, compartirían doGet y se pisarían.
+#
+# Variables del repositorio que necesita (Settings · Secrets and variables ·
+# Actions · Variables), no son secretos:
+#   MOTOR_SCRIPT_ID   id del proyecto de Apps Script que lleva Code.gs
+#   MOTOR_DEPLOY_ID   id del despliegue, lo que va entre /macros/s/ y /exec
+#
+# Y el mismo secreto CLASPRC que el otro flujo.
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/Code.gs', '.github/workflows/apps-script-motor.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Comprobar la configuración
+        env:
+          SCRIPT_ID: ${{ vars.MOTOR_SCRIPT_ID }}
+          DEPLOY_ID: ${{ vars.MOTOR_DEPLOY_ID }}
+          CLASPRC: ${{ secrets.CLASPRC }}
+        run: |
+          falta=0
+          for v in SCRIPT_ID DEPLOY_ID CLASPRC; do
+            if [ -z "${!v}" ]; then echo "::error::Falta $v"; falta=1; fi
+          done
+          if [ "$falta" = 1 ]; then
+            echo "::error::Mira la cabecera de este archivo para saber qué poner."
+            exit 1
+          fi
+
+      - name: Instalar clasp
+        run: npm install -g @google/clasp@2.5.0
+
+      - name: Poner la credencial
+        env:
+          CLASPRC: ${{ secrets.CLASPRC }}
+        run: |
+          printf '%s' "$CLASPRC" > "$HOME/.clasprc.json"
+          mkdir -p "$HOME/.config/clasp" && cp "$HOME/.clasprc.json" "$HOME/.config/clasp/.clasprc.json"
+          node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.clasprc.json','utf8'))" \
+            || { echo "::error::CLASPRC no es un JSON válido."; exit 1; }
+
+      - name: Traer lo que hay en el servidor
+        working-directory: /tmp
+        env:
+          SCRIPT_ID: ${{ vars.MOTOR_SCRIPT_ID }}
+        run: |
+          mkdir -p motor && cd motor
+          printf '{"scriptId":"%s","rootDir":"."}' "$SCRIPT_ID" > .clasp.json
+          # Se baja primero para conservar el manifiesto: subir uno inventado
+          # puede cambiar quién ejecuta el web app y quién tiene acceso, y eso
+          # deja a todos los clientes sin reservas sin avisar.
+          clasp pull
+          ls -la
+
+      - name: Sustituir el código
+        working-directory: /tmp/motor
+        run: |
+          mapfile -t FUENTES < <(find . -maxdepth 1 \( -name '*.gs' -o -name '*.js' \) -printf '%f\n' | sort)
+          echo "Archivos en el servidor: ${FUENTES[*]:-ninguno}"
+          if [ "${#FUENTES[@]}" -eq 0 ]; then
+            DESTINO="Code.gs"
+          elif [ "${#FUENTES[@]}" -eq 1 ]; then
+            DESTINO="${FUENTES[0]}"
+          else
+            echo "::error::Hay ${#FUENTES[@]} archivos de código (${FUENTES[*]}). Déjalo en uno solo."
+            exit 1
+          fi
+          echo "Sustituyo $DESTINO"
+          cp "$GITHUB_WORKSPACE/backend/Code.gs" "$DESTINO"
+          node --check "$DESTINO" || { echo "::error::El código no compila."; exit 1; }
+
+      - name: Subir y desplegar
+        working-directory: /tmp/motor
+        env:
+          DEPLOY_ID: ${{ vars.MOTOR_DEPLOY_ID }}
+        run: |
+          clasp push --force
+          clasp deploy -i "$DEPLOY_ID" -d "auto ${GITHUB_SHA::7}"
+          {
+            echo "### Motor de reservas desplegado"
+            echo "Commit \`${GITHUB_SHA::7}\` · la URL de los clientes no cambia."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Borrar la credencial
+        if: always()
+        run: rm -f "$HOME/.clasprc.json" "$HOME/.config/clasp/.clasprc.json"

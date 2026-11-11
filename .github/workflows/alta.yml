@@ -80,8 +80,17 @@ jobs:
         id: alta
         env:
           GH_TOKEN: ${{ secrets.ALTA_TOKEN }}
+          # URL del backend compartido de reservas, el /exec del proyecto que
+          # lleva backend/Code.gs. Va como variable del repositorio y no como
+          # secreto porque no lo es: acaba escrita en el config.json público
+          # de cada cliente. Si está vacía, el alta publica la página sin
+          # backend y avisa, en vez de escribir una dirección rota.
+          MOTOR_EXEC: ${{ vars.MOTOR_EXEC }}
         run: |
           set -o pipefail
+          if [ -z "$MOTOR_EXEC" ]; then
+            echo "::warning::Falta la variable MOTOR_EXEC: la página saldrá sin motor de reservas."
+          fi
           ARGS=(tools/alta.py "${{ steps.datos.outputs.slug }}" --config alta-config.json --json)
           if [ -n "${{ steps.datos.outputs.dominio }}" ]; then
             ARGS+=(--domain "${{ steps.datos.outputs.dominio }}")

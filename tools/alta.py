@@ -34,6 +34,12 @@ DOMINIO_OK = re.compile(r'^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$')
 # un cliente nuevo no necesita que se toque el DNS: basta con que su repo
 # lleve el CNAME con su subdominio.
 DOMINIO_BASE = 'wdstudio.agency'
+# El backend de reservas es uno solo para todos los clientes: cada página lo
+# llama con su propio slug y el backend resuelve de quién es la petición.
+# Antes había que crear y desplegar un proyecto de Apps Script por cliente,
+# que era el cuello de botella del alta. Se puede sobreescribir con la
+# variable de entorno MOTOR_EXEC para apuntar a un despliegue de pruebas.
+MOTOR_EXEC = os.environ.get('MOTOR_EXEC', '').strip()
 
 
 class Alto(Exception):
@@ -218,6 +224,11 @@ def arma_carpeta(slug, cfg, destino, usuario, dominio):
         raise Alto('plantilla.html no trae el marcador __MOTOR__.')
     (destino / 'index.html').write_text(
         plantilla.replace('__MOTOR__', motor), encoding='utf-8')
+    # La página pregunta disponibilidad y crea reservas contra el backend
+    # compartido, diciéndole con ?c= quién es. motor.js ya sabe añadir el
+    # resto de parámetros a esta dirección, así que no hay que tocar nada más.
+    if MOTOR_EXEC:
+        cfg['backendUrl'] = f'{MOTOR_EXEC}?c={slug}'
     (destino / 'config.json').write_text(
         json.dumps(cfg, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     if dominio:

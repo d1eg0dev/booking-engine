@@ -1,14 +1,27 @@
 /**
- * Backend del motor de reservas (Google Apps Script, ligado a una Google Sheet).
- * NO se edita por cliente. Todo sale de config.json (CONFIG_URL) y de las Propiedades del script.
+ * Backend de reservas, compartido por TODOS los clientes.
  *
- * Propiedades del script (Configuración del proyecto → Propiedades del script):
- *   CONFIG_URL         URL pública del config.json del cliente (p. ej. https://usuario.github.io/casa-x/config.json)
- *   STRIPE_SECRET_KEY  sk_live_... o sk_test_...   (solo si payment.mode = "stripe")
- *   OWNER_EMAIL        correo(s) del dueño para avisos, separados por coma
+ * Antes había un proyecto de Apps Script por propiedad, pegado a su hoja.
+ * Eso significaba que dar de alta a alguien exigía crear y desplegar un
+ * proyecto a mano, y que corregir un error de cálculo obligaba a redesplegar
+ * tantas veces como clientes hubiera. Ahora hay una sola implementación y
+ * una sola URL: cada petición trae el slug del cliente y de ahí se resuelve
+ * su configuración y su hoja.
  *
- * Hojas que crea setup(): "Reservas" y "Bloqueos" (en Bloqueos: columna A = desde, B = hasta, C = nota).
+ * Aislamiento: el id de la hoja NO viaja en la petición. La página sólo
+ * manda el slug, y el id se busca en el registro de altas, que es nuestro.
+ * Así nadie puede pedirle a este backend que abra una hoja que no hayamos
+ * dado de alta, por mucho que se invente un slug.
+ *
+ * Propiedades del script:
+ *   REGISTRO_ID        id de la hoja de altas (la misma de backend/Intake.gs)
+ *   STRIPE_SECRET_KEY  clave de la plataforma; el cobro se hace sobre la
+ *                      cuenta del propietario con la cabecera Stripe-Account
+ *   OWNER_EMAIL        opcional, sólo como destino de respaldo
  */
+
+var DOMINIO_BASE = 'wdstudio.agency';
+var SLUG_OK = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/;
 
 var SHEET_BOOKINGS = 'Reservas';
 var SHEET_BLOCKS = 'Bloqueos';
@@ -18,6 +31,8 @@ var HEADERS = ['Creada', 'Referencia', 'Estado', 'Nombre', 'Correo', 'Teléfono'
 function doGet(e) {
   var a = (e.parameter.action || '');
   try {
+    if (!a) return json({ ok: true });            // sonda de vida, sin cliente
+    abre_(e.parameter.c);
     if (a === 'availability') return json({ blocked: blockedDates() });
     if (a === 'confirm') return json(confirmSession(e.parameter.session_id));
     return json({ ok: true });
@@ -26,9 +41,14 @@ function doGet(e) {
 
 function doPost(e) {
   var a = (e.parameter.action || '');
+  /* El cerrojo es de todo el script, así que ahora serializa a todos los
+     clientes y no sólo a uno. Se coge DESPUÉS de resolver el cliente y se
+     suelta enseguida: lo que protege es el momento de escribir la reserva,
+     que es donde dos peticiones podrían pisarse las mismas fechas. */
   var lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
+    abre_(e.parameter.c);
     var body = JSON.parse(e.postData.contents || '{}');
     if (a === 'book') return json(createBooking(body));
     if (a === 'lead') return json(createLead(body));
@@ -52,19 +72,66 @@ function cabecerasStripe_(cfg) {
 }
 
 function config() {
-  var cache = CacheService.getScriptCache(), hit = cache.get('cfg');
-  if (hit) return JSON.parse(hit);
-  var res = UrlFetchApp.fetch(prop('CONFIG_URL') + '?t=' + Date.now(), { muteHttpExceptions: true });
-  if (res.getResponseCode() !== 200) throw new Error('No se pudo leer CONFIG_URL');
-  cache.put('cfg', res.getContentText(), 300);
-  return JSON.parse(res.getContentText());
+  if (!CTX) throw new Error('sin cliente');
+  return CTX.cfg;
 }
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
-function sheet(name) { return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name); }
+
+/* ---------- de quién es esta petición ---------- */
+/* CTX dura lo que dura la ejecución. Cada llamada al web app arranca de
+   cero, así que no hay forma de que el contexto de un cliente sobreviva a
+   la petición de otro. */
+var CTX = null;
+
+function abre_(slug) {
+  if (!SLUG_OK.test(String(slug || ''))) throw new Error('cliente no válido');
+  var cache = CacheService.getScriptCache();
+
+  /* Las claves de caché llevan el slug. Sin eso, el primer cliente que
+     pidiera disponibilidad dejaría SUS fechas bloqueadas en la caché y el
+     siguiente las leería como propias: justo la mezcla que este diseño no
+     se puede permitir. */
+  var kCfg = 'cfg_' + slug, hit = cache.get(kCfg), cfg;
+  if (hit) { cfg = JSON.parse(hit); }
+  else {
+    var url = 'https://' + slug + '.' + DOMINIO_BASE + '/config.json?t=' + Date.now();
+    var r = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) throw new Error('no se pudo leer la configuración de ' + slug);
+    cfg = JSON.parse(r.getContentText());
+    cache.put(kCfg, r.getContentText(), 300);
+  }
+
+  var kHoja = 'hoja_' + slug, idHoja = cache.get(kHoja);
+  if (!idHoja) {
+    idHoja = buscaHoja_(slug);
+    if (!idHoja) throw new Error('ese cliente no tiene hoja registrada');
+    cache.put(kHoja, idHoja, 1800);
+  }
+
+  CTX = { slug: slug, cfg: cfg, ss: SpreadsheetApp.openById(idHoja) };
+  return CTX;
+}
+
+/** Busca en el registro de altas la hoja que le toca a un slug. */
+function buscaHoja_(slug) {
+  var reg = SpreadsheetApp.openById(prop('REGISTRO_ID')).getSheets()[0];
+  var datos = reg.getDataRange().getValues();
+  var cab = datos[0].map(function (c) { return String(c).trim().toLowerCase(); });
+  var cSlug = cab.indexOf('slug'), cHoja = cab.indexOf('hoja del cliente');
+  if (cSlug === -1 || cHoja === -1) return '';
+  for (var i = 1; i < datos.length; i++) {
+    if (String(datos[i][cSlug]).trim() !== slug) continue;
+    var m = String(datos[i][cHoja] || '').match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) return m[1];
+  }
+  return '';
+}
+
+function sheet(name) { return CTX.ss.getSheetByName(name); }
 
 /* ---------- disponibilidad ---------- */
 function blockedDates() {
-  var cache = CacheService.getScriptCache(), hit = cache.get('blocked');
+  var cache = CacheService.getScriptCache(), kB = 'blocked_' + CTX.slug, hit = cache.get(kB);
   if (hit) return JSON.parse(hit);
   var cfg = config(), set = {};
   function addRange(from, to) { BookingPricing.dayList(from, to).forEach(function (d) { set[d] = 1; }); }
@@ -92,11 +159,11 @@ function blockedDates() {
   });
 
   var out = Object.keys(set).sort();
-  cache.put('blocked', JSON.stringify(out), 600);
+  cache.put(kB, JSON.stringify(out), 600);
   return out;
 }
 function ymd(s) { return s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6, 8); }
-function isoDate(v) { return v instanceof Date ? Utilities.formatDate(v, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd') : String(v).slice(0, 10); }
+function isoDate(v) { return v instanceof Date ? Utilities.formatDate(v, CTX.ss.getSpreadsheetTimeZone(), 'yyyy-MM-dd') : String(v).slice(0, 10); }
 function addDays(d, n) { var x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); }
 
 /* ---------- reservas ---------- */
@@ -111,7 +178,7 @@ function validate(b) {
 function createBooking(b) {
   validate(b);
   var cfg = config();
-  CacheService.getScriptCache().remove('blocked');
+  CacheService.getScriptCache().remove('blocked_' + CTX.slug);
   b.blocked = blockedDates();
   var q = BookingPricing.quote(cfg, b, b.lang);           // el precio se recalcula aquí: el navegador no lo decide
   if (!q.ok) return { error: q.error };
@@ -174,7 +241,7 @@ function confirmSession(sid) {
   if (!f) return { paid: true, ref: (s.metadata && s.metadata.ref) || '', email: s.customer_email };
   if (f.v[2] !== 'Pagada') {
     sheet(SHEET_BOOKINGS).getRange(f.row, 3).setValue('Pagada');
-    CacheService.getScriptCache().remove('blocked');
+    CacheService.getScriptCache().remove('blocked_' + CTX.slug);
     sendConfirmations(f.v);
   }
   return { paid: true, ref: f.v[1], email: f.v[4] };
@@ -202,7 +269,27 @@ function sendConfirmations(v) {
 }
 
 /* ---------- reservas abandonadas (activador cada hora) ---------- */
+/* El disparador horario es uno solo para toda la plataforma: recorre el
+   registro y revisa cliente por cliente. Si uno falla —una hoja borrada, un
+   config.json caído— se anota y se sigue con el siguiente, porque si no, el
+   primero roto dejaría sin recordatorio a todos los demás. */
 function recoverAbandoned() {
+  var reg = SpreadsheetApp.openById(prop('REGISTRO_ID')).getSheets()[0];
+  var datos = reg.getDataRange().getValues();
+  var cab = datos[0].map(function (c) { return String(c).trim().toLowerCase(); });
+  var cSlug = cab.indexOf('slug');
+  if (cSlug === -1) return;
+  var vistos = {};
+  for (var k = 1; k < datos.length; k++) {
+    var sl = String(datos[k][cSlug]).trim();
+    if (!sl || vistos[sl] || !SLUG_OK.test(sl)) continue;
+    vistos[sl] = 1;
+    try { abre_(sl); recuperaCliente_(); }
+    catch (err) { console.warn('recuperación de ' + sl + ': ' + err.message); }
+  }
+}
+
+function recuperaCliente_() {
   var sh = sheet(SHEET_BOOKINGS), n = sh.getLastRow();
   if (n < 2) return;
   var cfg = config(), now = Date.now(), vals = sh.getRange(2, 1, n - 1, HEADERS.length).getValues(), blocked = null;
@@ -224,16 +311,31 @@ function recoverAbandoned() {
 }
 
 /* ---------- instalación (correr una vez) ---------- */
-function setup() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var a = ss.getSheetByName(SHEET_BOOKINGS) || ss.insertSheet(SHEET_BOOKINGS);
-  a.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight('bold'); a.setFrozenRows(1);
-  var b = ss.getSheetByName(SHEET_BLOCKS) || ss.insertSheet(SHEET_BLOCKS);
-  b.getRange(1, 1, 1, 3).setValues([['Desde', 'Hasta', 'Nota']]).setFontWeight('bold'); b.setFrozenRows(1);
-  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'recoverAbandoned') ScriptApp.deleteTrigger(t); });
+/* Las hojas de cada cliente las crea el alta (backend/Intake.gs), así que
+   aquí ya no hay nada que montar por propiedad. Esto queda como prueba de
+   que la plataforma está bien configurada: registro accesible, cliente
+   resoluble, hoja abierta y config legible. */
+function comprueba(slug) {
+  if (!slug) return 'Pásale un slug: comprueba("casa-larios")';
+  var c = abre_(slug);
+  var r = sheet(SHEET_BOOKINGS), b = sheet(SHEET_BLOCKS);
+  return [
+    'Cliente: ' + c.cfg.property.name,
+    'Hoja: ' + c.ss.getName(),
+    'Reservas: ' + (r ? r.getLastRow() - 1 + ' filas' : 'FALTA la pestaña'),
+    'Bloqueos: ' + (b ? b.getLastRow() - 1 + ' filas' : 'FALTA la pestaña'),
+    'Fechas bloqueadas: ' + blockedDates().length,
+    'Cobro: ' + c.cfg.payment.mode + (c.cfg.payment.stripeAccount ? ' · ' + c.cfg.payment.stripeAccount : ' · sin cuenta conectada')
+  ].join('\n');
+}
+
+/* El disparador horario, una sola vez para toda la plataforma. */
+function instalaDisparador() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'recoverAbandoned') ScriptApp.deleteTrigger(t);
+  });
   ScriptApp.newTrigger('recoverAbandoned').timeBased().everyHours(1).create();
-  config();                                                         // prueba que CONFIG_URL responde
-  return 'Listo';
+  return 'Disparador puesto';
 }
 
 /* ================= pricing.js (copiado automáticamente; no editar aquí) ================= */
