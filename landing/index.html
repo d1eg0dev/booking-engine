@@ -204,9 +204,12 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
   border-top:1px solid var(--g300)}
 .comp thead th{border-top:0;font-size:10px;letter-spacing:.3em;text-transform:uppercase;
   color:var(--g500);font-weight:500;padding-bottom:10px}
-.comp tbody th{font-weight:400;color:var(--ink);width:22%}
-.comp td{color:var(--g700);width:39%}
-.comp td.gana{color:var(--ink)}
+.comp tbody th{font-weight:400;color:var(--ink);width:26%;padding-right:30px;
+  hyphens:none;overflow-wrap:normal;text-wrap:balance}
+.comp td{color:var(--g500);width:37%;padding-left:20px;transition:background .25s}
+.comp td.gana{color:var(--ink);background:var(--verde-palido);
+  box-shadow:inset 3px 0 0 var(--verde)}
+.comp thead th:last-child{color:var(--verde)}
 @media(max-width:760px){
   .comp,.comp tbody,.comp tr,.comp th,.comp td{display:block;width:auto}
   .comp thead{display:none}
@@ -214,6 +217,9 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
   .comp th,.comp td{border:0;padding:0 0 7px}
   .comp tbody th{font-weight:500}
   .comp td::before{content:attr(data-de) ' · ';color:var(--g500)}
+  .comp td{padding:7px 12px;width:auto}
+  .comp td.gana{box-shadow:inset 3px 0 0 var(--verde);border-radius:0}
+  .comp td.gana::before{color:var(--verde-oscuro)}
 }
 
 footer{padding:56px 0;border-top:1px solid var(--g200)}
@@ -526,7 +532,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
          loading="lazy" width="1920" height="1279">
   </figure>
 
-  <section class="bone centro">
+  <section class="bone">
     <div class="container">
       <p class="label">Cómo funciona</p>
       <h2 class="heading">Tres pasos y estás cobrando.</h2>
@@ -564,7 +570,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
          loading="lazy" width="1819" height="1213">
   </figure>
 
-  <section class="bone centro" id="precio">
+  <section class="bone" id="precio">
     <div class="container">
       <p class="label">Precio</p>
       <h2 class="heading">Una cuota. Cero comisión por reserva.</h2>
