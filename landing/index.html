@@ -11,6 +11,12 @@
 <style>
 :root{
   --ink:#0B0B0B; --paper:#FFFFFF; --bone:#F4F2ED;
+  /* El verde sale del reel: es el turquesa de los círculos, muestreado del
+     propio vídeo, para que la página y la pieza se lean como una sola cosa.
+     El morado sustituye al negro en los fondos oscuros: mismo peso, bastante
+     menos frío. Uno señala lo que se toca, el otro sostiene. */
+  --verde:#0E9C7A; --verde-oscuro:#0A7D61; --verde-palido:#EDF8F4;
+  --morado:#271D41; --morado-claro:#3A2C5E;
   --g900:#171717; --g800:#262626; --g700:#404040;
   --g500:#737373; --g400:#A3A3A3; --g300:#D4D4D4; --g200:#E7E5E1;
   --display:'Cormorant Garamond',Georgia,serif;
@@ -37,10 +43,10 @@ p.lead{margin-top:22px;color:var(--g700);max-width:62ch}
 
 .btn{display:inline-block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
   padding:16px 34px;transition:all .3s;cursor:pointer;font-family:inherit;border:1px solid transparent}
-.btn-solid{background:var(--ink);color:#fff}
-.btn-solid:hover{background:var(--g800)}
+.btn-solid{background:var(--verde);color:#fff}
+.btn-solid:hover{background:var(--verde-oscuro)}
 .btn-ghost{border-color:var(--g300);color:var(--ink)}
-.btn-ghost:hover{border-color:var(--ink)}
+.btn-ghost:hover{border-color:var(--verde);color:var(--verde-oscuro)}
 .btn-line{border-color:rgba(255,255,255,.45);color:#fff}
 .btn-line:hover{background:#fff;color:var(--ink)}
 
@@ -59,12 +65,28 @@ nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
 
 section{padding:120px 0}
 .bone{background:var(--bone)}
-.dark{background:var(--ink);color:#fff}
+.dark{background:var(--morado);color:#fff}
 .dark .label{color:var(--g400)}
 .dark .sub{color:var(--g300)}
 
-.hero{padding:clamp(80px,11vw,150px) 0 clamp(64px,8vw,110px)}
+/* La portada llevaba sólo tipografía sobre blanco y entraba fría. Ahora la
+   sostiene una fotografía, con un velo blanco encima para que el texto siga
+   leyéndose: la foto es el ambiente, no el protagonista. */
+.hero{position:relative;padding:clamp(96px,12vw,170px) 0 clamp(80px,9vw,120px);
+  background:var(--bone);overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background:url('media/foto-alberca.jpg') center 62% / cover no-repeat;
+  opacity:.5}
+.hero::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.9) 42%,
+    rgba(255,255,255,.55) 78%,rgba(255,255,255,.35) 100%)}
+.hero > *{position:relative;z-index:1}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:44px}
+@media(max-width:700px){
+  /* En vertical la foto queda detrás de todo el texto, así que el velo
+     sube de opacidad: leer manda sobre decorar. */
+  .hero::after{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.88))}
+}
 
 /* La cuenta */
 .cuenta{display:grid;gap:56px;margin-top:56px;align-items:start}
@@ -92,7 +114,10 @@ select{width:100%;font:300 15px var(--body);color:var(--ink);background:transpar
 .nota{margin-top:26px;font-size:12.5px;line-height:1.6;color:var(--g500);max-width:48ch}
 
 /* Muestra del producto */
-.media{margin-top:52px;border:1px solid var(--g200);background:#fff}
+/* Centrada y a dos tercios, no a sangre: la grabación de escritorio mide
+   1440 px de ancho, y estirarla a una pantalla de 1800 la amplía y la deja
+   blanda. A 860 se ve nítida, que es de lo que va este bloque. */
+.media{margin:52px auto 0;max-width:860px;border:1px solid var(--g200);background:#fff}
 .media video{display:block;width:100%;height:auto;background:var(--bone)}
 .media .v-angosta{display:none}
 @media(max-width:640px){
@@ -175,26 +200,36 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
    Va a sangre y pegado a la portada: es lo primero que se ve moverse.
    Lleva audio y narración, así que no se reproduce solo con sonido: arranca
    en silencio y en bucle, y quien quiera oírlo le da al control. */
-.reel{position:relative;background:var(--ink);line-height:0}
-.reel video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
-.reel-barra{position:absolute;left:0;right:0;bottom:0;display:flex;
-  justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 24px;
-  background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0));
-  line-height:1.5;pointer-events:none}
-.reel-barra > *{pointer-events:auto}
-.reel-idioma{display:flex;border:1px solid rgba(255,255,255,.45);overflow:hidden}
+/* El reel es blanco por dentro, así que no lleva fondo oscuro ni degradado
+   encima: sobre un vídeo claro, un velo negro para apoyar botones se ve como
+   una mancha. Los controles van debajo del vídeo, nunca sobre él, y así
+   tampoco tapan nada en el teléfono. En escritorio no va a sangre: se queda
+   en dos tercios y centrado, que además es la resolución a la que el vídeo
+   se ve nítido en vez de ampliado. */
+.reel{padding:0 0 clamp(56px,7vw,96px);background:var(--paper)}
+.reel-caja{max-width:860px;margin:0 auto;padding:0 40px}
+.reel-video{line-height:0;background:var(--bone);overflow:hidden;
+  border:1px solid var(--g200)}
+.reel-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.reel-barra{display:flex;justify-content:space-between;align-items:center;
+  gap:16px;flex-wrap:wrap;margin-top:16px}
+.reel-idioma{display:flex;border:1px solid var(--g300);overflow:hidden}
 .reel-idioma button{appearance:none;border:0;background:transparent;cursor:pointer;
   font-family:var(--body);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(255,255,255,.75);padding:9px 15px;transition:background .2s,color .2s}
-.reel-idioma button[aria-pressed=true]{background:#fff;color:var(--ink)}
-.reel-idioma button:hover[aria-pressed=false]{color:#fff;background:rgba(255,255,255,.14)}
-.reel-sonido{appearance:none;border:1px solid rgba(255,255,255,.45);background:transparent;
+  color:var(--g500);padding:9px 16px;transition:background .2s,color .2s}
+.reel-idioma button[aria-pressed=true]{background:var(--verde);color:#fff}
+.reel-idioma button:hover[aria-pressed=false]{color:var(--ink);background:var(--bone)}
+.reel-sonido{appearance:none;border:1px solid var(--g300);background:transparent;
   cursor:pointer;font-family:var(--body);font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(255,255,255,.75);padding:9px 15px;
-  transition:background .2s,color .2s}
-.reel-sonido:hover{color:#fff;background:rgba(255,255,255,.14)}
-@media(max-width:600px){
-  .reel-barra{padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+  text-transform:uppercase;color:var(--g500);padding:9px 16px;
+  transition:background .2s,color .2s,border-color .2s}
+.reel-sonido:hover{color:var(--ink);border-color:var(--ink)}
+.reel-sonido[aria-pressed=true]{border-color:var(--verde);color:var(--verde-oscuro)}
+/* En el teléfono sí va de lado a lado: ahí el ancho es lo único que hay. */
+@media(max-width:700px){
+  .reel-caja{padding:0}
+  .reel-video{border-left:0;border-right:0}
+  .reel-barra{padding:0 22px;gap:10px}
   .reel-idioma button,.reel-sonido{padding:8px 13px;font-size:10px}
 }
 
@@ -202,12 +237,33 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
    Rompen la sucesión de bloques de texto. Van a sangre del todo, sin
    contenedor, porque una foto con márgenes a los lados parece una
    ilustración y una a sangre parece el sitio. */
-.banda{line-height:0;background:var(--bone)}
-.banda img{display:block;width:100%;height:auto;aspect-ratio:21/9;object-fit:cover}
-.banda-par{display:grid;gap:2px;background:var(--g200)}
-@media(min-width:760px){.banda-par{grid-template-columns:1fr 1fr}}
+/* Las fotos ya no van a sangre de lado a lado: eso las convertía en una
+   cortina entre secciones. Ahora ocupan media página y alternan lado, con
+   el texto de la sección al otro: se leen como parte del argumento y no
+   como un descanso. En el teléfono no caben dos, así que va una sola y la
+   otra desaparece en vez de encogerse hasta no verse nada. */
+.banda{line-height:0;background:var(--bone);max-width:1280px;margin:0 auto;padding:0 40px}
+.banda img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.banda-media{max-width:1280px;margin:0 auto;padding:0 40px;display:grid;gap:0}
+@media(min-width:860px){
+  .banda-media{grid-template-columns:1fr 1fr;gap:0}
+  .banda-media.derecha img{order:2}
+}
+.banda-par{display:grid;gap:2px;background:var(--g200);
+  max-width:1280px;margin:0 auto;padding:0 40px}
+@media(min-width:860px){.banda-par{grid-template-columns:1fr 1fr;gap:2px}}
 .banda-par img{aspect-ratio:4/3}
-@media(max-width:600px){.banda img{aspect-ratio:3/2}}
+@media(max-width:859px){
+  /* La segunda de un par se retira: dos fotos de 180 px de alto una encima
+     de la otra no enseñan nada y alargan el scroll. */
+  .banda-par img:nth-child(2){display:none}
+  .banda-par{padding:0 22px}
+  .banda-par img{aspect-ratio:16/9}
+}
+@media(max-width:700px){
+  .banda{padding:0 22px}
+  .banda img{aspect-ratio:3/2}
+}
 
 /* ── Animaciones ────────────────────────────────────────────────────────
    Entrada discreta al entrar en pantalla: diez píxeles y una opacidad. Lo
@@ -274,16 +330,20 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
        idiomas son el mismo montaje con otra narración, así que cambiar de uno
        a otro conserva el segundo en el que ibas. -->
   <section class="reel" id="reel" aria-label="Vídeo de presentación">
-    <video id="reelVideo" playsinline muted loop preload="none"
-           poster="media/reel-es.jpg" width="1280" height="720">
-      <source id="reelFuente" src="media/reel-es.mp4" type="video/mp4">
-    </video>
-    <div class="reel-barra">
-      <div class="reel-idioma" role="group" aria-label="Idioma del vídeo">
-        <button type="button" data-reel="es" aria-pressed="true">Español</button>
-        <button type="button" data-reel="en" aria-pressed="false">English</button>
+    <div class="reel-caja">
+      <div class="reel-video">
+        <video id="reelVideo" playsinline muted loop preload="none"
+               poster="media/reel-es.jpg" width="1280" height="720">
+          <source id="reelFuente" src="media/reel-es.mp4" type="video/mp4">
+        </video>
       </div>
-      <button type="button" class="reel-sonido" id="reelSonido" aria-pressed="false">Con sonido</button>
+      <div class="reel-barra">
+        <div class="reel-idioma" role="group" aria-label="Idioma del vídeo">
+          <button type="button" data-reel="es" aria-pressed="true">Español</button>
+          <button type="button" data-reel="en" aria-pressed="false">English</button>
+        </div>
+        <button type="button" class="reel-sonido" id="reelSonido" aria-pressed="false">Con sonido</button>
+      </div>
     </div>
   </section>
 
@@ -300,9 +360,8 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
              audiencia. Sólo se descarga el que toca: el otro está oculto y
              ninguno precarga hasta que entra en pantalla. -->
         <video class="v-ancha" muted loop playsinline preload="none"
-               poster="media/demo-escritorio.jpg" width="1280" height="800"
+               poster="media/demo-escritorio.jpg" width="1440" height="900"
                aria-label="Recorrido por la página: la casa, las fotos, elegir fechas y ver el precio.">
-          <source src="media/demo-escritorio.webm" type="video/webm">
           <source src="media/demo-escritorio.mp4" type="video/mp4">
         </video>
         <video class="v-angosta" muted loop playsinline preload="none"
@@ -365,7 +424,7 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
 
 
   <figure class="banda">
-    <img src="media/foto-alberca.jpg" alt="Alberca infinita sobre el mar al atardecer"
+    <img src="media/foto-mar.jpg" alt="Terraza frente al mar"
          loading="lazy" width="1920" height="1280">
   </figure>
 
