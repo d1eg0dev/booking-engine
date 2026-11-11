@@ -38,6 +38,9 @@ DESTINO = 'booking-page'
 # formulario ya se enlaza como alta/, que es la ruta que tendrá publicado, así
 # que no hay nada que reescribir para él.
 ENLACES = [('href="../demo/"', 'href="demo/"')]
+# La página en inglés ya queda un nivel más abajo, en /booking-page/en/, así
+# que su "../demo/" apunta solo al sitio correcto. No hay nada que reescribir.
+ENLACES_EN: list[tuple[str, str]] = []
 
 
 class Alto(Exception):
@@ -101,6 +104,17 @@ def main():
         html = html.replace(viejo, nuevo)
     (tmp / 'index.html').write_text(html, encoding='utf-8')
     copia_dir(RAIZ / 'landing/media', tmp / 'media')
+
+    # La versión en inglés, que es otra página con su propia dirección y no un
+    # interruptor dentro de la española. Comparte la carpeta media, por eso
+    # sus rutas llevan ../ y aquí no hay nada que reescribir.
+    en = RAIZ / 'landing/en/index.html'
+    if en.is_file():
+        (tmp / 'en').mkdir(parents=True, exist_ok=True)
+        html_en = en.read_text(encoding='utf-8')
+        for viejo, nuevo in ENLACES_EN:
+            html_en = html_en.replace(viejo, nuevo)
+        (tmp / 'en' / 'index.html').write_text(html_en, encoding='utf-8')
 
     # El demo, tal cual: ya carga el motor por dirección absoluta.
     copia_dir(RAIZ / 'demo', tmp / 'demo')
