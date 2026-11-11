@@ -481,6 +481,69 @@ function filaDe_(id) {
 }
 
 /** Cierra la fila: vivo con su dirección, o falló con el motivo. */
+/* ── La hoja del propietario ──────────────────────────────────────────────
+   Estas dos constantes son un espejo de backend/Code.gs. El motor del
+   cliente lee las reservas por POSICIÓN de columna, no por nombre, así que
+   cambiar el orden aquí sin cambiarlo allí rompe las reservas de alguien en
+   silencio: la columna "Estado" dejaría de ser la tercera y ninguna fecha se
+   bloquearía. Si tocas una, toca la otra en el mismo commit.            */
+var HOJA_RESERVAS = 'Reservas';
+var HOJA_BLOQUEOS = 'Bloqueos';
+var COLS_RESERVAS = ['Creada', 'Referencia', 'Estado', 'Nombre', 'Correo', 'Teléfono',
+  'Entrada', 'Salida', 'Noches', 'Huéspedes', 'Mascotas', 'Extras', 'Total',
+  'Cobrado hoy', 'Moneda', 'Idioma', 'Notas', 'Stripe session',
+  'Recuperación enviada', 'URL de regreso'];
+
+/**
+ * Crea la hoja de cálculo con la que el propietario lleva su casa, y se la
+ * comparte. Son dos pestañas con dos trabajos distintos: Reservas la escribe
+ * el motor y él la lee; Bloqueos la escribe él y la lee el motor.
+ *
+ * Sin esto, un cliente que paga tiene una página que cobra y ninguna forma
+ * de ver qué tiene reservado ni de cerrar una semana porque viene su familia.
+ */
+function creaHojaCliente_(nombre, correo, idioma) {
+  var en = String(idioma || '').toLowerCase().indexOf('en') === 0;
+  var ss = SpreadsheetApp.create((nombre || 'Booking Page') + (en ? ' · Bookings' : ' · Reservas'));
+
+  var r = ss.getSheets()[0];
+  r.setName(HOJA_RESERVAS);
+  r.getRange(1, 1, 1, COLS_RESERVAS.length).setValues([COLS_RESERVAS])
+    .setFontWeight('bold').setBackground('#271D41').setFontColor('#FFFFFF');
+  r.setFrozenRows(1);
+  r.getRange('A:A').setNumberFormat('yyyy-mm-dd hh:mm');
+  r.getRange('G:H').setNumberFormat('yyyy-mm-dd');
+  r.setColumnWidth(1, 140); r.setColumnWidth(4, 170); r.setColumnWidth(5, 210);
+  r.setColumnWidth(17, 240); r.setColumnWidth(18, 60); r.setColumnWidth(20, 60);
+  // Las dos últimas son de uso interno del motor: se agrupan para que no
+  // estorben al abrir, pero no se ocultan, que esconder columnas es como se
+  // pierde la pista de un dato cuando algo va mal.
+  r.hideColumns(18, 3);
+
+  var b = ss.insertSheet(HOJA_BLOQUEOS);
+  b.getRange(1, 1, 1, 3)
+    .setValues([en ? ['From', 'To', 'Note'] : ['Desde', 'Hasta', 'Nota']])
+    .setFontWeight('bold').setBackground('#271D41').setFontColor('#FFFFFF');
+  b.setFrozenRows(1);
+  b.getRange('A:B').setNumberFormat('yyyy-mm-dd');
+  b.setColumnWidth(1, 120); b.setColumnWidth(2, 120); b.setColumnWidth(3, 320);
+  // Una fila de ejemplo, porque un formulario vacío no enseña el formato y
+  // una fecha mal escrita aquí significa una semana que no se bloquea.
+  b.getRange(2, 1, 1, 3).setValues([[
+    en ? '2027-01-10' : '2027-01-10',
+    en ? '2027-01-14' : '2027-01-14',
+    en ? 'EXAMPLE · delete this row. Both dates included.'
+       : 'EJEMPLO · borra esta fila. Las dos fechas se bloquean, inicio y fin incluidos.'
+  ]]).setFontColor('#9A9488').setFontStyle('italic');
+
+  // El propietario edita; no se le hace dueño para que la hoja no se vaya
+  // con él si cancela antes de que terminemos de configurarle el motor.
+  if (correo) {
+    try { DriveApp.getFileById(ss.getId()).addEditor(correo); } catch (err) {}
+  }
+  return ss;
+}
+
 /**
  * El correo que recibe el propietario cuando su página queda en línea.
  *
@@ -493,7 +556,7 @@ function filaDe_(id) {
  * le pide a alguien que enchufe su cuenta de cobros parece una estafa, por
  * muy nuestro que sea. Ese paso lo da Diego por su cuenta, hablando.
  */
-function correoCliente_(nombre, correo, url, idioma) {
+function correoCliente_(nombre, correo, url, idioma, hojaUrl) {
   if (!correo) return false;
   var en = String(idioma || '').toLowerCase().indexOf('en') === 0;
   var t = en ? {
@@ -501,6 +564,9 @@ function correoCliente_(nombre, correo, url, idioma) {
     hola: 'Hi,', titulo: 'Your page is live.',
     intro: nombre + ' now has its own booking page. Guests can check dates and book directly, without going through a portal.',
     boton: 'See my page', suya: 'This is your address:',
+    hojaTit: 'Where you run it from',
+    hojaTxt: 'We have created a spreadsheet and shared it with this address. It has two tabs: <b>Bookings</b>, which fills in on its own every time a guest books, and <b>Blocks</b>, where you write the dates you want to close — your own stays, maintenance, a week for family. Anything you put in Blocks stops showing as available on your page.',
+    hojaBtn: 'Open my spreadsheet',
     ayuda: 'Anything you want changed — photos, rates, text — just reply to this email or send a WhatsApp. We make the change and you see it the same day.',
     firma: 'Diego Larios', estudio: 'WD Studio'
   } : {
@@ -508,11 +574,14 @@ function correoCliente_(nombre, correo, url, idioma) {
     hola: 'Hola,', titulo: 'Tu página ya está en línea.',
     intro: nombre + ' ya tiene su propia página de reservas. Tus huéspedes pueden consultar fechas y reservar directamente, sin pasar por un portal.',
     boton: 'Ver mi página', suya: 'Esta es tu dirección:',
+    hojaTit: 'Desde dónde la manejas',
+    hojaTxt: 'Te creamos una hoja de cálculo y la compartimos con este mismo correo. Tiene dos pestañas: <b>Reservas</b>, que se llena sola cada vez que alguien reserva, y <b>Bloqueos</b>, donde escribes las fechas que quieras cerrar — tus propias estancias, mantenimiento, una semana para la familia. Lo que pongas en Bloqueos deja de aparecer como disponible en tu página.',
+    hojaBtn: 'Abrir mi hoja',
     ayuda: 'Si quieres cambiar algo —fotos, tarifas, textos— respóndeme a este correo o escríbeme por WhatsApp. Lo cambiamos y lo ves el mismo día.',
     firma: 'Diego Larios', estudio: 'WD Studio'
   };
 
-  var gris = '#737373', tinta = '#0B0B0B', linea = '#E7E5E1';
+  var gris = '#737373', tinta = '#0B0B0B', linea = '#E7E5E1', verde = '#0E9C7A';
   var cuerpo =
     '<div style="margin:0;padding:0;background:#F4F2ED;">' +
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F2ED;padding:32px 16px;">' +
@@ -535,7 +604,7 @@ function correoCliente_(nombre, correo, url, idioma) {
 
     '<tr><td style="padding:28px 40px 0 40px;">' +
     '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
-    '<td style="background:' + tinta + ';"><a href="' + url + '" ' +
+    '<td style="background:' + verde + ';"><a href="' + url + '" ' +
     'style="display:inline-block;padding:15px 30px;font-family:Helvetica,Arial,sans-serif;' +
     'font-size:14px;letter-spacing:.05em;color:#FFFFFF;text-decoration:none;">' + t.boton + '</a>' +
     '</td></tr></table></td></tr>' +
@@ -545,6 +614,19 @@ function correoCliente_(nombre, correo, url, idioma) {
     '<a href="' + url + '" style="color:' + tinta + ';">' + url + '</a></td></tr>' +
 
     '<tr><td style="padding:32px 40px 0 40px;"><div style="border-top:1px solid ' + linea + ';"></div></td></tr>' +
+
+    (hojaUrl ?
+      '<tr><td style="padding:26px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+      'font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:' + gris + ';">' +
+      t.hojaTit + '</td></tr>' +
+      '<tr><td style="padding:12px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+      'font-size:14px;line-height:1.75;color:#262626;">' + t.hojaTxt + '</td></tr>' +
+      '<tr><td style="padding:18px 40px 0 40px;">' +
+      '<a href="' + hojaUrl + '" style="font-family:Helvetica,Arial,sans-serif;font-size:14px;' +
+      'color:' + verde + ';text-decoration:none;border-bottom:1px solid ' + verde + ';">' +
+      t.hojaBtn + ' &rarr;</a></td></tr>' +
+      '<tr><td style="padding:32px 40px 0 40px;"><div style="border-top:1px solid ' + linea + ';"></div></td></tr>'
+      : '') +
 
     '<tr><td style="padding:24px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
     'font-size:14px;line-height:1.75;color:#262626;">' + escapa_(t.ayuda) + '</td></tr>' +
@@ -559,7 +641,9 @@ function correoCliente_(nombre, correo, url, idioma) {
     '</table></td></tr></table></div>';
 
   var plano = t.hola + '\n\n' + t.titulo + '\n\n' + t.intro + '\n\n' +
-    t.suya + ' ' + url + '\n\n' + t.ayuda + '\n\n' +
+    t.suya + ' ' + url + '\n\n' +
+    (hojaUrl ? t.hojaTit + '\n' + t.hojaTxt.replace(/<\/?b>/g, '') + '\n' + hojaUrl + '\n\n' : '') +
+    t.ayuda + '\n\n' +
     t.firma + ' · ' + t.estudio + '\n' + MARCA.tel + ' · ' + MARCA.correo + '\n';
 
   MailApp.sendEmail({
@@ -608,9 +692,23 @@ function resultado_(c) {
       // que lo lances tú cuando compruebes que quedó.
       var idioma = '';
       try { idioma = (JSON.parse(datos[i][8]).defaultLanguage || ''); } catch (err) {}
+
+      // La hoja con la que el propietario lleva su casa. Se crea aunque el
+      // sitio todavía no responda: es suya y no depende de que Pages haya
+      // terminado. Si esto falla, el alta no se tira abajo; se anota y se
+      // crea a mano, que es mejor que perder una página ya publicada.
+      var hojaUrl = '';
+      try {
+        var cl = creaHojaCliente_(datos[i][2] || '', datos[i][5] || '', idioma);
+        hojaUrl = cl.getUrl();
+        h.getRange(i + 1, columna_(h, 'hoja del cliente')).setValue(hojaUrl);
+      } catch (err) {
+        estado = estado + ' · sin hoja: ' + String(err.message).slice(0, 120);
+      }
+
       var avisado = false;
       if (c.vivo && c.url) {
-        try { avisado = correoCliente_(datos[i][2] || '', datos[i][5] || '', c.url, idioma); }
+        try { avisado = correoCliente_(datos[i][2] || '', datos[i][5] || '', c.url, idioma, hojaUrl); }
         catch (err) { estado = estado + ' · no se avisó al cliente'; }
       }
 
@@ -622,6 +720,7 @@ function resultado_(c) {
         'Alta publicada · ' + (datos[i][2] || id),
         (datos[i][2] || id) + ' ya está en línea.\n\n' +
         'Sitio: ' + (c.url || '') + '\n' +
+        'Hoja del cliente: ' + (hojaUrl || 'NO SE CREÓ, revisa el estado en la fila') + '\n' +
         'Fotos publicadas: ' + fotos + '\n' +
         'Correo del cliente: ' + (datos[i][5] || '') + '\n' +
         (avisado ? 'Ya le mandamos su enlace al cliente.\n'
