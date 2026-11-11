@@ -171,7 +171,61 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
   font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
 .pie a:hover{color:var(--ink)}
 
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* ── El reel ────────────────────────────────────────────────────────────
+   Va a sangre y pegado a la portada: es lo primero que se ve moverse.
+   Lleva audio y narración, así que no se reproduce solo con sonido: arranca
+   en silencio y en bucle, y quien quiera oírlo le da al control. */
+.reel{position:relative;background:var(--ink);line-height:0}
+.reel video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.reel-barra{position:absolute;left:0;right:0;bottom:0;display:flex;
+  justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 24px;
+  background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0));
+  line-height:1.5;pointer-events:none}
+.reel-barra > *{pointer-events:auto}
+.reel-idioma{display:flex;border:1px solid rgba(255,255,255,.45);overflow:hidden}
+.reel-idioma button{appearance:none;border:0;background:transparent;cursor:pointer;
+  font-family:var(--body);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.75);padding:9px 15px;transition:background .2s,color .2s}
+.reel-idioma button[aria-pressed=true]{background:#fff;color:var(--ink)}
+.reel-idioma button:hover[aria-pressed=false]{color:#fff;background:rgba(255,255,255,.14)}
+.reel-sonido{appearance:none;border:1px solid rgba(255,255,255,.45);background:transparent;
+  cursor:pointer;font-family:var(--body);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.75);padding:9px 15px;
+  transition:background .2s,color .2s}
+.reel-sonido:hover{color:#fff;background:rgba(255,255,255,.14)}
+@media(max-width:600px){
+  .reel-barra{padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+  .reel-idioma button,.reel-sonido{padding:8px 13px;font-size:10px}
+}
+
+/* ── Bandas de fotografía ───────────────────────────────────────────────
+   Rompen la sucesión de bloques de texto. Van a sangre del todo, sin
+   contenedor, porque una foto con márgenes a los lados parece una
+   ilustración y una a sangre parece el sitio. */
+.banda{line-height:0;background:var(--bone)}
+.banda img{display:block;width:100%;height:auto;aspect-ratio:21/9;object-fit:cover}
+.banda-par{display:grid;gap:2px;background:var(--g200)}
+@media(min-width:760px){.banda-par{grid-template-columns:1fr 1fr}}
+.banda-par img{aspect-ratio:4/3}
+@media(max-width:600px){.banda img{aspect-ratio:3/2}}
+
+/* ── Animaciones ────────────────────────────────────────────────────────
+   Entrada discreta al entrar en pantalla: diez píxeles y una opacidad. Lo
+   justo para que la página respire al bajar, no para que haga teatro. El
+   estado inicial lo pone el JS, no el CSS: si el JS no corre, todo tiene
+   que verse igual en vez de quedarse invisible para siempre. */
+.anim{opacity:0;transform:translateY(14px);
+  transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.anim.visible{opacity:1;transform:none}
+.btn,.valor article,.faq details,.pasos li{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.btn:hover{transform:translateY(-2px)}
+.valor article:hover,.pasos li:hover{transform:translateY(-3px)}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+  .anim{opacity:1!important;transform:none!important}
+}
 @media(max-width:860px){
   .container,.nav-in{padding-left:22px;padding-right:22px}
   section{padding:72px 0}
@@ -207,6 +261,24 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
         <a class="btn btn-solid" href="#precio">Crear mi página</a>
         <a class="btn btn-ghost" href="#cuenta">Ver la cuenta</a>
       </div>
+    </div>
+  </section>
+
+  <!-- El reel va aquí, entre la portada y el producto: el titular dice de qué
+       va esto en una frase, y lo siguiente que pasa es que se mueve. Los dos
+       idiomas son el mismo montaje con otra narración, así que cambiar de uno
+       a otro conserva el segundo en el que ibas. -->
+  <section class="reel" id="reel" aria-label="Vídeo de presentación">
+    <video id="reelVideo" playsinline muted loop preload="none"
+           poster="media/reel-es.jpg" width="1280" height="720">
+      <source id="reelFuente" src="media/reel-es.mp4" type="video/mp4">
+    </video>
+    <div class="reel-barra">
+      <div class="reel-idioma" role="group" aria-label="Idioma del vídeo">
+        <button type="button" data-reel="es" aria-pressed="true">Español</button>
+        <button type="button" data-reel="en" aria-pressed="false">English</button>
+      </div>
+      <button type="button" class="reel-sonido" id="reelSonido" aria-pressed="false">Con sonido</button>
     </div>
   </section>
 
@@ -287,6 +359,11 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
   </section>
 
 
+  <figure class="banda">
+    <img src="media/foto-alberca.jpg" alt="Alberca infinita sobre el mar al atardecer"
+         loading="lazy" width="1920" height="1280">
+  </figure>
+
   <section class="bone">
     <div class="container">
       <p class="label">Lo que ganas</p>
@@ -351,6 +428,13 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     </div>
   </section>
 
+  <figure class="banda banda-par">
+    <img src="media/foto-casa.jpg" alt="Casa con alberca entre la vegetación, al anochecer"
+         loading="lazy" width="1920" height="1280">
+    <img src="media/foto-aerea.jpg" alt="La misma casa vista desde arriba, junto a la playa"
+         loading="lazy" width="1920" height="1279">
+  </figure>
+
   <section class="bone">
     <div class="container">
       <p class="label">Cómo funciona</p>
@@ -383,6 +467,11 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
       </ol>
     </div>
   </section>
+
+  <figure class="banda">
+    <img src="media/foto-tumbonas.jpg" alt="Tumbonas junto a una alberca frente al mar"
+         loading="lazy" width="1819" height="1213">
+  </figure>
 
   <section class="bone" id="precio">
     <div class="container">
@@ -464,6 +553,11 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     </div>
   </section>
 
+  <figure class="banda">
+    <img src="media/foto-palapa.jpg" alt="Palapa y alberca al atardecer"
+         loading="lazy" width="1920" height="1280">
+  </figure>
+
   <section class="dark" id="empezar">
     <div class="container">
       <p class="label">Empezar</p>
@@ -526,6 +620,99 @@ footer{padding:56px 0;border-top:1px solid var(--g200)}
     });
   }, { threshold: 0.25 });
   vids.forEach(function(v){ obs.observe(v); });
+})();
+
+/* ── El reel ──────────────────────────────────────────────────────────────
+   Dos pistas del mismo montaje, una por idioma. Al cambiar se conserva el
+   segundo en el que iba, porque si no, pulsar "English" a mitad te devuelve
+   al principio y parece que se rompió algo. */
+(function reel(){
+  var v = document.getElementById('reelVideo');
+  var f = document.getElementById('reelFuente');
+  var son = document.getElementById('reelSonido');
+  if (!v || !f) return;
+  var quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function pon(idioma){
+    var t = v.currentTime, sonando = !v.paused;
+    f.src = 'media/reel-' + idioma + '.mp4';
+    v.poster = 'media/reel-' + idioma + '.jpg';
+    v.load();
+    v.addEventListener('loadedmetadata', function una(){
+      v.removeEventListener('loadedmetadata', una);
+      /* Las dos pistas duran lo mismo, pero se comprueba igual: un vídeo
+         recortado mandaría currentTime más allá del final y el navegador
+         lo dejaría parado en negro. */
+      if (t && t < v.duration) v.currentTime = t;
+      if (sonando) v.play().catch(function(){});
+    });
+    document.documentElement.setAttribute('data-reel', idioma);
+  }
+
+  [].forEach.call(document.querySelectorAll('[data-reel]'), function(b){
+    if (b.tagName !== 'BUTTON') return;
+    b.addEventListener('click', function(){
+      var idioma = b.dataset.reel;
+      [].forEach.call(document.querySelectorAll('.reel-idioma button'), function(o){
+        o.setAttribute('aria-pressed', String(o.dataset.reel === idioma));
+      });
+      pon(idioma);
+    });
+  });
+
+  /* El navegador sólo deja arrancar solo lo que está en silencio. El botón
+     es la única forma honesta de ofrecer el audio: nadie quiere que una
+     página le hable sin avisar. */
+  if (son) son.addEventListener('click', function(){
+    v.muted = !v.muted;
+    son.setAttribute('aria-pressed', String(!v.muted));
+    son.textContent = v.muted ? 'Con sonido' : 'Silenciar';
+    if (v.muted === false) v.play().catch(function(){});
+  });
+
+  if (quieto){ v.controls = true; return; }
+  if (!('IntersectionObserver' in window)){ v.preload = 'auto'; v.play().catch(function(){}); return; }
+  new IntersectionObserver(function(ent){
+    ent.forEach(function(e){
+      if (e.isIntersecting){
+        if (v.preload === 'none') v.preload = 'auto';
+        v.play().catch(function(){ v.controls = true; });
+      } else v.pause();
+    });
+  }, { threshold: 0.2 }).observe(v);
+})();
+
+/* ── Entrada al hacer scroll ──────────────────────────────────────────────
+   La clase que esconde se pone desde aquí, no en el HTML: si este script
+   falla o el navegador es viejo, la página se ve entera en vez de quedarse
+   en blanco, que es el fallo clásico de estas animaciones. */
+(function anima(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  var sel = 'section .container > *, .banda, .valor article, .pasos li, .faq details';
+  var items = [].slice.call(document.querySelectorAll(sel));
+  if (!items.length) return;
+
+  var obs = new IntersectionObserver(function(ent){
+    ent.forEach(function(e){
+      if (!e.isIntersecting) return;
+      /* Escalonado dentro de cada grupo: el retraso se calcula al entrar,
+         no al cargar, para que no dependa de por dónde empezaste a leer. */
+      var i = Number(e.target.dataset.orden || 0);
+      setTimeout(function(){ e.target.classList.add('visible'); }, Math.min(i, 5) * 70);
+      obs.unobserve(e.target);
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  items.forEach(function(el){
+    /* Lo que ya está en pantalla al cargar no se anima: ver la portada
+       aparecer de golpe al abrir es peor que no animar nada. */
+    if (el.getBoundingClientRect().top < innerHeight * 0.9){ return; }
+    var hermanos = el.parentNode.children;
+    el.dataset.orden = String([].indexOf.call(hermanos, el));
+    el.classList.add('anim');
+    obs.observe(el);
+  });
 })();
 
 (function(){
