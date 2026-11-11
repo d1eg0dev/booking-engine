@@ -134,7 +134,7 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
   <div class="wrap">
     <div>
       <h1 data-en="Your booking system">Tu sistema de reservas</h1>
-      <p data-en="Fill in what you know and download the file at the end. Leave anything you don't have at hand blank and we'll sort it out. Takes about fifteen minutes.">Llena lo que sepas y descarga el archivo al final. Lo que no tengas a la mano, déjalo en blanco y lo resolvemos nosotros. Toma unos quince minutos.</p>
+      <p data-en="Fill in what you know. Leave anything you don't have at hand blank and we'll sort it out. Takes about fifteen minutes, and your page goes live the same day.">Llena lo que sepas. Lo que no tengas a la mano, déjalo en blanco y lo resolvemos nosotros. Toma unos quince minutos, y tu página queda el mismo día.</p>
     </div>
     <div id="lang">
       <button type="button" data-lang="es" aria-pressed="true">Español</button>
@@ -163,13 +163,13 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
       <input name="p_tag_es" placeholder="Cuatro suites, hasta diez huéspedes. Alberca, terraza y el mar a unos pasos."></label>
     <label><span data-en="The same line in English">La misma frase en inglés</span>
       <em data-en="If you don't have it, we'll translate it.">Si no la tienes, la traducimos nosotros.</em>
-      <input name="p_tag_en" data-ph-en="Four suites, up to ten guests. Pool, terrace and the sea a few steps away."></label>
+      <input name="p_tag_en" placeholder="Four suites, up to ten guests. Pool, terrace and the sea a few steps away." data-ph-en="Four suites, up to ten guests. Pool, terrace and the sea a few steps away."></label>
     <label><span data-en="Describe it · Spanish">Descríbela · español</span>
       <em data-en="Two or three sentences, under the photos. What it's like to be there, not a list of features.">Dos o tres frases, van debajo de las fotos. Cómo se siente estar ahí, no una lista de características.</em>
       <textarea name="p_about_es" rows="4" placeholder="Una casa de piedra sobre el acantilado, con tres terrazas que miran al mar y una cocina donde de verdad se cocina. El pueblo queda a diez minutos a pie; la cala, a dos."></textarea></label>
     <label><span data-en="The same in English">La misma en inglés</span>
       <em data-en="If you leave it blank, we'll translate the one above.">Si la dejas vacía, la traducimos de la de arriba.</em>
-      <textarea name="p_about_en" rows="4"></textarea></label>
+      <textarea name="p_about_en" rows="4" placeholder="A stone house on the cliff, with three terraces facing the sea and a kitchen where people actually cook. The village is ten minutes on foot; the cove, two." data-ph-en="A stone house on the cliff, with three terraces facing the sea and a kitchen where people actually cook. The village is ten minutes on foot; the cove, two."></textarea></label>
     <div class="row row-2">
       <label><span data-en="Current website">Sitio web actual</span><em data-en="Leave blank if you don't have one.">Si no tienes, déjalo vacío.</em><input name="p_site" type="url" placeholder="https://"></label>
       <label><span data-en="Maximum guests">Huéspedes máximo</span><input name="p_max" type="number" min="1" value="10"></label>
@@ -281,7 +281,7 @@ pre{background:var(--head);color:var(--head-txt);border:1px solid var(--line);pa
   <fieldset>
     <legend data-en="Contact">Contacto</legend>
     <div class="row row-2">
-      <label><span data-en="Email where you receive bookings">Correo donde recibes las reservas</span><input name="c_email" type="email" required placeholder="reservas@tusitio.com"></label>
+      <label><span data-en="Email where you receive bookings">Correo donde recibes las reservas</span><input name="c_email" type="email" required placeholder="reservas@tusitio.com" data-ph-en="bookings@yoursite.com"></label>
       <label><span data-en="WhatsApp">WhatsApp</span><em data-en="With country code.">Con código de país.</em><input name="c_wa" placeholder="+52 312 000 0000"></label>
     </div>
   </fieldset>
@@ -375,7 +375,8 @@ function applyLang(){
 
 document.querySelectorAll('#lang button').forEach(b =>
   b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang();
-    if (typeof pintaAcceso === 'function') pintaAcceso(); }));
+    if (typeof pintaAcceso === 'function') pintaAcceso();
+    if (typeof repintaBarra === 'function') repintaBarra(); }));
 
 /* ---------- politicas ---------- */
 const POL = {
@@ -905,6 +906,15 @@ const CONDICIONES = [
     `<p><b>${i + 1}. ${t}.</b> ${b}</p>`).join('');
 })();
 
+/* Al quitarle el data-en a la barra, applyLang ya no puede traducirla: hay
+   que repintarla a mano al cambiar de idioma. Sólo cuando está en reposo,
+   porque si hay un error o un "subiendo foto 3 de 7" en pantalla, pisarlo
+   sería peor que dejarlo en el idioma anterior. */
+function repintaBarra(){
+  const s = document.getElementById('status');
+  if (s && !s.className) s.textContent = M('ready');
+}
+
 /* ---------- publicar ---------- */
 /* Pega aquí la URL de la aplicación web de Apps Script (backend/Intake.gs).
    Mientras esté vacía, el formulario se comporta como antes: el cliente
@@ -914,12 +924,24 @@ const ALTA_URL = 'https://script.google.com/macros/s/AKfycbwHekgYbD_yPRyR2zBtV9q
 if (ALTA_URL){
   const bp = document.getElementById('publish');
   bp.hidden = false;
-  /* Con el botón de publicar, el texto de abajo ya no aplica: nadie tiene
-     que descargar ni mandar nada. */
-  status.textContent = LANG === 'en'
-    ? "When you're done, press Publish my page."
-    : 'Al terminar, dale a Publicar mi página.';
+
+  /* La página se crea sola, así que descargar el config y mirar el JSON ya
+     no son pasos del cliente: son nuestras herramientas de depuración
+     asomando en la cara de un propietario que no sabe lo que es un JSON, y
+     sugiriendo que todavía le falta mandarnos algo. Se esconden.
+     Siguen ahí para cuando ALTA_URL esté vacía, que es el modo manual. */
+  ['preview', 'download'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.hidden = true;
+  });
+  if (out) { out.hidden = true; out.textContent = ''; }
+
+  /* Y el mensaje de la barra: check() lo repinta con M('ready') cada vez que
+     valida, así que no basta con cambiarlo una vez aquí. */
+  MSG.ready = ['Al terminar, dale a Publicar mi página.',
+               "When you're done, press Publish my page."];
   status.removeAttribute('data-en');
+  repintaBarra();
   bp.addEventListener('click', async () => {
     if (!check()) return;
     bp.disabled = true;

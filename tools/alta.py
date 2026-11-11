@@ -29,6 +29,11 @@ import urllib.request
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 SLUG_OK = re.compile(r'^[a-z0-9]([a-z0-9-]{1,38}[a-z0-9])$')
 DOMINIO_OK = re.compile(r'^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$')
+# Cada cliente sale bajo nuestro dominio, no bajo la cuenta de GitHub de
+# nadie. El DNS tiene un comodín *.wdstudio.agency apuntando a Pages, así que
+# un cliente nuevo no necesita que se toque el DNS: basta con que su repo
+# lleve el CNAME con su subdominio.
+DOMINIO_BASE = 'wdstudio.agency'
 
 
 class Alto(Exception):
@@ -310,7 +315,10 @@ def main():
                    help='config.json que salió del formulario, o - para leerlo de la entrada')
     p.add_argument('--json', action='store_true',
                    help='además del informe, imprime una línea JSON con el resultado')
-    p.add_argument('--domain', help='dominio propio, por ejemplo reservas.casaluna.mx')
+    p.add_argument('--domain', help='dominio propio del cliente, por ejemplo '
+                   f'reservas.casaluna.mx. Por defecto, slug.{DOMINIO_BASE}')
+    p.add_argument('--sin-dominio', action='store_true',
+                   help=f'no pone CNAME: el sitio queda en usuario.github.io/slug')
     p.add_argument('--private', action='store_true', help='repo privado')
     p.add_argument('--dry-run', action='store_true', help='enseña los pasos sin ejecutarlos')
     p.add_argument('--force', action='store_true', help='continúa aunque haya avisos')
@@ -321,6 +329,10 @@ def main():
                    'entre 3 y 40 caracteres, y no puede empezar ni acabar en guion.')
     if a.domain and not DOMINIO_OK.match(a.domain):
         raise Alto(f'El dominio "{a.domain}" no tiene forma de dominio.')
+    if a.domain and a.sin_dominio:
+        raise Alto('--domain y --sin-dominio se contradicen. Elige uno.')
+    # Sin instrucciones, el cliente va a su subdominio nuestro.
+    dominio = None if a.sin_dominio else (a.domain or f'{a.slug}.{DOMINIO_BASE}')
 
     if a.config == '-':
         crudo, origen = sys.stdin.read(), 'la entrada estándar'
@@ -362,14 +374,13 @@ def main():
 
     paso(3, TOTAL, 'Armo la carpeta')
     destino = RAIZ.parent / a.slug
-    archivos = arma_carpeta(a.slug, limpia(cfg), destino, usuario, a.domain)
+    archivos = arma_carpeta(a.slug, limpia(cfg), destino, usuario, dominio)
     print(f'      {destino}')
     print(f'      {", ".join(archivos)}')
 
     paso(4, TOTAL, 'Creo el repo y publico')
-    url = a.domain and f'https://{a.domain}/' or None
     url_pages = publica(a.slug, destino, usuario, a.private, a.dry_run)
-    url = url or url_pages
+    url = f'https://{dominio}/' if dominio else url_pages
 
     paso(5, TOTAL, 'Espero a que el sitio responda')
     vivo = espera(url_pages, seco=a.dry_run)
@@ -378,8 +389,11 @@ def main():
     print(f'  Cliente:  {cfg["property"]["name"]}')
     print(f'  Carpeta:  {destino}')
     print(f'  Sitio:    {url}')
-    if a.domain:
-        print(f'            apunta un CNAME de {a.domain} a {usuario}.github.io')
+    if dominio and dominio.endswith('.' + DOMINIO_BASE):
+        print(f'            el comodín *.{DOMINIO_BASE} ya apunta a Pages;')
+        print('            el certificado tarda unos minutos la primera vez')
+    elif dominio:
+        print(f'            apunta un CNAME de {dominio} a {usuario}.github.io')
     print(f'  Estado:   {"respondiendo" if vivo else "publicando, tarda unos minutos"}')
     print('─' * 58)
     if cfg.get('payment', {}).get('mode') == 'demo':
@@ -394,7 +408,7 @@ def main():
         print('\n' + json.dumps({
             'ok': True, 'slug': a.slug, 'cliente': cfg['property']['name'],
             'url': url, 'repo': f'{usuario}/{a.slug}', 'vivo': vivo,
-            'dominio': a.domain or None, 'avisos': avisos,
+            'dominio': dominio, 'avisos': avisos,
         }, ensure_ascii=False))
     return 0
 

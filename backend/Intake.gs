@@ -23,6 +23,20 @@
  * El token de GitHub vive sólo aquí. Nunca en el repo ni en el navegador.
  */
 
+/* Las páginas de cliente salen bajo nuestro dominio: el DNS tiene un comodín
+   *.wdstudio.agency apuntando a Pages, así que cada cliente es slug.<base>.
+   Antes salían en d1eg0dev.github.io, que le decía al propietario que su
+   negocio vive en la cuenta personal de alguien. */
+var DOMINIO_BASE = 'wdstudio.agency';
+var MARCA = {
+  nombre: 'WD Studio',
+  logo: 'https://wdstudio.agency/images/work/logo-dark.png',
+  sitio: 'https://wdstudio.agency',
+  correo: 'diego@wdstudio.agency',
+  tel: '+52 312 241 1693',
+  telLink: '+523122411693'
+};
+
 /**
  * Córrela una vez desde el editor, con el botón Ejecutar, y acepta los
  * permisos que pida.
@@ -362,7 +376,7 @@ function doGet(e) {
     h.getRange(i + 1, 7).setValue('publicando');
     return HtmlService.createHtmlOutput(
       '<p>Aprobada: <b>' + datos[i][2] + '</b>.</p>' +
-      '<p>En unos minutos estará en https://d1eg0dev.github.io/' + slug + '/</p>');
+      '<p>En unos minutos estará en https://' + slug + '.' + DOMINIO_BASE + '/</p>');
   }
   return HtmlService.createHtmlOutput('<p>No encuentro esa alta.</p>');
 }
@@ -467,6 +481,100 @@ function filaDe_(id) {
 }
 
 /** Cierra la fila: vivo con su dirección, o falló con el motivo. */
+/**
+ * El correo que recibe el propietario cuando su página queda en línea.
+ *
+ * Va en HTML con los estilos metidos a mano en cada etiqueta, porque Gmail y
+ * Outlook tiran la hoja de estilos. Y lleva debajo una versión en texto: si
+ * el cliente bloquea las imágenes, que es lo normal en un primer correo de
+ * alguien desconocido, el mensaje se sigue entendiendo entero.
+ *
+ * No lleva el enlace de conectar Stripe a propósito. Un correo automático que
+ * le pide a alguien que enchufe su cuenta de cobros parece una estafa, por
+ * muy nuestro que sea. Ese paso lo da Diego por su cuenta, hablando.
+ */
+function correoCliente_(nombre, correo, url, idioma) {
+  if (!correo) return false;
+  var en = String(idioma || '').toLowerCase().indexOf('en') === 0;
+  var t = en ? {
+    asunto: 'Your booking page is live',
+    hola: 'Hi,', titulo: 'Your page is live.',
+    intro: nombre + ' now has its own booking page. Guests can check dates and book directly, without going through a portal.',
+    boton: 'See my page', suya: 'This is your address:',
+    ayuda: 'Anything you want changed — photos, rates, text — just reply to this email or send a WhatsApp. We make the change and you see it the same day.',
+    firma: 'Diego Larios', estudio: 'WD Studio'
+  } : {
+    asunto: 'Tu página de reservas ya está en línea',
+    hola: 'Hola,', titulo: 'Tu página ya está en línea.',
+    intro: nombre + ' ya tiene su propia página de reservas. Tus huéspedes pueden consultar fechas y reservar directamente, sin pasar por un portal.',
+    boton: 'Ver mi página', suya: 'Esta es tu dirección:',
+    ayuda: 'Si quieres cambiar algo —fotos, tarifas, textos— respóndeme a este correo o escríbeme por WhatsApp. Lo cambiamos y lo ves el mismo día.',
+    firma: 'Diego Larios', estudio: 'WD Studio'
+  };
+
+  var gris = '#737373', tinta = '#0B0B0B', linea = '#E7E5E1';
+  var cuerpo =
+    '<div style="margin:0;padding:0;background:#F4F2ED;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F2ED;padding:32px 16px;">' +
+    '<tr><td align="center">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background:#FFFFFF;">' +
+
+    '<tr><td style="padding:36px 40px 0 40px;">' +
+    '<img src="' + MARCA.logo + '" alt="' + MARCA.nombre + '" width="150" ' +
+    'style="display:block;width:150px;max-width:150px;height:auto;border:0;">' +
+    '</td></tr>' +
+
+    '<tr><td style="padding:36px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:15px;line-height:1.7;color:' + gris + ';">' + t.hola + '</td></tr>' +
+
+    '<tr><td style="padding:10px 40px 0 40px;font-family:Georgia,\'Times New Roman\',serif;' +
+    'font-size:30px;line-height:1.2;color:' + tinta + ';font-weight:normal;">' + t.titulo + '</td></tr>' +
+
+    '<tr><td style="padding:20px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:15px;line-height:1.75;color:#262626;">' + escapa_(t.intro) + '</td></tr>' +
+
+    '<tr><td style="padding:28px 40px 0 40px;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' +
+    '<td style="background:' + tinta + ';"><a href="' + url + '" ' +
+    'style="display:inline-block;padding:15px 30px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:14px;letter-spacing:.05em;color:#FFFFFF;text-decoration:none;">' + t.boton + '</a>' +
+    '</td></tr></table></td></tr>' +
+
+    '<tr><td style="padding:24px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:13px;line-height:1.7;color:' + gris + ';">' + t.suya + '<br>' +
+    '<a href="' + url + '" style="color:' + tinta + ';">' + url + '</a></td></tr>' +
+
+    '<tr><td style="padding:32px 40px 0 40px;"><div style="border-top:1px solid ' + linea + ';"></div></td></tr>' +
+
+    '<tr><td style="padding:24px 40px 0 40px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:14px;line-height:1.75;color:#262626;">' + escapa_(t.ayuda) + '</td></tr>' +
+
+    '<tr><td style="padding:28px 40px 40px 40px;font-family:Helvetica,Arial,sans-serif;' +
+    'font-size:14px;line-height:1.8;color:' + gris + ';">' +
+    '<span style="color:' + tinta + ';">' + t.firma + '</span><br>' + t.estudio + '<br>' +
+    '<a href="https://wa.me/' + MARCA.telLink.replace(/[^0-9]/g, '') + '" style="color:' + gris + ';">' + MARCA.tel + '</a>' +
+    ' &nbsp;·&nbsp; <a href="mailto:' + MARCA.correo + '" style="color:' + gris + ';">' + MARCA.correo + '</a>' +
+    '</td></tr>' +
+
+    '</table></td></tr></table></div>';
+
+  var plano = t.hola + '\n\n' + t.titulo + '\n\n' + t.intro + '\n\n' +
+    t.suya + ' ' + url + '\n\n' + t.ayuda + '\n\n' +
+    t.firma + ' · ' + t.estudio + '\n' + MARCA.tel + ' · ' + MARCA.correo + '\n';
+
+  MailApp.sendEmail({
+    to: correo, subject: t.asunto, body: plano, htmlBody: cuerpo,
+    name: MARCA.nombre, replyTo: MARCA.correo
+  });
+  return true;
+}
+
+/** Texto a HTML seguro: el nombre de la propiedad lo escribe el cliente. */
+function escapa_(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function resultado_(c) {
   if (c.token !== prop_('SECRETO', true)) return json_({ ok: false, error: 'no autorizado' });
   var id = (c.id || '').toString().trim();
@@ -493,16 +601,33 @@ function resultado_(c) {
         'El alta de ' + (datos[i][2] || id) + ' no se publicó.\n\n' +
         (c.error || 'sin motivo') + '\n\nRevisa la pestaña Actions del repo del motor.\n');
     } else {
-      // El aviso llega aquí, a ti, y no al cliente: el enlace de conectar
-      // Stripe se lo reenvías tú con tus palabras. Si algún día quieres que
-      // salga solo hacia el cliente, es cambiar el destinatario.
+      // El cliente recibe su enlace sólo cuando el sitio ya responde. Si
+      // todavía está publicando, mandarle la dirección significa que el
+      // propietario abre su página nueva y ve un 404: el peor primer minuto
+      // posible. En ese caso no se manda, y el aviso de abajo te lo dice para
+      // que lo lances tú cuando compruebes que quedó.
+      var idioma = '';
+      try { idioma = (JSON.parse(datos[i][8]).defaultLanguage || ''); } catch (err) {}
+      var avisado = false;
+      if (c.vivo && c.url) {
+        try { avisado = correoCliente_(datos[i][2] || '', datos[i][5] || '', c.url, idioma); }
+        catch (err) { estado = estado + ' · no se avisó al cliente'; }
+      }
+
+      // El enlace de conectar Stripe llega aquí, a ti, y no al cliente: un
+      // correo automático que pide enchufar una cuenta de cobros parece una
+      // estafa. Ese se lo mandas tú, con tus palabras.
       var enlace = ScriptApp.getService().getUrl() + '?conectar=' + encodeURIComponent(datos[i][3]);
       MailApp.sendEmail(prop_('AVISO_EMAIL', true),
         'Alta publicada · ' + (datos[i][2] || id),
         (datos[i][2] || id) + ' ya está en línea.\n\n' +
         'Sitio: ' + (c.url || '') + '\n' +
         'Fotos publicadas: ' + fotos + '\n' +
-        'Correo del cliente: ' + (datos[i][5] || '') + '\n\n' +
+        'Correo del cliente: ' + (datos[i][5] || '') + '\n' +
+        (avisado ? 'Ya le mandamos su enlace al cliente.\n'
+                 : 'OJO: al cliente NO se le avisó todavía' +
+                   (c.vivo ? '.\n' : ', porque el sitio aún no respondía.\n') +
+                   'Compruébalo y mándaselo tú.\n') + '\n' +
         'Para que cobre de verdad, el propietario tiene que conectar su Stripe.\n' +
         'Reenvíale este enlace:\n' + enlace + '\n\n' +
         'Mientras no lo haga, la página sigue en modo demostración y no cobra.\n' +
