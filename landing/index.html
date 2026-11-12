@@ -73,7 +73,11 @@ section{padding:120px 0}
 /* Las secciones centradas respiran mejor cuando el texto no se queda
    pegado al borde izquierdo de una página de 1400 px. */
 .centro{text-align:center}
-.centro .col,.centro .lead,.centro .sub{margin-left:auto;margin-right:auto}
+/* El titular lleva max-width para que no se estire; sin los márgenes
+   automáticos esa caja se queda pegada a la izquierda y el texto centrado
+   dentro de ella, que es lo que hacía el escalón. */
+.centro .col,.centro .lead,.centro .sub,.centro .heading,
+.centro .label{margin-left:auto;margin-right:auto}
 .centro .hero-actions{justify-content:center}
 .centro .incluye{margin-left:0;margin-right:auto;text-align:left}
 /* Centrar la cabecera de una sección es una cosa; centrar una lista
@@ -234,7 +238,17 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
 }
 
 footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
-.derechos{margin-top:30px;padding-top:22px;border-top:1px solid var(--g200)}
+.pie-legal{display:flex;gap:16px 28px;flex-wrap:wrap}
+.pie-legal a:hover{color:var(--tinta)}
+/* Los métodos de pago, entre el pie y la línea de derechos: es donde la
+   gente los busca cuando duda de si el cobro es serio. */
+.pagos{margin-top:26px;padding-top:22px;border-top:1px solid var(--g200);
+  display:flex;justify-content:space-between;gap:10px 28px;flex-wrap:wrap;
+  align-items:baseline}
+.pagos-txt{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--g500)}
+.pagos-marcas{font-size:12px;color:var(--g400);letter-spacing:.02em}
+.derechos{margin-top:26px;padding-top:22px;border-top:1px solid var(--g200)}
 .derechos small{font-size:12px;letter-spacing:.04em;color:var(--g500)}
 .pie{display:flex;justify-content:space-between;gap:16px 36px;flex-wrap:wrap;
   font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
@@ -693,7 +707,19 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
 <footer>
   <div class="container pie">
     <span>Booking Page · WD Studio Agency</span>
-    <a href="mailto:hola@wdstudio.agency">hola@wdstudio.agency</a>
+    <nav class="pie-legal">
+      <a href="terminos/">Términos y condiciones</a>
+      <a href="privacidad/">Política de privacidad</a>
+      <a href="mailto:hola@wdstudio.agency">hola@wdstudio.agency</a>
+    </nav>
+  </div>
+  <div class="container pagos">
+    <!-- Los nombres van en texto, no como logotipos: las marcas de Visa,
+         Mastercard y compañía tienen sus propios archivos oficiales y sus
+         reglas de uso. Cuando Diego los baje del centro de marca de Stripe,
+         se sustituye este bloque por las imágenes. -->
+    <span class="pagos-txt">Pagos con tarjeta procesados por Stripe</span>
+    <span class="pagos-marcas">Visa · Mastercard · American Express · Apple Pay · Google Pay</span>
   </div>
   <div class="container derechos">
     <small>&copy; 2026 WD Studio Agency. Todos los derechos reservados.</small>

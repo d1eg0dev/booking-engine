@@ -1,0 +1,79 @@
+{
+  "_nota": "Fuente única de lo legal. Los términos son LITERALMENTE los que el cliente acepta en el alta (tools/intake.html, CONDICIONES). Si se cambian aquí, hay que cambiarlos allí y subir la versión en los dos sitios: si divergen, vale la que el cliente firmó y la pública te contradice.",
+
+  "_pendiente": "RAZÓN SOCIAL y DOMICILIO están sin rellenar. Tanto el RGPD como la ley mexicana exigen identificar a quién responde de los datos. Hay que ponerlos antes de publicar.",
+
+  "version": "2026-11-05",
+  "entidad": {
+    "nombre": "WD Studio Agency",
+    "razon_social": "",
+    "domicilio": "",
+    "correo": "hola@wdstudio.agency"
+  },
+
+  "terminos": {
+    "es": {
+      "titulo": "Términos y condiciones",
+      "entradilla": "Estas son las mismas condiciones que aceptas al dar de alta tu página. No hay una versión distinta para el contrato y otra para la web.",
+      "apartados": [
+        ["Qué incluye", "Una página de reservas propia para tu propiedad: calendario, cálculo de precios, cobro en línea, textos en español e inglés, alojamiento y las mejoras que vayamos publicando. No somos una agencia de viajes y no gestionamos tu propiedad."],
+        ["Cuánto cuesta", "79 USD al mes, el mismo precio en todos los países, cobrado por adelantado. Si eres de los veinte primeros, tienes seis meses sin costo; antes del primer cobro te avisamos con 30 días y puedes cancelar sin pagar nada."],
+        ["El dinero de tus reservas es tuyo", "Los pagos de tus huéspedes entran directo a tu cuenta de Stripe. WD Studio no cobra ninguna comisión sobre tus reservas y no toca ese dinero en ningún momento. Stripe sí cobra sus propias comisiones por procesar cada pago: en México, alrededor de 3.6% más 3 pesos por transacción, y en otros países varía. Esa comisión la cobra Stripe, no nosotros."],
+        ["Si dejas de pagar", "Te avisamos. A los 15 días de impago la página se suspende y deja de aceptar reservas nuevas; las reservas ya confirmadas no se ven afectadas, porque viven en tu Stripe y en tu correo. Guardamos tu información 60 días por si quieres volver, y después se borra."],
+        ["Tus fotos y tus textos son tuyos", "Nos autorizas a publicarlos en tu página. Podemos enseñar tu página como ejemplo de nuestro trabajo; si prefieres que no, dínoslo por escrito y dejamos de hacerlo."],
+        ["El dominio", "Mientras no tengas uno propio, tu página vive en un subdominio nuestro. Si compras tu dominio, es tuyo: lo conectamos, y si algún día te vas, se queda contigo."],
+        ["Cancelar", "Cuando quieras, escribiendo a hola@wdstudio.agency. El servicio sigue hasta el final del mes que ya pagaste y te entregamos tu configuración y tus fotos."],
+        ["Lo que no cubrimos", "No respondemos por lo que ocurra entre tú y tus huéspedes, ni por decisiones de Stripe sobre tu cuenta, ni por caídas de servicios de terceros. Hacemos lo razonable para que tu página esté siempre en línea, pero no garantizamos disponibilidad ininterrumpida."],
+        ["Cambios", "Si cambiamos estas condiciones o el precio, te avisamos con 30 días de antelación. Si no te parece, puedes cancelar antes de que apliquen."]
+      ]
+    },
+    "en": {
+      "titulo": "Terms and conditions",
+      "entradilla": "These are the same terms you accept when you set up your page. There is no separate version for the contract and the website.",
+      "apartados": [
+        ["What is included", "Your own booking page for your property: calendar, price calculation, online payment, text in English and Spanish, hosting and the improvements we release. We are not a travel agency and we do not manage your property."],
+        ["What it costs", "79 USD a month, the same price in every country, charged in advance. If you are one of the first twenty, you get six months at no cost; we give you 30 days' notice before the first charge and you can cancel without paying anything."],
+        ["The money from your bookings is yours", "Your guests' payments go straight into your Stripe account. WD Studio charges no commission on your bookings and never touches that money. Stripe does charge its own fee for processing each payment, which depends on your country. That fee is charged by Stripe, not by us."],
+        ["If you stop paying", "We let you know. After 15 days without payment the page is suspended and stops accepting new bookings; bookings already confirmed are not affected, because they live in your Stripe and your inbox. We keep your information for 60 days in case you want to come back, and then it is deleted."],
+        ["Your photos and text are yours", "You authorise us to publish them on your page. We may show your page as an example of our work; if you would rather we didn't, tell us in writing and we will stop."],
+        ["The domain", "Until you have your own, your page lives on one of our subdomains. If you buy your own domain, it is yours: we connect it, and if you ever leave, it stays with you."],
+        ["Cancelling", "Whenever you like, by writing to hola@wdstudio.agency. The service runs until the end of the month you have already paid for and we hand over your setup and your photos."],
+        ["What we do not cover", "We are not responsible for what happens between you and your guests, for Stripe's decisions about your account, or for outages of third-party services. We do what is reasonable to keep your page online, but we do not guarantee uninterrupted availability."],
+        ["Changes", "If we change these terms or the price, we give you 30 days' notice. If you don't agree, you can cancel before they apply."]
+      ]
+    }
+  },
+
+  "privacidad": {
+    "es": {
+      "titulo": "Política de privacidad",
+      "entradilla": "Qué datos tocamos, por qué, y qué puedes pedirnos. En corto: casi todo lo tuyo vive en tus propias cuentas, no en las nuestras.",
+      "apartados": [
+        ["Quién responde", "WD Studio Agency, razón social y domicilio arriba. Para cualquier cosa de esta política: hola@wdstudio.agency."],
+        ["Qué datos recogemos de ti", "Los del formulario de alta: tu nombre, tu correo, tu teléfono, los datos de tu propiedad y las fotos y textos que subes. Nada más. No usamos rastreadores publicitarios ni vendemos datos a nadie."],
+        ["Para qué los usamos", "Para crear y mantener tu página, cobrarte la suscripción y escribirte sobre el servicio. No te mandamos publicidad de terceros."],
+        ["Los datos de tus huéspedes", "Cuando alguien reserva en tu página, sus datos van a tu hoja de cálculo y a tu cuenta de Stripe. Son tuyos: frente a tus huéspedes, el responsable eres tú. Nosotros solo operamos la herramienta que los mueve, y no los usamos para nada más."],
+        ["Con quién se comparten", "Con nadie que no haga falta para que esto funcione: Stripe procesa los pagos, Google aloja las hojas de cálculo y el motor de reservas, y GitHub aloja las páginas. Cada uno tiene su propia política y trata los datos para prestarnos ese servicio y nada más."],
+        ["Cuánto tiempo los guardamos", "Mientras seas cliente. Si cancelas, 60 días más por si quieres volver, y después se borran. Si nos pides el borrado antes, lo hacemos."],
+        ["Qué puedes pedirnos", "Acceder a tus datos, corregirlos, llevártelos o borrarlos. Escribe a hola@wdstudio.agency y te contestamos en un plazo máximo de 30 días. Si estás en la Unión Europea, también puedes reclamar ante la autoridad de protección de datos de tu país."],
+        ["Cookies", "La página pública no usa cookies de seguimiento. Guardamos en tu navegador el idioma que elegiste, para no volver a preguntártelo. Eso no sale de tu dispositivo y no sirve para identificarte."],
+        ["Cambios", "Si cambiamos esta política, actualizamos la fecha de arriba y, si el cambio es importante, te avisamos por correo."]
+      ]
+    },
+    "en": {
+      "titulo": "Privacy policy",
+      "entradilla": "What data we touch, why, and what you can ask us for. In short: almost everything of yours lives in your own accounts, not in ours.",
+      "apartados": [
+        ["Who is responsible", "WD Studio Agency, legal name and address above. For anything about this policy: hola@wdstudio.agency."],
+        ["What we collect from you", "What you put in the signup form: your name, email, phone, your property's details, and the photos and text you upload. Nothing else. We use no advertising trackers and we sell data to nobody."],
+        ["What we use it for", "To build and run your page, charge your subscription and write to you about the service. We do not send you third-party advertising."],
+        ["Your guests' data", "When someone books on your page, their details go to your spreadsheet and your Stripe account. They are yours: towards your guests, you are the controller. We only operate the tool that moves them, and we use them for nothing else."],
+        ["Who it is shared with", "Nobody who isn't needed to make this work: Stripe processes payments, Google hosts the spreadsheets and the booking engine, and GitHub hosts the pages. Each has its own policy and handles the data to provide us that service and nothing more."],
+        ["How long we keep it", "For as long as you are a customer. If you cancel, 60 days more in case you come back, and then it is deleted. If you ask us to delete it sooner, we do."],
+        ["What you can ask for", "To access your data, correct it, take it with you or delete it. Write to hola@wdstudio.agency and we answer within 30 days at most. If you are in the European Union, you can also complain to your country's data protection authority."],
+        ["Cookies", "The public site uses no tracking cookies. We store the language you picked in your browser so we don't ask again. That never leaves your device and cannot identify you."],
+        ["Changes", "If we change this policy we update the date above and, when the change matters, we tell you by email."]
+      ]
+    }
+  }
+}

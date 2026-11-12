@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy policy · Booking Page</title>
+<meta name="description" content="What data we touch, why, and what you can ask us for. In short: almost everything of yours lives in your own accounts, not in ours.">
+<meta name="robots" content="index,follow">
+<style>
+  :root{
+    --verde:#0E9C7A; --verde-hondo:#073F31;
+    --tinta:#14171A; --g700:#4A5054; --g400:#8A9196;
+    --papel:#FFFFFF; --hueso:#F3F2EE; --linea:rgba(20,23,26,.12);
+    --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
+    --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
+    font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:var(--verde);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .barra{border-bottom:1px solid var(--linea)}
+  .envoltura{max-width:760px;margin:0 auto;padding:0 28px}
+  .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
+    height:64px;gap:20px}
+  .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+  .marca span{color:var(--g400);font-weight:400}
+  .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g400)}
+  .idiomas a.activo{color:var(--tinta)}
+  main{padding:clamp(48px,7vw,86px) 0}
+  h1{font-family:var(--display);font-weight:300;
+    font-size:clamp(2.1rem,5vw,3.2rem);line-height:1.1;letter-spacing:-.01em}
+  .entradilla{margin-top:18px;color:var(--g700);font-size:1.05rem;max-width:60ch}
+  .meta{margin-top:26px;padding-top:20px;border-top:1px solid var(--linea);
+    font-size:13px;color:var(--g400)}
+  .ficha{margin-top:6px;font-size:13px;color:var(--g400)}
+  .apartado{margin-top:38px}
+  .apartado h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
+    line-height:1.2;margin-bottom:10px}
+  .apartado p{color:var(--g700)}
+  .cierre{margin-top:56px;padding-top:28px;border-top:1px solid var(--linea);
+    display:flex;gap:22px;flex-wrap:wrap;font-size:14px}
+  footer{border-top:1px solid var(--linea);padding:28px 0;margin-top:40px;
+    font-size:12px;color:var(--g400)}
+  footer .envoltura{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="../../">Booking Page <span>· WD Studio</span></a>
+    <div class="idiomas">
+      <a href="../../terminos/">ES</a>
+      <a href="#" class="activo">EN</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="envoltura">
+    <h1>Privacy policy</h1>
+    <p class="entradilla">What data we touch, why, and what you can ask us for. In short: almost everything of yours lives in your own accounts, not in ours.</p>
+    <p class="meta">Version 2026-11-05 · In force since 5/11/2026</p>
+    
+
+    <section class="apartado"><h2>Who is responsible</h2><p>WD Studio Agency, legal name and address above. For anything about this policy: hola@wdstudio.agency.</p></section><section class="apartado"><h2>What we collect from you</h2><p>What you put in the signup form: your name, email, phone, your property&#x27;s details, and the photos and text you upload. Nothing else. We use no advertising trackers and we sell data to nobody.</p></section><section class="apartado"><h2>What we use it for</h2><p>To build and run your page, charge your subscription and write to you about the service. We do not send you third-party advertising.</p></section><section class="apartado"><h2>Your guests&#x27; data</h2><p>When someone books on your page, their details go to your spreadsheet and your Stripe account. They are yours: towards your guests, you are the controller. We only operate the tool that moves them, and we use them for nothing else.</p></section><section class="apartado"><h2>Who it is shared with</h2><p>Nobody who isn&#x27;t needed to make this work: Stripe processes payments, Google hosts the spreadsheets and the booking engine, and GitHub hosts the pages. Each has its own policy and handles the data to provide us that service and nothing more.</p></section><section class="apartado"><h2>How long we keep it</h2><p>For as long as you are a customer. If you cancel, 60 days more in case you come back, and then it is deleted. If you ask us to delete it sooner, we do.</p></section><section class="apartado"><h2>What you can ask for</h2><p>To access your data, correct it, take it with you or delete it. Write to hola@wdstudio.agency and we answer within 30 days at most. If you are in the European Union, you can also complain to your country&#x27;s data protection authority.</p></section><section class="apartado"><h2>Cookies</h2><p>The public site uses no tracking cookies. We store the language you picked in your browser so we don&#x27;t ask again. That never leaves your device and cannot identify you.</p></section><section class="apartado"><h2>Changes</h2><p>If we change this policy we update the date above and, when the change matters, we tell you by email.</p></section>
+
+    <div class="cierre">
+      <a href="../../terms/">Terms and conditions</a>
+      <a href="../../">Back to Booking Page</a>
+      <a href="mailto:hola@wdstudio.agency">Anything unclear, write to us</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="envoltura">
+    <span>© <span id="anio">2026</span> WD Studio Agency</span>
+    <span><a href="../../">wdstudio.agency</a></span>
+  </div>
+</footer>
+
+<script>document.getElementById('anio').textContent = new Date().getFullYear();</script>
+</body>
+</html>

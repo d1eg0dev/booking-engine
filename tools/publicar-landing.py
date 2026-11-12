@@ -123,6 +123,18 @@ def main():
     (tmp / 'alta').mkdir()
     shutil.copy2(RAIZ / 'tools/intake.html', tmp / 'alta/index.html')
 
+    # Las legales. Las escribe tools/genera-legal.py desde landing/legal.json;
+    # si faltan, se avisa en vez de publicar un enlace roto en el pie.
+    for carpeta in ('terminos', 'privacidad', 'en/terms', 'en/privacy'):
+        origen = RAIZ / 'landing' / carpeta / 'index.html'
+        if not origen.is_file():
+            print(f'  AVISO: falta landing/{carpeta}/index.html '
+                  '· corre tools/genera-legal.py')
+            continue
+        destino = tmp / carpeta
+        destino.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(origen, destino / 'index.html')
+
     nuevos = sorted(x.relative_to(tmp).as_posix() for x in tmp.rglob('*') if x.is_file())
     pesa = sum(x.stat().st_size for x in tmp.rglob('*') if x.is_file())
 
