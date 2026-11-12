@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direct bookings, in writing · Booking Page</title>
+<meta name="description" content="What we learn running booking pages for hosts: real numbers, what works and what does not.">
+<link rel="canonical" href="https://wdstudio.agency/booking-page/en/blog/">
+<link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/">
+
+<meta property="og:title" content="Direct bookings, in writing · Booking Page">
+<meta property="og:description" content="What we learn running booking pages for hosts: real numbers, what works and what does not.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://wdstudio.agency/booking-page/en/blog/">
+<link rel="alternate" type="application/rss+xml" title="Booking Page"
+      href="https://wdstudio.agency/booking-page/blog/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#0E9C7A; --tinta:#14171A; --g700:#4A5054; --g500:#6B7378;
+    --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
+    --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
+    --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
+    font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  a{color:var(--verde);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .envoltura{max-width:720px;margin:0 auto;padding:0 28px}
+  .barra{border-bottom:1px solid var(--g200)}
+  .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
+    height:64px;gap:20px}
+  .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+    color:var(--tinta)}
+  .marca span{color:var(--g400);font-weight:400}
+  .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--g400);margin-left:10px}
+  .idiomas a.activo{color:var(--tinta)}
+  main{padding:clamp(44px,6vw,76px) 0}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.1rem,5vw,3.1rem);
+    line-height:1.1;letter-spacing:-.01em}
+  .meta{margin-top:18px;font-size:13px;color:var(--g400);
+    letter-spacing:.04em}
+  .resumen{margin-top:20px;font-size:1.12rem;color:var(--g700);max-width:60ch}
+  .dato{margin-top:26px;padding:14px 18px;background:var(--hueso);
+    border-left:3px solid var(--verde);font-size:14px;color:var(--g700)}
+  article{margin-top:42px}
+  article h2{font-family:var(--display);font-weight:400;font-size:1.72rem;
+    line-height:1.2;margin:40px 0 12px}
+  article h3{font-size:1.14rem;font-weight:600;margin:30px 0 8px}
+  article p{margin-bottom:18px;color:var(--g700)}
+  article ul,article ol{margin:0 0 20px 22px;color:var(--g700)}
+  article li{margin-bottom:8px}
+  article blockquote{margin:26px 0;padding-left:20px;border-left:2px solid var(--verde);
+    font-family:var(--display);font-size:1.3rem;line-height:1.45;color:var(--tinta)}
+  article blockquote p{color:inherit;margin:0}
+  article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+  article th,article td{padding:11px 14px;text-align:left;
+    border-bottom:1px solid var(--g200)}
+  article th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--g400);font-weight:500}
+  article td{color:var(--g700)}
+  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;
+    font-size:.9em}
+  .cierre{margin-top:52px;padding:28px;background:var(--hueso);border-radius:4px}
+  .cierre h2{font-family:var(--display);font-weight:300;font-size:1.6rem;
+    line-height:1.2;margin-bottom:10px}
+  .cierre p{color:var(--g700);font-size:15px;margin-bottom:18px}
+  .btn{display:inline-block;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;padding:13px 24px;border:1px solid var(--tinta);
+    color:var(--tinta)}
+  .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
+  .lista{margin-top:40px}
+  .lista a.item{display:block;padding:24px 0;border-bottom:1px solid var(--g200);
+    color:inherit}
+  .lista a.item:hover{text-decoration:none}
+  .lista a.item:hover h2{color:var(--verde)}
+  .lista h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
+    line-height:1.22}
+  .lista .meta{margin-top:8px}
+  .lista p{margin-top:8px;color:var(--g700);font-size:15px}
+  .vacio{margin-top:40px;color:var(--g400)}
+  .aviso{margin-top:26px;padding:12px 16px;border:1px dashed var(--verde);
+    font-size:13px;color:var(--g700)}
+  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:56px;
+    font-size:12px;color:var(--g400)}
+  footer .envoltura{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+
+</head>
+<body>
+
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="../../">Booking Page <span>· WD Studio</span></a>
+    <div class="idiomas">
+      <a href="../../blog/">ES</a>
+      <a href="../../en/blog/" class="activo">EN</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="envoltura">
+    <h1>Direct bookings, in writing</h1>
+    <p class="resumen">What we learn running booking pages for hosts: real numbers, what works and what does not.</p>
+    <div class="lista"><a class="item" href="../../en/blog/what-a-platform-booking-really-costs/">
+      <h2>What a platform booking really costs</h2>
+      <p class="meta">November 13, 2026</p>
+      <p>The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.</p>
+    </a></div>
+  </div></main>
+
+<footer>
+  <div class="envoltura">
+    <span>© <span class="anio">2026</span> WD Studio Agency</span>
+    <span><a href="../../">Booking Page</a></span>
+  </div>
+</footer>
+
+<script>document.querySelectorAll('.anio').forEach(function (e) {
+  e.textContent = new Date().getFullYear();
+});</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What a platform booking really costs · Booking Page</title>
+<meta name="description" content="The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.">
+<link rel="canonical" href="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
+<link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
+
+<meta property="og:title" content="What a platform booking really costs · Booking Page">
+<meta property="og:description" content="The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
+<link rel="alternate" type="application/rss+xml" title="Booking Page"
+      href="https://wdstudio.agency/booking-page/blog/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#0E9C7A; --tinta:#14171A; --g700:#4A5054; --g500:#6B7378;
+    --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
+    --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
+    --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
+    font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  a{color:var(--verde);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .envoltura{max-width:720px;margin:0 auto;padding:0 28px}
+  .barra{border-bottom:1px solid var(--g200)}
+  .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
+    height:64px;gap:20px}
+  .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+    color:var(--tinta)}
+  .marca span{color:var(--g400);font-weight:400}
+  .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--g400);margin-left:10px}
+  .idiomas a.activo{color:var(--tinta)}
+  main{padding:clamp(44px,6vw,76px) 0}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.1rem,5vw,3.1rem);
+    line-height:1.1;letter-spacing:-.01em}
+  .meta{margin-top:18px;font-size:13px;color:var(--g400);
+    letter-spacing:.04em}
+  .resumen{margin-top:20px;font-size:1.12rem;color:var(--g700);max-width:60ch}
+  .dato{margin-top:26px;padding:14px 18px;background:var(--hueso);
+    border-left:3px solid var(--verde);font-size:14px;color:var(--g700)}
+  article{margin-top:42px}
+  article h2{font-family:var(--display);font-weight:400;font-size:1.72rem;
+    line-height:1.2;margin:40px 0 12px}
+  article h3{font-size:1.14rem;font-weight:600;margin:30px 0 8px}
+  article p{margin-bottom:18px;color:var(--g700)}
+  article ul,article ol{margin:0 0 20px 22px;color:var(--g700)}
+  article li{margin-bottom:8px}
+  article blockquote{margin:26px 0;padding-left:20px;border-left:2px solid var(--verde);
+    font-family:var(--display);font-size:1.3rem;line-height:1.45;color:var(--tinta)}
+  article blockquote p{color:inherit;margin:0}
+  article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+  article th,article td{padding:11px 14px;text-align:left;
+    border-bottom:1px solid var(--g200)}
+  article th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--g400);font-weight:500}
+  article td{color:var(--g700)}
+  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;
+    font-size:.9em}
+  .cierre{margin-top:52px;padding:28px;background:var(--hueso);border-radius:4px}
+  .cierre h2{font-family:var(--display);font-weight:300;font-size:1.6rem;
+    line-height:1.2;margin-bottom:10px}
+  .cierre p{color:var(--g700);font-size:15px;margin-bottom:18px}
+  .btn{display:inline-block;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;padding:13px 24px;border:1px solid var(--tinta);
+    color:var(--tinta)}
+  .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
+  .lista{margin-top:40px}
+  .lista a.item{display:block;padding:24px 0;border-bottom:1px solid var(--g200);
+    color:inherit}
+  .lista a.item:hover{text-decoration:none}
+  .lista a.item:hover h2{color:var(--verde)}
+  .lista h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
+    line-height:1.22}
+  .lista .meta{margin-top:8px}
+  .lista p{margin-top:8px;color:var(--g700);font-size:15px}
+  .vacio{margin-top:40px;color:var(--g400)}
+  .aviso{margin-top:26px;padding:12px 16px;border:1px dashed var(--verde);
+    font-size:13px;color:var(--g700)}
+  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:56px;
+    font-size:12px;color:var(--g400)}
+  footer .envoltura{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "What a platform booking really costs", "description": "The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.", "datePublished": "2026-11-13", "inLanguage": "en", "author": {"@type": "Person", "name": "Diego Larios"}, "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency"}, "mainEntityOfPage": "https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/"}</script>
+</head>
+<body>
+
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="../../../">Booking Page <span>· WD Studio</span></a>
+    <div class="idiomas">
+      <a href="../../../blog/">ES</a>
+      <a href="../../../en/blog/" class="activo">EN</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="envoltura">
+    <p class="meta"><a href="../../../en/blog/">All articles</a></p>
+    <h1>What a platform booking really costs</h1>
+    <p class="meta">November 13, 2026 · Diego Larios
+      · 504 words</p>
+    <p class="resumen">The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.</p>
+    <p class="dato">Airbnb and Stripe published rates as of November 2026, with the arithmetic worked through</p>
+    
+    <article><p>Almost no host knows what a booking costs them. They know the percentage on the screen, which is not the same thing.</p>
+<p>Let us do the whole sum on an ordinary house: €110 a night, four-night stays, eight nights booked a month.</p>
+<h2>What you see and what you don't</h2>
+<p>Under the model Airbnb applies to most individual hosts in Europe, the host commission sits around 15.5% and carries VAT on top. That is the visible part.</p>
+<p>The part you don't see: the guest pays their own service fee too. It doesn't come out of your pocket, but it does come out of the total price they compare against other options. Your house looks dearer than what you charge.</p>
+<h2>The sum, month by month</h2>
+<table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Two four-night stays at €110</td><td>€880</td></tr><tr><td>Host commission, 15.5%</td><td>−€136.40</td></tr><tr><td>VAT on that commission, 21%</td><td>−€28.64</td></tr><tr><td><strong>You keep</strong></td><td><strong>€714.96</strong></td></tr></tbody></table>
+<p>That is <strong>€165 a month</strong> that never arrives. Close to <strong>€1,980</strong> a year.</p>
+<h2>The same booking, direct</h2>
+<p>If that same guest books on your own page, the money lands in your Stripe account. Stripe charges for processing the payment, which is a real service and not a fee for introducing anyone: in Spain it runs around 1.5% plus €0.25 per transaction for European cards, and in Mexico about 3.6% plus 3 pesos.</p>
+<table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>The same two stays</td><td>€880</td></tr><tr><td>Processing, ~1.5% + €0.25 × 2</td><td>−€13.70</td></tr><tr><td>Booking Page, 79 USD a month</td><td>≈ −€73</td></tr><tr><td><strong>You keep</strong></td><td><strong>€793.30</strong></td></tr></tbody></table>
+<p>Difference: <strong>€78 more a month</strong> on a house billing €880. And from the second house on, the fee doesn't rise per booking: the margin grows on its own.</p>
+<h2>Where this calculation is unfair</h2>
+<p>It isn't free and I don't want to sell it that way.</p>
+<p><strong>The platform brings you people who had never heard of you.</strong> That is worth paying for. If every booking you get comes from searches inside Airbnb, removing the platform doesn't leave you better off, it leaves you empty.</p>
+<p><strong>The fee is fixed and bookings are not.</strong> In a slow month the 79 USD is due all the same. At two stays a month it pays for itself; at one, barely.</p>
+<p><strong>Moving people to direct booking is work.</strong> You have to ask the guest who already stayed, put the link on your Instagram, send it on checkout. Nobody arrives on their own.</p>
+<h2>So when does it make sense</h2>
+<p>When you already have guests who come back, referrals, or people who find you by name. Those bookings were never brought in by the platform: they were paying a commission on work you did yourself.</p>
+<p>The rest can keep arriving the way it already does.</p>
+<h2>Check the sum with your own numbers</h2>
+<p>Rates vary by country and by host type. On <a href="/booking-page/en/" rel="noopener">the Booking Page site</a> there is a calculator where you put in your rate, your nights and your currency, and it runs this same sum on your figures.</p></article>
+    <div class="cierre">
+      <h2>Your own booking page, from 79 USD a month</h2>
+      <p>Guests book and pay you directly. No commission per booking.</p>
+      <a class="btn" href="../../../en/">See Booking Page</a>
+    </div>
+  </div></main>
+
+<footer>
+  <div class="envoltura">
+    <span>© <span class="anio">2026</span> WD Studio Agency</span>
+    <span><a href="../../../">Booking Page</a></span>
+  </div>
+</footer>
+
+<script>document.querySelectorAll('.anio').forEach(function (e) {
+  e.textContent = new Date().getFullYear();
+});</script>
+</body>
+</html>

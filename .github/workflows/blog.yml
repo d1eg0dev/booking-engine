@@ -1,0 +1,66 @@
+name: Publicar el blog
+
+# Un agente escribe un .md en landing/blog/posts/ y abre un pull request.
+# Al fusionarlo, esto construye el blog y lo publica.
+#
+# El flujo corre también en el pull request, sin publicar nada: ahí es donde
+# las puertas del generador avisan antes de que nadie fusione. Un artículo
+# sin dato propio, demasiado corto, con título repetido o que rompe el tope
+# semanal tumba la construcción entera, y eso es deliberado: lo que Google
+# castiga como contenido a escala se paga con el dominio, no con el artículo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'landing/blog/posts/**'
+      - 'tools/genera-blog.py'
+      - '.github/workflows/blog.yml'
+  pull_request:
+    paths:
+      - 'landing/blog/posts/**'
+      - 'tools/genera-blog.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  blog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Construir el blog
+        run: python3 tools/genera-blog.py
+
+      - name: Qué saldría publicado
+        run: |
+          {
+            echo "### Blog"
+            echo ""
+            for f in landing/blog/*/index.html landing/en/blog/*/index.html; do
+              [ -e "$f" ] || continue
+              titulo=$(sed -n 's/.*<title>\(.*\) · Booking Page<\/title>.*/\1/p' "$f" | head -1)
+              echo "- $titulo"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # En un pull request se queda aquí: se ve que construye y no se publica.
+      - name: Publicar en el sitio
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.ALTA_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Falta el secreto ALTA_TOKEN: no se puede publicar."
+            exit 1
+          fi
+          git clone --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/d1eg0dev/wdstudio.agency.git" \
+            /tmp/sitio
+          python3 tools/publicar-landing.py --repo /tmp/sitio

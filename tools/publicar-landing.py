@@ -123,6 +123,24 @@ def main():
     (tmp / 'alta').mkdir()
     shutil.copy2(RAIZ / 'tools/intake.html', tmp / 'alta/index.html')
 
+    # El blog: sólo lo construido. Los .md de origen no se publican — son la
+    # cocina, y además dejarían el borrador a la vista de quien adivine la URL.
+    blog = RAIZ / 'landing/blog'
+    if (blog / 'index.html').is_file():
+        for origen in blog.rglob('*'):
+            if not origen.is_file() or 'posts' in origen.relative_to(blog).parts:
+                continue
+            destino = tmp / 'blog' / origen.relative_to(blog)
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(origen, destino)
+        en_blog = RAIZ / 'landing/en/blog'
+        for origen in en_blog.rglob('*.html'):
+            destino = tmp / 'en/blog' / origen.relative_to(en_blog)
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(origen, destino)
+    else:
+        print('  AVISO: el blog no está construido · corre tools/genera-blog.py')
+
     # Las legales. Las escribe tools/genera-legal.py desde landing/legal.json;
     # si faltan, se avisa en vez de publicar un enlace roto en el pie.
     for carpeta in ('terminos', 'privacidad', 'en/terms', 'en/privacy'):
