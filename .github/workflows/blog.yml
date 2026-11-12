@@ -50,6 +50,19 @@ jobs:
             done
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # En el pull request se sube lo construido como adjunto, para poder
+      # leer el artículo tal como quedaría antes de aprobarlo, sin tener que
+      # imaginárselo desde el .md.
+      - name: Dejar el borrador para revisar
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-para-revisar
+          path: |
+            landing/blog/**/index.html
+            landing/en/blog/**/index.html
+          retention-days: 14
+
       # En un pull request se queda aquí: se ve que construye y no se publica.
       - name: Publicar en el sitio
         if: github.event_name != 'pull_request'
