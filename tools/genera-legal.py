@@ -41,6 +41,13 @@ def pagina(doc, datos, en, otra_cara):
                  else 'Si algo no queda claro, escríbenos'),
     }
     bloque = datos[doc][idioma]
+    anio, mes, dia = datos['version'].split('-')
+    meses = (['January', 'February', 'March', 'April', 'May', 'June', 'July',
+              'August', 'September', 'October', 'November', 'December'] if en else
+             ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+              'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'])
+    fecha_larga = (f'{meses[int(mes) - 1]} {int(dia)}, {anio}' if en
+                   else f'{int(dia)} de {meses[int(mes) - 1]} de {anio}')
     otro = 'privacidad' if doc == 'terminos' else 'terminos'
     ruta_otro = ({'terminos': 'terms', 'privacidad': 'privacy'}[otro] if en else otro)
 
@@ -119,7 +126,7 @@ def pagina(doc, datos, en, otra_cara):
   <div class="envoltura">
     <h1>{esc(bloque['titulo'])}</h1>
     <p class="entradilla">{esc(bloque['entradilla'])}</p>
-    <p class="meta">{t['version']} {esc(datos['version'])} · {t['vigente']} 5/11/2026</p>
+    <p class="meta">{t['version']} {esc(datos['version'])} · {t['vigente']} {esc(fecha_larga)}</p>
     {ficha}
 
     {apartados}

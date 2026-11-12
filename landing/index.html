@@ -50,7 +50,9 @@ p.lead{margin-top:22px;color:var(--g700);max-width:62ch}
 .btn-line{border-color:rgba(255,255,255,.45);color:#fff}
 .btn-line:hover{background:#fff;color:var(--ink)}
 
-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+/* Sólo la barra de arriba: las columnas del pie también son <nav> y
+   heredaban el borde inferior, que dejaba una raya suelta. */
+nav:not(.pie-col){position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
   -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--g200)}
 .nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:68px;display:flex;
   justify-content:space-between;align-items:center;gap:28px}
@@ -238,20 +240,30 @@ ol.pasos p{color:var(--g700);font-size:15px;max-width:52ch}
 }
 
 footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
-.pie-legal{display:flex;gap:16px 28px;flex-wrap:wrap}
-.pie-legal a:hover{color:var(--tinta)}
-/* Los métodos de pago, entre el pie y la línea de derechos: es donde la
-   gente los busca cuando duda de si el cobro es serio. */
-.pagos{margin-top:26px;padding-top:22px;border-top:1px solid var(--g200);
-  display:flex;justify-content:space-between;gap:10px 28px;flex-wrap:wrap;
-  align-items:baseline}
-.pagos-txt{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--g500)}
-.pagos-marcas{font-size:12px;color:var(--g400);letter-spacing:.02em}
-.derechos{margin-top:26px;padding-top:22px;border-top:1px solid var(--g200)}
+/* ── El pie ───────────────────────────────────────────────────────
+   Antes eran tres bandas apiladas del mismo peso, sin jerarquía. Ahora la
+   marca manda a la izquierda y lo demás va en columnas con su encabezado,
+   que es como la gente busca un enlace en un pie. */
+.pie-rejilla{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;
+  gap:34px 40px;align-items:start}
+@media(max-width:900px){.pie-rejilla{grid-template-columns:1fr 1fr;gap:34px}}
+@media(max-width:560px){.pie-rejilla{grid-template-columns:1fr;gap:30px}}
+.pie-nombre{font-family:var(--display);font-size:1.5rem;font-weight:300;
+  line-height:1.1}
+.pie-linea{margin-top:10px;font-size:14px;color:var(--g500);max-width:30ch;
+  line-height:1.6}
+.pie-correo{display:inline-block;margin-top:14px;font-size:14px;
+  color:var(--verde);border-bottom:1px solid transparent}
+.pie-correo:hover{border-bottom-color:currentColor}
+.pie-col h3{font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--g400);font-weight:500;margin-bottom:14px}
+.pie-col a{display:block;font-size:14px;color:var(--g700);margin-bottom:9px}
+.pie-col a:hover{color:var(--tinta)}
+.pie-pagos{font-size:14px;color:var(--g700);margin-bottom:8px}
+.pie-pagos.tenue{font-size:12.5px;color:var(--g400);line-height:1.55}
+.derechos{margin-top:40px;padding-top:22px;border-top:1px solid var(--g200);
+  display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
 .derechos small{font-size:12px;letter-spacing:.04em;color:var(--g500)}
-.pie{display:flex;justify-content:space-between;gap:16px 36px;flex-wrap:wrap;
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500)}
 .pie a:hover{color:var(--ink)}
 
 /* ── El reel ────────────────────────────────────────────────────────────
@@ -705,24 +717,38 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
 </main>
 
 <footer>
-  <div class="container pie">
-    <span>Booking Page · WD Studio Agency</span>
-    <nav class="pie-legal">
+  <div class="container pie-rejilla">
+    <div class="pie-marca">
+      <p class="pie-nombre">Booking Page</p>
+      <p class="pie-linea">Tu propia página de reservas. El huésped reserva
+        contigo y te paga a ti.</p>
+      <a class="pie-correo" href="mailto:diego@wdstudio.agency">diego@wdstudio.agency</a>
+    </div>
+    <nav class="pie-col">
+      <h3>Producto</h3>
+      <a href="#producto">Cómo funciona</a>
+      <a href="#precio">Precio</a>
+      <a href="demo/">Ver un ejemplo</a>
+      <a href="alta/">Empezar</a>
+    </nav>
+    <nav class="pie-col">
+      <h3>Legal</h3>
       <a href="terminos/">Términos y condiciones</a>
       <a href="privacidad/">Política de privacidad</a>
-      <a href="mailto:hola@wdstudio.agency">hola@wdstudio.agency</a>
     </nav>
-  </div>
-  <div class="container pagos">
-    <!-- Los nombres van en texto, no como logotipos: las marcas de Visa,
-         Mastercard y compañía tienen sus propios archivos oficiales y sus
-         reglas de uso. Cuando Diego los baje del centro de marca de Stripe,
-         se sustituye este bloque por las imágenes. -->
-    <span class="pagos-txt">Pagos con tarjeta procesados por Stripe</span>
-    <span class="pagos-marcas">Visa · Mastercard · American Express · Apple Pay · Google Pay</span>
+    <div class="pie-col">
+      <h3>Pagos</h3>
+      <!-- Los nombres van en texto, no como logotipos: las marcas tienen sus
+           archivos oficiales y sus reglas de uso. Cuando estén descargados,
+           se sustituye este párrafo por las imágenes. -->
+      <p class="pie-pagos">Procesados por Stripe</p>
+      <p class="pie-pagos tenue">Visa · Mastercard · American Express ·
+        Apple Pay · Google Pay</p>
+    </div>
   </div>
   <div class="container derechos">
-    <small>&copy; 2026 WD Studio Agency. Todos los derechos reservados.</small>
+    <small>&copy; <span class="anio">2026</span> WD Studio Agency. Todos los derechos reservados.</small>
+    <small>Colima, México</small>
   </div>
 </footer>
 
@@ -1007,6 +1033,12 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
     })
     .catch(function(){ /* se queda el respaldo */ });
 })();
+</script>
+<script>
+/* El año del pie se calcula solo: en enero nadie se acuerda de cambiarlo. */
+document.querySelectorAll('.anio').forEach(function (e) {
+  e.textContent = new Date().getFullYear();
+});
 </script>
 </body>
 </html>
