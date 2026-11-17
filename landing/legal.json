@@ -1,7 +1,7 @@
 {
   "_nota": "Fuente única de lo legal. Los términos son LITERALMENTE los que el cliente acepta en el alta (tools/intake.html, CONDICIONES). Si se cambian aquí, hay que cambiarlos allí y subir la versión en los dos sitios: si divergen, vale la que el cliente firmó y la pública te contradice.",
 
-  "version": "2026-11-13",
+  "version": "2026-11-17",
   "entidad": {
     "nombre": "WD Studio Agency",
     "razon_social": "Diego Eduardo Larios Mejía",
@@ -15,7 +15,7 @@
       "entradilla": "Estas son las mismas condiciones que aceptas al dar de alta tu página. No hay una versión distinta para el contrato y otra para la web.",
       "apartados": [
         ["Qué incluye", "Una página de reservas propia para tu propiedad: calendario, cálculo de precios, cobro en línea, textos en español e inglés, alojamiento y las mejoras que vayamos publicando. No somos una agencia de viajes y no gestionamos tu propiedad."],
-        ["Cuánto cuesta", "79 USD al mes, el mismo precio en todos los países, cobrado por adelantado. Si eres de los veinte primeros, tienes seis meses sin costo; antes del primer cobro te avisamos con 30 días y puedes cancelar sin pagar nada."],
+        ["Cuánto cuesta", "1,490 pesos mexicanos al mes, o 14,900 al año, cobrados por adelantado. El precio se cobra siempre en pesos; si pagas desde otro país, tu banco hace la conversión. Tienes un mes de prueba que empieza el día que tu página queda publicada, no el día que te registras, y puedes cancelar antes de que termine sin pagar nada. Si eres de los veinte primeros, tienes seis meses sin costo. Los impuestos van por separado si pides factura."],
         ["El dinero de tus reservas es tuyo", "Los pagos de tus huéspedes entran directo a tu cuenta de Stripe. WD Studio no cobra ninguna comisión sobre tus reservas y no toca ese dinero en ningún momento. Stripe sí cobra sus propias comisiones por procesar cada pago: en México, alrededor de 3.6% más 3 pesos por transacción, y en otros países varía. Esa comisión la cobra Stripe, no nosotros."],
         ["Si dejas de pagar", "Te avisamos. A los 15 días de impago la página se suspende y deja de aceptar reservas nuevas; las reservas ya confirmadas no se ven afectadas, porque viven en tu Stripe y en tu correo. Guardamos tu información 60 días por si quieres volver, y después se borra."],
         ["Tus fotos y tus textos son tuyos", "Nos autorizas a publicarlos en tu página. Podemos enseñar tu página como ejemplo de nuestro trabajo; si prefieres que no, dínoslo por escrito y dejamos de hacerlo."],
@@ -30,7 +30,7 @@
       "entradilla": "These are the same terms you accept when you set up your page. There is no separate version for the contract and the website.",
       "apartados": [
         ["What is included", "Your own booking page for your property: calendar, price calculation, online payment, text in English and Spanish, hosting and the improvements we release. We are not a travel agency and we do not manage your property."],
-        ["What it costs", "79 USD a month, the same price in every country, charged in advance. If you are one of the first twenty, you get six months at no cost; we give you 30 days' notice before the first charge and you can cancel without paying anything."],
+        ["What it costs", "1,490 Mexican pesos a month, or 14,900 a year, charged in advance. Billing is always in pesos; if you pay from another country, your bank handles the conversion. You get a one-month trial that starts the day your page goes live, not the day you sign up, and you can cancel before it ends without paying anything. If you are one of the first twenty, you get six months at no cost. Taxes are added separately if you request an invoice."],
         ["The money from your bookings is yours", "Your guests' payments go straight into your Stripe account. WD Studio charges no commission on your bookings and never touches that money. Stripe does charge its own fee for processing each payment, which depends on your country. That fee is charged by Stripe, not by us."],
         ["If you stop paying", "We let you know. After 15 days without payment the page is suspended and stops accepting new bookings; bookings already confirmed are not affected, because they live in your Stripe and your inbox. We keep your information for 60 days in case you want to come back, and then it is deleted."],
         ["Your photos and text are yours", "You authorise us to publish them on your page. We may show your page as an example of our work; if you would rather we didn't, tell us in writing and we will stop."],

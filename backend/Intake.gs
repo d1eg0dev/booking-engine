@@ -126,7 +126,16 @@ function accesoValido_(acceso) {
     if (s.payment_status !== 'paid' && s.status !== 'complete') {
       return { ok: false, error: 'Ese pago todavía no está confirmado.' };
     }
-    return { ok: true, nota: 'pago ' + sid.slice(0, 18), correo: (s.customer_details || {}).email || '' };
+    // La suscripción se guarda entera, no recortada como la nota. Es lo único
+    // que permite, cuando la página quede publicada, mover el inicio del mes
+    // de prueba a ese día. Sin esto habría que adivinarla por el correo, y el
+    // del formulario no tiene por qué ser el de la tarjeta.
+    return {
+      ok: true,
+      nota: 'pago ' + sid.slice(0, 18),
+      correo: (s.customer_details || {}).email || '',
+      suscripcion: String(s.subscription || '')
+    };
   }
   return { ok: false, error: 'Falta elegir un plan.' };
 }
@@ -208,6 +217,11 @@ function doPost(e) {
     // La aceptación se guarda con su versión y su hora: "aceptó las
     // condiciones" sin decir cuáles ni cuándo no prueba nada.
     h.getRange(h.getLastRow(), columna_(h, 'acceso')).setValue(acc.nota || '');
+
+    // La suscripción, para poder arrancarle la prueba el día que publique.
+    if (acc.suscripcion) {
+      h.getRange(h.getLastRow(), columna_(h, 'suscripcion')).setValue(acc.suscripcion);
+    }
 
     var ac = cuerpo.config && cuerpo.config._intake && cuerpo.config._intake.condiciones;
     if (ac && ac.version) {
@@ -685,6 +699,42 @@ function escapa_(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/* ── El mes de prueba empieza al publicar ────────────────────────────────
+   Stripe cuenta la prueba desde que se crea la suscripción, y la suscripción
+   se crea al pagar, que es antes de que exista la página. Aquí se mueve su
+   final a treinta días contados desde hoy: el día que el sitio quedó vivo.
+
+   Sólo se mueve hacia adelante. Si la suscripción ya tenía una prueba más
+   larga, se deja como estaba: un reintento o una publicación repetida no
+   deben quitarle días a nadie. Y si ya salió de la prueba y está cobrando,
+   no se toca, porque devolverla a prueba sería regalarle un mes a alguien
+   que ya pagó.                                                            */
+function arrancaPrueba_(sub) {
+  var clave = prop_('STRIPE_SECRET', true);
+  if (!clave) throw new Error('falta STRIPE_SECRET');
+  var url = 'https://api.stripe.com/v1/subscriptions/' + encodeURIComponent(sub);
+
+  var r = UrlFetchApp.fetch(url, {
+    headers: { Authorization: 'Bearer ' + clave },
+    muteHttpExceptions: true
+  });
+  if (r.getResponseCode() !== 200) throw new Error('no se pudo leer la suscripción');
+
+  var s = JSON.parse(r.getContentText() || '{}');
+  if (s.status !== 'trialing') return;
+
+  var fin = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
+  if (s.trial_end && s.trial_end >= fin) return;
+
+  var p = UrlFetchApp.fetch(url, {
+    method: 'post',
+    headers: { Authorization: 'Bearer ' + clave },
+    payload: { 'trial_end': String(fin), 'proration_behavior': 'none' },
+    muteHttpExceptions: true
+  });
+  if (p.getResponseCode() !== 200) throw new Error(String(p.getContentText()).slice(0, 160));
+}
+
 function resultado_(c) {
   if (c.token !== prop_('SECRETO', true)) return json_({ ok: false, error: 'no autorizado' });
   var id = (c.id || '').toString().trim();
@@ -703,6 +753,29 @@ function resultado_(c) {
       try { fotos = subeFotos_(id, datos[i][3]); }
       catch (err) { estado = 'vivo, sin fotos: ' + String(err.message).slice(0, 180); }
     }
+
+    // El mes de prueba empieza cuando la página responde, no cuando el
+    // propietario se registró. Si empezara en el alta, el que tarda dos
+    // semanas en mandar sus fotos se gastaría media prueba esperándose a sí
+    // mismo, y le llegaría el primer cobro sin haber visto su sitio nunca.
+    // Ese es el cobro que se cancela y además deja mal sabor.
+    if (c.ok && c.vivo) {
+      var colPrueba = columna_(h, 'prueba desde');
+      if (!h.getRange(i + 1, colPrueba).getValue()) {
+        var sub = String(h.getRange(i + 1, columna_(h, 'suscripcion')).getValue() || '').trim();
+        if (sub) {
+          try {
+            arrancaPrueba_(sub);
+            h.getRange(i + 1, colPrueba).setValue(new Date());
+          } catch (err) {
+            // Que falle esto no tira el alta: el sitio ya está publicado. Se
+            // anota para poder moverlo a mano, que es mucho menos grave.
+            h.getRange(i + 1, colPrueba).setValue('falló: ' + String(err.message).slice(0, 120));
+          }
+        }
+      }
+    }
+
     h.getRange(i + 1, 7).setValue(estado);
     if (c.url) h.getRange(i + 1, 8).setValue(c.url);
     if (!c.ok) {

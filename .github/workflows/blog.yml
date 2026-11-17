@@ -1,7 +1,13 @@
-name: Publicar el blog
+name: Publicar el sitio
 
 # Un agente escribe un .md en landing/blog/posts/ y abre un pull request.
 # Al fusionarlo, esto construye el blog y lo publica.
+#
+# Publica también la landing, el demo y el formulario, porque es el único
+# flujo que llama a publicar-landing.py. Antes sólo se disparaba con cambios
+# del blog, así que tocar un precio en landing/index.html no llegaba nunca al
+# sitio y había que acordarse de lanzarlo a mano. Un despliegue que depende de
+# que alguien se acuerde no es un despliegue.
 #
 # El flujo corre también en el pull request, sin publicar nada: ahí es donde
 # las puertas del generador avisan antes de que nadie fusione. Un artículo
@@ -13,8 +19,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'landing/blog/posts/**'
+      - 'landing/**'
+      - 'demo/**'
+      - 'tools/intake.html'
       - 'tools/genera-blog.py'
+      - 'tools/publicar-landing.py'
       - '.github/workflows/blog.yml'
   pull_request:
     paths:

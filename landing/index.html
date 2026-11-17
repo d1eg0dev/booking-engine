@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Booking Page · Reserva directa para tu propiedad</title>
-<meta name="description" content="Tu propia página de reservas: calendario, temporadas y cobro directo a tu cuenta. Desde 790 USD al año, sin comisión por reserva.">
+<meta name="description" content="Tu propia página de reservas: calendario, temporadas y cobro directo a tu cuenta. Desde 14,900 MXN al año, sin comisión por reserva.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -767,8 +767,8 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
   // antes de dar de alta nada. Cambiar un enlace aquí no abre ninguna puerta:
   // la comprobación la hace el servidor, no esta página.
   var PAGO = {
-    mes: 'https://buy.stripe.com/bJedR97oR5jc9IXdpr2Nq00',
-    ano: 'https://buy.stripe.com/14A8wP8sV7rkcV97132Nq01'
+    mes: 'https://buy.stripe.com/fZu7sLgZrcLE9IX2KN2Nq02',
+    ano: 'https://buy.stripe.com/6oUeVd9wZ9zs7AP4SV2Nq03'
   };
   [].forEach.call(document.querySelectorAll('[data-pago]'), function(a){
     var plan = a.dataset.pago;
@@ -908,7 +908,10 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
 (function(){
   'use strict';
 
-  var MES_USD = 79, ANO_USD = 790;          // el año son diez meses
+  /* El precio se cobra en pesos: la cuenta de Stripe es mexicana y liquida en
+     pesos, así que ese es el número de verdad y los demás son conversiones.
+     El año son diez meses. */
+  var MES_MXN = 1490, ANO_MXN = 14900;
   var MONEDAS = [
     ['MXN','Peso mexicano','es-MX'], ['USD','Dólar','en-US'], ['EUR','Euro','es-ES'],
     ['COP','Peso colombiano','es-CO'], ['ARS','Peso argentino','es-AR'],
@@ -932,6 +935,14 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       currencyDisplay:'narrowSymbol', maximumFractionDigits:0 });
   }
   function moneda(n, mon, l){ return dinero(n, mon, l) + ' ' + mon; }
+
+  /* Los tipos de cambio están en unidades por dólar, así que para pasar de
+     pesos a cualquier otra moneda se pasa por el dólar. En pesos la cuenta
+     devuelve el precio exacto, sin redondeos de conversión. */
+  function precio(baseMXN, mon){
+    if (mon === 'MXN') return baseMXN;
+    return hay(mon) ? baseMXN / FX.MXN * FX[mon] : baseMXN / FX.MXN;
+  }
   function loc(mon){
     for (var i = 0; i < MONEDAS.length; i++) if (MONEDAS[i][0] === mon) return MONEDAS[i][2];
     return 'en-US';
@@ -969,13 +980,14 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
     var L = loc(est.mon), conv = hay(est.mon);
     var bruto = est.tarifa * est.noches * 12;
     var comision = bruto * est.com / 100;
-    var cuesta = conv ? ANO_USD * FX[est.mon] : null;
+    var cuesta = conv ? precio(ANO_MXN, est.mon) : null;
 
     $('v-tarifa').textContent = dinero(est.tarifa, est.mon, L);
     $('v-noches').textContent = est.noches + (est.noches === 1 ? ' noche' : ' noches');
     $('r-comision').textContent = dinero(comision, est.mon, L);
-    $('r-cuesta').textContent = conv ? dinero(cuesta, est.mon, L) + ' · ' + ANO_USD + ' USD'
-                                     : ANO_USD + ' USD';
+    $('r-cuesta').textContent = conv && est.mon !== 'MXN'
+      ? moneda(cuesta, est.mon, L) + ' · ' + ANO_MXN.toLocaleString('es-MX') + ' MXN'
+      : dinero(ANO_MXN, 'MXN', 'es-MX') + ' MXN';
 
     if (conv && comision > cuesta){
       $('r-titulo').textContent = 'Al año te quedas con';
@@ -993,19 +1005,24 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
     /* Con el código de moneda detrás. El símbolo corto no basta: 79 dólares y
        1.481 pesos salen los dos como «$…», y en la caja del precio es justo
        donde nadie debería tener que adivinar cuál está viendo. */
-    $('p-mes').textContent = conv ? moneda(MES_USD * FX[est.mon], est.mon, L) : MES_USD + ' USD';
-    $('p-ano').textContent = conv ? moneda(ANO_USD * FX[est.mon], est.mon, L) : ANO_USD + ' USD';
-    $('p-ano-nota').textContent = conv
-      ? 'al año · ahorras ' + moneda((MES_USD * 12 - ANO_USD) * FX[est.mon], est.mon, L)
-      : 'al año · ahorras ' + (MES_USD * 12 - ANO_USD) + ' USD';
+    $('p-mes').textContent = conv ? moneda(precio(MES_MXN, est.mon), est.mon, L)
+                                  : moneda(MES_MXN, 'MXN', 'es-MX');
+    $('p-ano').textContent = conv ? moneda(precio(ANO_MXN, est.mon), est.mon, L)
+                                  : moneda(ANO_MXN, 'MXN', 'es-MX');
+    var ahorro = MES_MXN * 12 - ANO_MXN;
+    $('p-ano-nota').textContent = 'al año · ahorras ' + (conv
+      ? moneda(precio(ahorro, est.mon), est.mon, L)
+      : moneda(ahorro, 'MXN', 'es-MX'));
 
     var base = 'Esta cuenta sólo mide las reservas que ya llegarían a ti: huéspedes que '
       + 'repiten, recomendados, gente que te escribe. Un portal sí trae clientes nuevos, y '
       + 'ese valor no está aquí.';
     $('r-nota').textContent = base + (conv
-      ? ' Precio en ' + est.mon + ' convertido desde dólares'
-        + (FX_VIVO ? ' al tipo de cambio de hoy.' : ', tipo de cambio del ' + FX_FECHA + '.')
-      : ' No tenemos tipo de cambio para ' + est.mon + ' ahora mismo, así que el precio va en dólares.');
+      ? (est.mon === 'MXN' ? ' El precio se cobra en pesos.'
+          : ' Precio en ' + est.mon + ' convertido desde pesos'
+            + (FX_VIVO ? ' al tipo de cambio de hoy.' : ', tipo de cambio del ' + FX_FECHA + '.')
+            + ' El cobro se hace en pesos.')
+      : ' No tenemos tipo de cambio para ' + est.mon + ' ahora mismo, así que el precio va en pesos.');
   }
 
   $('tarifa').addEventListener('input', function(){ est.tarifa = +this.value; pinta(); });
