@@ -4,10 +4,15 @@ slug: cuanto-cuesta-una-reserva-por-portal
 idioma: es
 fecha: 2026-11-13
 autor: Diego Larios
-resumen: La comisión que ves no es la que pagas. Hacemos la cuenta completa con las tarifas publicadas, para una casa de 110 € la noche.
+resumen: La comisión de Airbnb que ves no es la que pagas. La cuenta completa con tarifas publicadas, para una casa de 110 € la noche.
 estado: publicado
 par: what-a-platform-booking-really-costs
 dato: Tarifas publicadas de Airbnb y Stripe a noviembre de 2026, con la aritmética hecha paso a paso
+titulo_seo: La comisión de Airbnb en 2026: lo que cuesta una reserva
+palabra_clave: comisión de airbnb
+imagen: casa.jpg
+imagen_alt: Casa con alberca entre la vegetación, al anochecer
+modificado: 2026-11-21
 ---
 
 Casi ningún anfitrión sabe cuánto le cuesta una reserva. Sabe el porcentaje
@@ -36,6 +41,8 @@ otras opciones. Tu casa aparece más cara de lo que tú cobras.
 | **Te queda** | **714,96 €** |
 
 Son **165 € al mes** que no llegan. Al año, cerca de **1.980 €**.
+
+![Alberca infinita frente al mar al atardecer](alberca.jpg)
 
 ## La misma reserva, directa
 

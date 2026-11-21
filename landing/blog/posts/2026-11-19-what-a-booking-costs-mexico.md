@@ -4,10 +4,15 @@ slug: what-a-booking-really-costs-in-mexico
 idioma: en
 fecha: 2026-11-19
 autor: Diego Larios
-resumen: Airbnb and Booking are good at getting you found. For the guest who already knows you, you can have your own page, with your own rules, from an apartment to a boutique hotel.
+resumen: Airbnb and Booking help guests find you. With direct booking, the guest who comes back books with you, on your own rules.
 estado: publicado
 par: cuanto-cuesta-una-reserva-en-mexico
-dato: Published Airbnb Mexico rates (16% since June 2026) and Stripe Mexico pricing, worked through for a house at 2,500 pesos a night with the Booking Page fee in pesos
+dato: Published Airbnb Mexico rates (16% single host fee, per its Help Center) and Stripe Mexico pricing, worked through for a house at 2,500 pesos a night with the Booking Page fee in pesos
+titulo_seo: Direct booking for returning Airbnb guests, on your rules
+palabra_clave: direct booking
+imagen: palapa.jpg
+imagen_alt: Palapa and pool at sunset
+modificado: 2026-11-21
 ---
 
 There is a family that comes back to your house every December. You know the
@@ -18,8 +23,8 @@ You built that relationship. It can have its own front door too.
 ## What Airbnb and Booking do well
 
 Platforms do something very hard to do alone: put you in front of thousands
-of travellers who do not know you. That is why they charge. In Mexico, Airbnb
-has charged hosts a 16% fee since June 2026.
+of travellers who do not know you. That is why they charge. In Mexico, Airbnb's
+single host fee is 16%, according to its Help Center.
 
 For a new guest, that deal makes sense. The platform brought them.
 
@@ -43,6 +48,8 @@ write to them.
 
 **Your brand.** The page looks like your house, not one more listing in a
 list. And the calendar syncs with Airbnb and Booking, so you stay on both.
+
+![Loungers by a pool facing the sea](tumbonas.jpg)
 
 ## The numbers, plainly
 

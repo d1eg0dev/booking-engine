@@ -4,10 +4,15 @@ slug: cuanto-cuesta-una-reserva-en-mexico
 idioma: es
 fecha: 2026-11-19
 autor: Diego Larios
-resumen: Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.
+resumen: Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.
 estado: publicado
 par: what-a-booking-really-costs-in-mexico
-dato: Tarifas publicadas de Airbnb México (16 % desde junio de 2026) y Stripe México, con la cuenta hecha para una casa de 2,500 pesos la noche y la cuota de Booking Page en pesos
+dato: Tarifas publicadas de Airbnb México (tarifa única del 16 % para anfitriones, según su centro de ayuda) y Stripe México, con la cuenta hecha para una casa de 2,500 pesos la noche y la cuota de Booking Page en pesos
+titulo_seo: Reservas directas: tus huéspedes de Airbnb, con tus reglas
+palabra_clave: reservas directas
+imagen: palapa.jpg
+imagen_alt: Palapa y alberca al atardecer
+modificado: 2026-11-21
 ---
 
 Hay una familia que vuelve a tu casa cada diciembre. Sabes cómo se llaman los
@@ -19,8 +24,8 @@ entrada.
 ## Lo que Airbnb y Booking hacen bien
 
 Los portales hacen algo muy difícil de hacer solo: ponerte delante de miles de
-viajeros que no te conocen. Por eso cobran. En México, Airbnb cobra a los
-anfitriones una tarifa del 16 % desde junio de 2026.
+viajeros que no te conocen. Por eso cobran. En México, la tarifa única de Airbnb
+para anfitriones es del 16 %, según su centro de ayuda.
 
 Para el huésped nuevo, ese trato tiene sentido. Te lo trajeron ellos.
 
@@ -45,6 +50,8 @@ viene le escribes tú.
 **Tu marca.** La página se ve como tu casa, no como un anuncio más en una
 lista. Y el calendario se sincroniza con Airbnb y Booking, así que sigues en
 los dos.
+
+![Tumbonas junto a una alberca frente al mar](tumbonas.jpg)
 
 ## Los números, sin adornos
 

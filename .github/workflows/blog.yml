@@ -28,6 +28,7 @@ on:
   pull_request:
     paths:
       - 'landing/blog/posts/**'
+      - 'landing/blog/media/**'
       - 'tools/genera-blog.py'
   workflow_dispatch:
 
