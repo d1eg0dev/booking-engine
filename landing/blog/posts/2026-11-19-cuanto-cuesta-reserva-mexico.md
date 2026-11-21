@@ -72,22 +72,20 @@ al mes.
 El dinero es un extra. Lo que ganas de verdad es que esa parte del negocio
 funcione con tus reglas.
 
-## Dónde está la trampa
+## Lo que conviene saber antes
 
-**El portal te sigue haciendo falta.** Si tus reservas vienen de búsquedas en
-Airbnb o Booking, quédate ahí. La página propia es para los que ya te
-conocen.
+**Airbnb y Booking siguen siendo tu escaparate.** Ahí te encuentran los huéspedes nuevos.
+Tu página es para los que ya te conocen, y las dos cosas conviven.
 
-**La cuota es fija.** Con menos de unos 13,400 pesos al mes en reservas
-directas, Booking Page te cuesta más de lo que te ahorra.
+**Arranca cuando haya volumen.** Booking Page tiene una cuota fija. Empieza a pagarse sola
+a partir de unos 13,400 pesos al mes en reservas directas.
 
-**El papeleo pasa a ser tuyo.** En directo, Airbnb no te retiene impuestos. Tú
-cobras el IVA, emites la factura y lo declaras. Si hoy tomas la retención de
-Airbnb como pago definitivo, cobrar directo puede sacarte de esa opción.
-Habla con tu contador antes.
+**En directo, los impuestos los llevas tú.** Airbnb no te retiene nada: cobras el IVA,
+facturas y declaras. Si hoy tomas la retención de Airbnb como pago definitivo, revisa con
+tu contador cómo te conviene cobrar directo.
 
-**Mover a la gente lleva trabajo.** La familia de diciembre no llega sola a tu
-página. Dale el enlace al despedirla y en tu Instagram.
+**Invita a tus huéspedes a volver por tu página.** La familia de diciembre no llega sola.
+Dale el enlace al despedirla y ponlo en tu Instagram.
 
 ## Por dónde empezar
 
