@@ -7,6 +7,7 @@
 <meta name="description" content="Airbnb and Booking help guests find you. With direct booking, the guest who comes back books with you, on your own rules.">
 <link rel="canonical" href="https://wdstudio.agency/booking-page/en/blog/what-a-booking-really-costs-in-mexico/">
 <link rel="alternate" hreflang="en" href="https://wdstudio.agency/booking-page/en/blog/what-a-booking-really-costs-in-mexico/">
+<link rel="alternate" hreflang="es-MX" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
 <link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
 <link rel="alternate" hreflang="x-default" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
 <meta name="robots" content="max-image-preview:large">
@@ -36,11 +37,11 @@
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    --col:680px; --ancho:1200px;
+    --col:920px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
-    font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+    font-size:18px;line-height:1.75;-webkit-font-smoothing:antialiased}
   img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
@@ -67,7 +68,7 @@
     line-height:1.08;letter-spacing:-.01em}
   .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
   .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
-  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada{max-width:var(--col);margin:clamp(30px,4vw,44px) auto 0;padding:0 24px}
   .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
     background:var(--hueso)}
   .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
@@ -92,9 +93,8 @@
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
   article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
-  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
-     ancho de pantalla para la foto. */
-  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  /* Todo comparte el mismo ancho: título, fotos, texto y tarjetas. */
+  .figura{margin:38px 0}
   .figura img{width:100%;border-radius:4px;background:var(--hueso)}
   .figura figcaption{padding:0 4px}
   /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
@@ -112,7 +112,7 @@
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .btn.lleno{background:var(--tinta);color:#fff}
   .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
-  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+  .cierre{max-width:var(--col);margin:64px auto 0;padding:0 24px;
     display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
   .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
     display:flex;flex-direction:column}
@@ -125,10 +125,10 @@
   .tarjeta.oscura p{color:#C9CDD0}
   .tarjeta.oscura .btn{border-color:#fff;color:#fff}
   .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
-  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados{max-width:var(--col);margin:72px auto 0;padding:0 24px}
   .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
     margin-bottom:22px}
-  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px}
   .item{color:inherit;display:block}
   .item:hover{text-decoration:none}
   .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
@@ -157,11 +157,8 @@
   footer a{color:var(--g500)}
   @media (max-width:760px){
     .destacado{grid-template-columns:1fr;gap:20px}
-    .figura{margin:30px -24px}
-    .figura img{border-radius:0}
-    .portada{padding:0}
-    .portada img{border-radius:0;aspect-ratio:4/3}
-    .portada figcaption{padding:0 24px}
+    .figura{margin:30px 0}
+    .portada img{aspect-ratio:4/3}
     .navega .cta{display:none}
     .marca span{display:none}
     .navega{gap:14px}
@@ -195,7 +192,7 @@
     <p class="resumen">Airbnb and Booking help guests find you. With direct booking, the guest who comes back books with you, on your own rules.</p>
     
   </div>
-  <figure class="portada"><img src="../../../blog/media/palapa.jpg" srcset="../../../blog/media/palapa-800.jpg 800w, ../../../blog/media/palapa.jpg 1600w" sizes="(max-width:1256px) 100vw, 1200px" width="1600" height="1067" alt="Palapa and pool at sunset" fetchpriority="high" decoding="async"></figure>
+  <figure class="portada"><img src="../../../blog/media/palapa.jpg" srcset="../../../blog/media/palapa-800.jpg 800w, ../../../blog/media/palapa.jpg 1600w" sizes="(max-width:968px) 100vw, 920px" width="1600" height="1067" alt="Palapa and pool at sunset" fetchpriority="high" decoding="async"></figure>
   <div class="columna">
     <p class="dato"><b>What this article is built on:</b> Published Airbnb Mexico rates (16% single host fee, per its Help Center) and Stripe Mexico pricing, worked through for a house at 2,500 pesos a night with the Booking Page fee in pesos</p>
     <article><p>There is a family that comes back to your house every December. You know the kids' names. They message you on WhatsApp before they book.</p>
@@ -210,7 +207,7 @@
 <p><strong>Your guest.</strong> You have their email and phone from day one. Next year, you write to them.</p>
 <p><strong>Your money.</strong> Payment lands straight in your Stripe account.</p>
 <p><strong>Your brand.</strong> The page looks like your house, not one more listing in a list. And the calendar syncs with Airbnb and Booking, so you stay on both.</p>
-<figure class="figura"><img src="../../../blog/media/tumbonas.jpg" srcset="../../../blog/media/tumbonas-800.jpg 800w, ../../../blog/media/tumbonas.jpg 1600w" sizes="(max-width:760px) 100vw, 960px" width="1600" height="1067" alt="Loungers by a pool facing the sea" loading="lazy" decoding="async"></figure>
+<figure class="figura"><img src="../../../blog/media/tumbonas.jpg" srcset="../../../blog/media/tumbonas-800.jpg 800w, ../../../blog/media/tumbonas.jpg 1600w" sizes="(max-width:968px) 100vw, 920px" width="1600" height="1067" alt="Loungers by a pool facing the sea" loading="lazy" decoding="async"></figure>
 <h2>The numbers, plainly</h2>
 <p>We ran the sum for a house at 2,500 pesos a night, with two four-night stays a month booked direct instead of through Airbnb.</p>
 <table><thead><tr><th>How the guest pays</th><th>You keep per month, against Airbnb</th></tr></thead><tbody><tr><td>Mexican card, in pesos</td><td>+734 pesos</td></tr><tr><td>Foreign card, in pesos</td><td>+600 pesos</td></tr><tr><td>Foreign card, in dollars</td><td>+61 pesos</td></tr></tbody></table>
@@ -235,7 +232,7 @@
   
   <section class="cierre" aria-label="More from WD Studio">
     <div class="tarjeta">
-      <img src="../../../blog/media/mar.jpg" srcset="../../../blog/media/mar-800.jpg 800w, ../../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1067" alt="Terrace facing the sea" loading="lazy" decoding="async">
+      <img src="../../../blog/media/mar.jpg" srcset="../../../blog/media/mar-800.jpg 800w, ../../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 460px" width="1600" height="1067" alt="Terrace facing the sea" loading="lazy" decoding="async">
       <div class="txt">
         <span class="etq">Booking Page</span>
         <h2>A booking page that is yours</h2>
@@ -244,7 +241,7 @@
       </div>
     </div>
     <div class="tarjeta oscura">
-      <img src="../../../blog/media/aerea.jpg" srcset="../../../blog/media/aerea-800.jpg 800w, ../../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1066" alt="House seen from above, by the beach" loading="lazy" decoding="async">
+      <img src="../../../blog/media/aerea.jpg" srcset="../../../blog/media/aerea-800.jpg 800w, ../../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 460px" width="1600" height="1066" alt="House seen from above, by the beach" loading="lazy" decoding="async">
       <div class="txt">
         <span class="etq">WD Studio</span>
         <h2>Want the whole website, or photos that sell?</h2>

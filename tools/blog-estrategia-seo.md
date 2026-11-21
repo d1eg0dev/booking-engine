@@ -6,6 +6,29 @@ Planner, Ahrefs ni Semrush. Las prioridades salen de quién ocupa hoy cada búsq
 tan específica es. Cuando tengamos Search Console con datos, esta tabla se corrige con
 números de verdad.
 
+## Decisión: el público es México
+
+Decisión de Diego del 21 de noviembre de 2026. En México no hay una buena opción de reserva
+directa escrita para anfitriones mexicanos, y Booking Page quiere ser esa opción. Por eso:
+
+- **El español se escribe para México**: renta vacacional, casa de renta, reservación,
+  alberca, anfitrión, pesos, SAT, factura, SPEI, temporada alta (Semana Santa, verano,
+  Navidad y Año Nuevo, puentes). "Alquiler vacacional" aparece una vez por artículo, para
+  quien busque así.
+- **Las cifras van en pesos.** Las tarifas, las reglas y los ejemplos son mexicanos. Europa
+  sale solo como comparación.
+- **Escenas mexicanas**: el huésped de Guadalajara o de la CDMX que vuelve cada puente, el
+  extranjero que paga en dólares, la villa en la costa, el departamento en la ciudad, la
+  cabaña en el bosque, el hotel boutique en un pueblo mágico.
+- **Destinos para búsquedas locales** (con el destino en el título o en un subtítulo):
+  Tulum, Playa del Carmen, Puerto Vallarta, Riviera Nayarit, Los Cabos, Oaxaca, Puerto
+  Escondido, San Miguel de Allende, Mérida, Valle de Bravo, Careyes. Ejemplo: "Página de
+  reservas propia para tu casa en Tulum".
+- **El inglés es para extranjeros con propiedad en México**: estadounidenses y canadienses
+  que rentan su casa en Tulum, Vallarta o Los Cabos. No compite por el público de Estados
+  Unidos en general.
+- La plantilla marca el español como `es-MX` (también `es`) y Open Graph como `es_MX`.
+
 ## Lo que muestran los resultados
 
 1. **Las búsquedas genéricas ya tienen dueño.** "Reservas directas", "sitio web de
@@ -23,8 +46,10 @@ números de verdad.
 4. **Airbnb prueba comisiones más bajas para reservas que traes tú con tu propio enlace.**
    Es noticia (Skift, agosto de 2026) y se puede escribir sin atacar a nadie.
 5. **Google Vacation Rentals da enlaces de reserva gratis** hacia la web del alojamiento.
-   Para salir ahí hace falta un socio de conectividad. Es un tema de interés, pero no se
-   puede prometer que Booking Page lo consigue.
+   Para salir ahí hace falta un socio de conectividad (una lista aprobada por Google) o
+   que Booking Page se convierta en uno. Los propietarios individuales no son elegibles;
+   sí los negocios de administración de propiedades con web de reserva directa. Mientras
+   no esté hecho, no se promete en el blog.
 6. **Booking.com no publica una comisión única.** Las guías dan una comisión base del 15 %
    y un rango del 10 al 25 % según país y programa, más un cargo si usas Pagos por
    Booking.com. Cualquier cifra de Booking necesita su fuente y su fecha.
@@ -49,7 +74,14 @@ los subtítulos y en el texto, sin forzar.
 | Huésped | huéspedes que repiten | fidelizar huéspedes, base de datos de huéspedes | Informativa | Media |
 | Fiscal México | retención isr airbnb | IVA renta vacacional, factura huésped | Informativa, delicada | Media (siempre mandando al contador) |
 | Por tipo | página de reservas para hotel boutique | web para cabaña, web para villa de lujo, departamento | Comercial | Media |
+| Destino | página de reservas casa en tulum | renta vacacional Puerto Vallarta reservación directa, Los Cabos, San Miguel de Allende | Comercial y local | Alta (un destino por artículo, sin repetir plantilla) |
+| Cobros México | cobrar con tarjeta renta vacacional méxico | cobrar en dólares o pesos, comisión Stripe México, SPEI | Problema concreto | Alta |
+| Temporadas | temporada alta renta vacacional | Semana Santa, Navidad, puentes, huésped nacional | Informativa | Media |
 | Google | google vacation rentals | aparecer en Google con mi casa vacacional | Informativa | Baja-media |
+
+Una página por destino solo si dice algo propio de ese destino: un dato local verificable,
+una temporada o un tipo de huésped. Diez páginas iguales con el nombre de la ciudad
+cambiado son justo el contenido a escala que Google castiga.
 
 ### Inglés
 
@@ -60,6 +92,7 @@ los subtítulos y en el texto, sin forzar.
 | Huésped | repeat guests book direct | get guests to book direct, guest list | Alta |
 | Operación | sync airbnb and booking calendar | ical double booking | Media |
 | México | airbnb host fee mexico | vacation rental mexico direct booking, Stripe Mexico fees | Alta (casi nadie lo escribe) |
+| Destino | direct booking vacation rental tulum | Puerto Vallarta, Los Cabos, San Miguel de Allende, for foreign owners | Alta |
 
 ## Reglas para cada artículo
 

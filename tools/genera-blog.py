@@ -52,6 +52,9 @@ POSTS = LANDING / 'blog' / 'posts'
 SITIO = 'https://wdstudio.agency/booking-page'
 MEDIA = LANDING / 'blog' / 'media'
 ESTUDIO = 'https://wdstudio.agency/'
+# El público principal es México: el español se marca es-MX, y también es
+# para que quien busca desde otro país hispano encuentre la misma página.
+HREFLANG = {'es': ('es-MX', 'es'), 'en': ('en',)}
 
 # Más de esto en una semana no es una línea editorial, es una fábrica.
 TOPE_SEMANAL = 2
@@ -326,11 +329,11 @@ ESTILO = """
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    --col:680px; --ancho:1200px;
+    --col:920px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
-    font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+    font-size:18px;line-height:1.75;-webkit-font-smoothing:antialiased}
   img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
@@ -357,7 +360,7 @@ ESTILO = """
     line-height:1.08;letter-spacing:-.01em}
   .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
   .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
-  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada{max-width:var(--col);margin:clamp(30px,4vw,44px) auto 0;padding:0 24px}
   .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
     background:var(--hueso)}
   .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
@@ -382,9 +385,8 @@ ESTILO = """
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
   article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
-  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
-     ancho de pantalla para la foto. */
-  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  /* Todo comparte el mismo ancho: título, fotos, texto y tarjetas. */
+  .figura{margin:38px 0}
   .figura img{width:100%;border-radius:4px;background:var(--hueso)}
   .figura figcaption{padding:0 4px}
   /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
@@ -402,7 +404,7 @@ ESTILO = """
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .btn.lleno{background:var(--tinta);color:#fff}
   .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
-  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+  .cierre{max-width:var(--col);margin:64px auto 0;padding:0 24px;
     display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
   .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
     display:flex;flex-direction:column}
@@ -415,10 +417,10 @@ ESTILO = """
   .tarjeta.oscura p{color:#C9CDD0}
   .tarjeta.oscura .btn{border-color:#fff;color:#fff}
   .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
-  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados{max-width:var(--col);margin:72px auto 0;padding:0 24px}
   .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
     margin-bottom:22px}
-  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px}
   .item{color:inherit;display:block}
   .item:hover{text-decoration:none}
   .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
@@ -447,11 +449,8 @@ ESTILO = """
   footer a{color:var(--g500)}
   @media (max-width:760px){
     .destacado{grid-template-columns:1fr;gap:20px}
-    .figura{margin:30px -24px}
-    .figura img{border-radius:0}
-    .portada{padding:0}
-    .portada img{border-radius:0;aspect-ratio:4/3}
-    .portada figcaption{padding:0 24px}
+    .figura{margin:30px 0}
+    .portada img{aspect-ratio:4/3}
     .navega .cta{display:none}
     .marca span{display:none}
     .navega{gap:14px}
@@ -488,8 +487,8 @@ def armazon(titulo, descripcion, canonical, cuerpo, en, alternas=None,
     og = og or {}
     hreflang = ''
     if alternas:
-        hreflang = ''.join(f'<link rel="alternate" hreflang="{k}" href="{v}">\n'
-                           for k, v in alternas.items())
+        hreflang = ''.join(f'<link rel="alternate" hreflang="{h}" href="{v}">\n'
+                           for k, v in alternas.items() for h in HREFLANG.get(k, (k,)))
         if 'es' in alternas:
             hreflang += f'<link rel="alternate" hreflang="x-default" href="{alternas["es"]}">\n'
     img_og = ''
@@ -504,7 +503,7 @@ def armazon(titulo, descripcion, canonical, cuerpo, en, alternas=None,
         fechas = (f'<meta property="article:published_time" content="{og["publicado"]}">\n'
                   f'<meta property="article:modified_time" content="{og["modificado"]}">\n')
     return f"""<!doctype html>
-<html lang="{idioma}">
+<html lang="{'en' if en else 'es-MX'}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -650,7 +649,7 @@ def pagina_post(p, pareja, otros, precio):
         img = imagen(src)
         if not img:
             return ''
-        return (f'<figure class="figura">{etiqueta_img(img, alt, base, sizes="(max-width:760px) 100vw, 960px")}'
+        return (f'<figure class="figura">{etiqueta_img(img, alt, base, sizes="(max-width:968px) 100vw, 920px")}'
                 + (f'<figcaption>{en_linea(pie)}</figcaption>' if pie else '')
                 + '</figure>')
 
@@ -669,7 +668,7 @@ def pagina_post(p, pareja, otros, precio):
             'description': p['resumen'],
             'datePublished': p['fecha'],
             'dateModified': modificado,
-            'inLanguage': 'en' if en else 'es',
+            'inLanguage': 'en' if en else 'es-MX',
             'wordCount': p['palabras'],
             'author': {'@type': 'Person', 'name': p.get('autor', 'Diego Larios'),
                        'url': ESTUDIO},
@@ -700,7 +699,7 @@ def pagina_post(p, pareja, otros, precio):
     portada_html = ''
     if portada:
         portada_html = (f'<figure class="portada">'
-                        f'{etiqueta_img(portada, p.get("imagen_alt", ""), base, prioridad=True, sizes="(max-width:1256px) 100vw, 1200px")}'
+                        f'{etiqueta_img(portada, p.get("imagen_alt", ""), base, prioridad=True, sizes="(max-width:968px) 100vw, 920px")}'
                         f'</figure>')
     inicio = f'{base}{"en/" if en else ""}'
     anuncio = f"""<aside class="anuncio" aria-label="Booking Page">
@@ -718,7 +717,7 @@ def pagina_post(p, pareja, otros, precio):
     cierre = f"""
   <section class="cierre" aria-label="{'More from WD Studio' if en else 'Más de WD Studio'}">
     <div class="tarjeta">
-      {etiqueta_img(foto_bp, 'Terraza frente al mar' if not en else 'Terrace facing the sea', base, sizes='(max-width:760px) 100vw, 600px') if foto_bp else ''}
+      {etiqueta_img(foto_bp, 'Terraza frente al mar' if not en else 'Terrace facing the sea', base, sizes='(max-width:760px) 100vw, 460px') if foto_bp else ''}
       <div class="txt">
         <span class="etq">Booking Page</span>
         <h2>{t['bp_t']}</h2>
@@ -727,7 +726,7 @@ def pagina_post(p, pareja, otros, precio):
       </div>
     </div>
     <div class="tarjeta oscura">
-      {etiqueta_img(foto_wd, 'Casa vista desde arriba, junto a la playa' if not en else 'House seen from above, by the beach', base, sizes='(max-width:760px) 100vw, 600px') if foto_wd else ''}
+      {etiqueta_img(foto_wd, 'Casa vista desde arriba, junto a la playa' if not en else 'House seen from above, by the beach', base, sizes='(max-width:760px) 100vw, 460px') if foto_wd else ''}
       <div class="txt">
         <span class="etq">{t['wd_etq']}</span>
         <h2>{t['wd_t']}</h2>
@@ -804,7 +803,7 @@ def pagina_indice(posts, en, precio):
 
     jsonld = {'@context': 'https://schema.org', '@type': 'Blog', '@id': canonical,
               'name': t['titulo'], 'description': t['resumen'],
-              'inLanguage': 'en' if en else 'es',
+              'inLanguage': 'en' if en else 'es-MX',
               'publisher': {'@type': 'Organization', 'name': 'WD Studio Agency',
                             'url': ESTUDIO},
               'blogPost': [{'@type': 'BlogPosting', 'headline': q['titulo'][:110],
@@ -836,7 +835,8 @@ def sitemap(posts):
     def nodo(url, lastmod, alternas, imgs):
         x = f'<url><loc>{url}</loc><lastmod>{lastmod}</lastmod>'
         for k, v in alternas.items():
-            x += f'<xhtml:link rel="alternate" hreflang="{k}" href="{v}"/>'
+            for h in HREFLANG.get(k, (k,)):
+                x += f'<xhtml:link rel="alternate" hreflang="{h}" href="{v}"/>'
         for src, alt in imgs:
             x += (f'<image:image><image:loc>{SITIO}/blog/media/{src}</image:loc>'
                   f'</image:image>')

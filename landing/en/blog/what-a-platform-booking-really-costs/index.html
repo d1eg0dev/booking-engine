@@ -7,6 +7,7 @@
 <meta name="description" content="The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.">
 <link rel="canonical" href="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
 <link rel="alternate" hreflang="en" href="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
+<link rel="alternate" hreflang="es-MX" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
 <link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
 <link rel="alternate" hreflang="x-default" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
 <meta name="robots" content="max-image-preview:large">
@@ -36,11 +37,11 @@
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    --col:680px; --ancho:1200px;
+    --col:920px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
-    font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+    font-size:18px;line-height:1.75;-webkit-font-smoothing:antialiased}
   img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
@@ -67,7 +68,7 @@
     line-height:1.08;letter-spacing:-.01em}
   .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
   .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
-  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada{max-width:var(--col);margin:clamp(30px,4vw,44px) auto 0;padding:0 24px}
   .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
     background:var(--hueso)}
   .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
@@ -92,9 +93,8 @@
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
   article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
-  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
-     ancho de pantalla para la foto. */
-  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  /* Todo comparte el mismo ancho: título, fotos, texto y tarjetas. */
+  .figura{margin:38px 0}
   .figura img{width:100%;border-radius:4px;background:var(--hueso)}
   .figura figcaption{padding:0 4px}
   /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
@@ -112,7 +112,7 @@
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .btn.lleno{background:var(--tinta);color:#fff}
   .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
-  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+  .cierre{max-width:var(--col);margin:64px auto 0;padding:0 24px;
     display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
   .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
     display:flex;flex-direction:column}
@@ -125,10 +125,10 @@
   .tarjeta.oscura p{color:#C9CDD0}
   .tarjeta.oscura .btn{border-color:#fff;color:#fff}
   .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
-  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados{max-width:var(--col);margin:72px auto 0;padding:0 24px}
   .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
     margin-bottom:22px}
-  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px}
   .item{color:inherit;display:block}
   .item:hover{text-decoration:none}
   .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
@@ -157,11 +157,8 @@
   footer a{color:var(--g500)}
   @media (max-width:760px){
     .destacado{grid-template-columns:1fr;gap:20px}
-    .figura{margin:30px -24px}
-    .figura img{border-radius:0}
-    .portada{padding:0}
-    .portada img{border-radius:0;aspect-ratio:4/3}
-    .portada figcaption{padding:0 24px}
+    .figura{margin:30px 0}
+    .portada img{aspect-ratio:4/3}
     .navega .cta{display:none}
     .marca span{display:none}
     .navega{gap:14px}
@@ -195,7 +192,7 @@
     <p class="resumen">The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.</p>
     
   </div>
-  <figure class="portada"><img src="../../../blog/media/casa.jpg" srcset="../../../blog/media/casa-800.jpg 800w, ../../../blog/media/casa.jpg 1600w" sizes="(max-width:1256px) 100vw, 1200px" width="1600" height="1066" alt="House with a pool among the trees, at dusk" fetchpriority="high" decoding="async"></figure>
+  <figure class="portada"><img src="../../../blog/media/casa.jpg" srcset="../../../blog/media/casa-800.jpg 800w, ../../../blog/media/casa.jpg 1600w" sizes="(max-width:968px) 100vw, 920px" width="1600" height="1066" alt="House with a pool among the trees, at dusk" fetchpriority="high" decoding="async"></figure>
   <div class="columna">
     <p class="dato"><b>What this article is built on:</b> Airbnb and Stripe published rates as of November 2026, with the arithmetic worked through</p>
     <article><p>Almost no host knows what a booking costs them. They know the percentage on the screen, which is not the same thing.</p>
@@ -206,7 +203,7 @@
 <h2>The sum, month by month</h2>
 <table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Two four-night stays at €110</td><td>€880</td></tr><tr><td>Host commission, 15.5%</td><td>−€136.40</td></tr><tr><td>VAT on that commission, 21%</td><td>−€28.64</td></tr><tr><td><strong>You keep</strong></td><td><strong>€714.96</strong></td></tr></tbody></table>
 <p>That is <strong>€165 a month</strong> that never arrives. Close to <strong>€1,980</strong> a year.</p>
-<figure class="figura"><img src="../../../blog/media/alberca.jpg" srcset="../../../blog/media/alberca-800.jpg 800w, ../../../blog/media/alberca.jpg 1600w" sizes="(max-width:760px) 100vw, 960px" width="1600" height="1067" alt="Infinity pool facing the sea at sunset" loading="lazy" decoding="async"></figure>
+<figure class="figura"><img src="../../../blog/media/alberca.jpg" srcset="../../../blog/media/alberca-800.jpg 800w, ../../../blog/media/alberca.jpg 1600w" sizes="(max-width:968px) 100vw, 920px" width="1600" height="1067" alt="Infinity pool facing the sea at sunset" loading="lazy" decoding="async"></figure>
 <h2>The same booking, direct</h2>
 <p>If that same guest books on your own page, the money lands in your Stripe account. Stripe charges for processing the payment, which is a real service and not a fee for introducing anyone: in Spain it runs around 1.5% plus €0.25 per transaction for European cards, and in Mexico about 3.6% plus 3 pesos.</p>
 <table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>The same two stays</td><td>€880</td></tr><tr><td>Processing, ~1.5% + €0.25 × 2</td><td>−€13.70</td></tr><tr><td>Booking Page, 79 USD a month</td><td>≈ −€73</td></tr><tr><td><strong>You keep</strong></td><td><strong>€793.30</strong></td></tr></tbody></table>
@@ -232,7 +229,7 @@
   
   <section class="cierre" aria-label="More from WD Studio">
     <div class="tarjeta">
-      <img src="../../../blog/media/mar.jpg" srcset="../../../blog/media/mar-800.jpg 800w, ../../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1067" alt="Terrace facing the sea" loading="lazy" decoding="async">
+      <img src="../../../blog/media/mar.jpg" srcset="../../../blog/media/mar-800.jpg 800w, ../../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 460px" width="1600" height="1067" alt="Terrace facing the sea" loading="lazy" decoding="async">
       <div class="txt">
         <span class="etq">Booking Page</span>
         <h2>A booking page that is yours</h2>
@@ -241,7 +238,7 @@
       </div>
     </div>
     <div class="tarjeta oscura">
-      <img src="../../../blog/media/aerea.jpg" srcset="../../../blog/media/aerea-800.jpg 800w, ../../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1066" alt="House seen from above, by the beach" loading="lazy" decoding="async">
+      <img src="../../../blog/media/aerea.jpg" srcset="../../../blog/media/aerea-800.jpg 800w, ../../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 460px" width="1600" height="1066" alt="House seen from above, by the beach" loading="lazy" decoding="async">
       <div class="txt">
         <span class="etq">WD Studio</span>
         <h2>Want the whole website, or photos that sell?</h2>
