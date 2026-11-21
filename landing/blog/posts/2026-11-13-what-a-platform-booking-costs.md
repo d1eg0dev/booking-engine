@@ -63,20 +63,16 @@ Difference: **€78 more a month** on a house billing €880. And from the
 second house on, the fee doesn't rise per booking: the margin grows on its
 own.
 
-## Where this calculation is unfair
+## Worth knowing before you start
 
-It isn't free and I don't want to sell it that way.
+**The platform brings people who did not know you, and that is worth something.** Your
+own page does not replace it: it complements it, for the guests who are already yours.
 
-**The platform brings you people who had never heard of you.** That is worth
-paying for. If every booking you get comes from searches inside Airbnb,
-removing the platform doesn't leave you better off, it leaves you empty.
+**The fee is fixed.** With two direct stays a month it pays off; with one, barely. Start
+when you already have guests who come back.
 
-**The fee is fixed and bookings are not.** In a slow month the 79 USD is due
-all the same. At two stays a month it pays for itself; at one, barely.
-
-**Moving people to direct booking is work.** You have to ask the guest who
-already stayed, put the link on your Instagram, send it on checkout. Nobody
-arrives on their own.
+**Returning guests need an invitation.** Ask the guest who already stayed, put the link on
+your Instagram, and send it when they leave.
 
 ## So when does it make sense
 

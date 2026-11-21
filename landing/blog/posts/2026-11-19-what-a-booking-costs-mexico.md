@@ -70,21 +70,19 @@ already taken off.
 The money is a bonus. What you really gain is that this part of the business
 runs on your rules.
 
-## Where this is unfair
+## Worth knowing before you start
 
-**You still need the platform.** If your bookings come from searches on
-Airbnb or Booking, stay there. Your own page is for the guests who already
-know you.
+**Airbnb and Booking are still your shop window.** That is where new guests find you.
+Your page is for the ones who already know you, and the two live side by side.
 
-**The fee is fixed.** Under roughly 13,400 pesos a month in direct bookings,
-Booking Page costs you more than it saves.
+**Start when there is volume.** Booking Page has a fixed fee. It pays for itself from
+roughly 13,400 pesos a month in direct bookings.
 
-**The paperwork becomes yours.** On a direct booking, Airbnb withholds no
-tax. You charge the VAT, issue the invoice and file it. If you treat Airbnb's
-withholding as your final tax today, charging direct can take you out of
-that option. Talk to your accountant first.
+**On direct bookings, taxes are on you.** Airbnb withholds nothing: you charge the VAT,
+invoice and file. If you treat Airbnb's withholding as your final tax today, check with
+your accountant how direct bookings fit.
 
-**Moving people takes work.** The December family will not find your page on
+**Invite your guests back through your page.** The December family will not find it on
 their own. Give them the link when they leave, and put it on your Instagram.
 
 ## Where to start
