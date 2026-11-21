@@ -3,17 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo · Booking Page</title>
-<meta name="description" content="Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.">
+<title>Reservas directas: tus huéspedes de Airbnb, con tus reglas</title>
+<meta name="description" content="Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.">
 <link rel="canonical" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
+<link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
 <link rel="alternate" hreflang="en" href="https://wdstudio.agency/booking-page/en/blog/what-a-booking-really-costs-in-mexico/">
-
-<meta property="og:title" content="Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo · Booking Page">
-<meta property="og:description" content="Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.">
+<link rel="alternate" hreflang="x-default" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
+<meta name="robots" content="max-image-preview:large">
+<meta property="og:site_name" content="Booking Page · WD Studio">
+<meta property="og:locale" content="es_MX">
+<meta property="og:title" content="Reservas directas: tus huéspedes de Airbnb, con tus reglas">
+<meta property="og:description" content="Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/">
-<link rel="alternate" type="application/rss+xml" title="Booking Page"
-      href="https://wdstudio.agency/booking-page/blog/feed.xml">
+<meta property="og:image" content="https://wdstudio.agency/booking-page/blog/media/palapa.jpg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="1067">
+<meta property="og:image:alt" content="Palapa y alberca al atardecer">
+<meta name="twitter:image" content="https://wdstudio.agency/booking-page/blog/media/palapa.jpg">
+<meta property="article:published_time" content="2026-11-19">
+<meta property="article:modified_time" content="2026-11-21">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Reservas directas: tus huéspedes de Airbnb, con tus reglas">
+<meta name="twitter:description" content="Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.">
+<link rel="alternate" type="application/rss+xml" title="Booking Page" href="https://wdstudio.agency/booking-page/blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,37 +36,52 @@
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --col:680px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
     font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
-  .envoltura{max-width:720px;margin:0 auto;padding:0 28px}
-  .barra{border-bottom:1px solid var(--g200)}
+  .envoltura{max-width:var(--ancho);margin:0 auto;padding:0 28px}
+  .columna{max-width:var(--col);margin:0 auto;padding:0 24px}
+  .barra{border-bottom:1px solid var(--g200);background:var(--papel)}
   .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
     height:64px;gap:20px}
   .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
     color:var(--tinta)}
   .marca span{color:var(--g400);font-weight:400}
+  .navega{display:flex;align-items:center;gap:22px}
+  .navega .cta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta);border:1px solid var(--tinta);padding:9px 14px}
+  .navega .cta:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--g400);margin-left:10px}
   .idiomas a.activo{color:var(--tinta)}
-  main{padding:clamp(44px,6vw,76px) 0}
-  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.1rem,5vw,3.1rem);
-    line-height:1.1;letter-spacing:-.01em}
-  .meta{margin-top:18px;font-size:13px;color:var(--g400);
-    letter-spacing:.04em}
-  .resumen{margin-top:20px;font-size:1.12rem;color:var(--g700);max-width:60ch}
-  .dato{margin-top:26px;padding:14px 18px;background:var(--hueso);
+  main{padding:clamp(36px,5vw,64px) 0 0}
+  .migas{font-size:12px;letter-spacing:.06em;color:var(--g400);margin-bottom:22px}
+  .migas a{color:var(--g500)}
+  .migas span{margin:0 8px}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.2rem,5.4vw,3.5rem);
+    line-height:1.08;letter-spacing:-.01em}
+  .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
+  .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
+  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
+    background:var(--hueso)}
+  .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
+  .dato{margin-top:30px;padding:14px 18px;background:var(--hueso);
     border-left:3px solid var(--verde);font-size:14px;color:var(--g700)}
-  article{margin-top:42px}
-  article h2{font-family:var(--display);font-weight:400;font-size:1.72rem;
-    line-height:1.2;margin:40px 0 12px}
+  .dato b{font-weight:600;color:var(--tinta)}
+  article{margin-top:34px}
+  article h2{font-family:var(--display);font-weight:400;font-size:1.86rem;
+    line-height:1.2;margin:46px 0 12px}
   article h3{font-size:1.14rem;font-weight:600;margin:30px 0 8px}
   article p{margin-bottom:18px;color:var(--g700)}
   article ul,article ol{margin:0 0 20px 22px;color:var(--g700)}
   article li{margin-bottom:8px}
+  article strong{color:var(--tinta)}
   article blockquote{margin:26px 0;padding-left:20px;border-left:2px solid var(--verde);
     font-family:var(--display);font-size:1.3rem;line-height:1.45;color:var(--tinta)}
   article blockquote p{color:inherit;margin:0}
@@ -63,59 +91,117 @@
   article th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
-  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;
-    font-size:.9em}
-  .cierre{margin-top:52px;padding:28px;background:var(--hueso);border-radius:4px}
-  .cierre h2{font-family:var(--display);font-weight:300;font-size:1.6rem;
-    line-height:1.2;margin-bottom:10px}
-  .cierre p{color:var(--g700);font-size:15px;margin-bottom:18px}
+  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
+  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
+     ancho de pantalla para la foto. */
+  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  .figura img{width:100%;border-radius:4px;background:var(--hueso)}
+  .figura figcaption{padding:0 4px}
+  /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
+  .anuncio{margin:40px 0;padding:24px 26px;border:1px solid var(--g200);
+    border-radius:6px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .anuncio div{flex:1 1 300px}
+  .anuncio .etq,.tarjeta .etq{font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--verde);font-weight:600}
+  .anuncio h2,.anuncio p.t{font-family:var(--display);font-weight:400;font-size:1.45rem;
+    line-height:1.2;margin:6px 0 6px;color:var(--tinta)}
+  .anuncio p{font-size:15px;color:var(--g700);margin:0}
   .btn{display:inline-block;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;padding:13px 24px;border:1px solid var(--tinta);
-    color:var(--tinta)}
+    text-transform:uppercase;padding:13px 22px;border:1px solid var(--tinta);
+    color:var(--tinta);white-space:nowrap}
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
-  .lista{margin-top:40px}
-  .lista a.item{display:block;padding:24px 0;border-bottom:1px solid var(--g200);
-    color:inherit}
-  .lista a.item:hover{text-decoration:none}
-  .lista a.item:hover h2{color:var(--verde)}
-  .lista h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
-    line-height:1.22}
-  .lista .meta{margin-top:8px}
-  .lista p{margin-top:8px;color:var(--g700);font-size:15px}
+  .btn.lleno{background:var(--tinta);color:#fff}
+  .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
+  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
+    display:flex;flex-direction:column}
+  .tarjeta img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  .tarjeta .txt{padding:26px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .tarjeta h2{font-family:var(--display);font-weight:300;font-size:1.7rem;line-height:1.15}
+  .tarjeta p{color:var(--g700);font-size:15px;flex:1}
+  .tarjeta .btn{align-self:flex-start;margin-top:6px}
+  .tarjeta.oscura{background:var(--tinta);color:#fff}
+  .tarjeta.oscura p{color:#C9CDD0}
+  .tarjeta.oscura .btn{border-color:#fff;color:#fff}
+  .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
+  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
+    margin-bottom:22px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .item{color:inherit;display:block}
+  .item:hover{text-decoration:none}
+  .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
+    background:var(--hueso);transition:opacity .2s}
+  .item:hover img{opacity:.88}
+  .item h2,.item h3{font-family:var(--display);font-weight:400;font-size:1.42rem;
+    line-height:1.22;margin-top:16px;color:var(--tinta)}
+  .item:hover h2,.item:hover h3{color:var(--verde)}
+  .item .meta{margin-top:6px}
+  .item p{margin-top:8px;color:var(--g700);font-size:15px;line-height:1.6}
+  .destacado{display:grid;grid-template-columns:1.35fr 1fr;gap:40px;align-items:center;
+    margin:44px 0 56px;color:inherit}
+  .destacado:hover{text-decoration:none}
+  .destacado img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}
+  .destacado h2{font-family:var(--display);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.5rem);
+    line-height:1.12;color:var(--tinta)}
+  .destacado:hover h2{color:var(--verde)}
+  .destacado p{margin-top:14px;color:var(--g700)}
+  .cabeza-indice{max-width:760px}
   .vacio{margin-top:40px;color:var(--g400)}
   .aviso{margin-top:26px;padding:12px 16px;border:1px dashed var(--verde);
     font-size:13px;color:var(--g700)}
-  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:56px;
+  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:80px;
     font-size:12px;color:var(--g400)}
   footer .envoltura{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--g500)}
+  @media (max-width:760px){
+    .destacado{grid-template-columns:1fr;gap:20px}
+    .figura{margin:30px -24px}
+    .figura img{border-radius:0}
+    .portada{padding:0}
+    .portada img{border-radius:0;aspect-ratio:4/3}
+    .portada figcaption{padding:0 24px}
+    .navega .cta{display:none}
+    .marca span{display:none}
+    .navega{gap:14px}
+  }
+  .idiomas{white-space:nowrap}
 </style>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo", "description": "Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.", "datePublished": "2026-11-19", "inLanguage": "es", "author": {"@type": "Person", "name": "Diego Larios"}, "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency"}, "mainEntityOfPage": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "@id": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/#articulo", "headline": "Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo", "description": "Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.", "datePublished": "2026-11-19", "dateModified": "2026-11-21", "inLanguage": "es", "wordCount": 554, "author": {"@type": "Person", "name": "Diego Larios", "url": "https://wdstudio.agency/"}, "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency/"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/"}, "isPartOf": {"@type": "Blog", "@id": "https://wdstudio.agency/booking-page/blog/", "name": "Booking Page · Blog"}, "keywords": "reservas directas", "image": {"@type": "ImageObject", "url": "https://wdstudio.agency/booking-page/blog/media/palapa.jpg", "width": 1600, "height": 1067}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Booking Page", "item": "https://wdstudio.agency/booking-page/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://wdstudio.agency/booking-page/blog/"}, {"@type": "ListItem", "position": 3, "name": "Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo", "item": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/"}]}]}</script>
 </head>
 <body>
 
 <header class="barra">
   <div class="envoltura">
     <a class="marca" href="../../">Booking Page <span>· WD Studio</span></a>
-    <div class="idiomas">
-      <a href="../../blog/" class="activo">ES</a>
-      <a href="../../en/blog/">EN</a>
-    </div>
+    <nav class="navega">
+      <a href="../../blog/" style="font-size:13px;color:var(--g700)">Blog</a>
+      <a class="cta" href="../../">Tu página</a>
+      <span class="idiomas">
+        <a href="../../blog/" class="activo" hreflang="es">ES</a>
+        <a href="../../en/blog/" hreflang="en">EN</a>
+      </span>
+    </nav>
   </div>
 </header>
 
 <main>
-  <div class="envoltura">
-    <p class="meta"><a href="../../blog/">Todos los artículos</a></p>
+  <div class="columna">
+    <nav class="migas" aria-label="breadcrumb"><a href="../../">Booking Page</a><span>/</span><a href="../../blog/">Blog</a></nav>
     <h1>Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo</h1>
-    <p class="meta">19 de noviembre de 2026 · Diego Larios
-      · 552 palabras</p>
-    <p class="resumen">Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.</p>
-    <p class="dato">Tarifas publicadas de Airbnb México (16 % desde junio de 2026) y Stripe México, con la cuenta hecha para una casa de 2,500 pesos la noche y la cuota de Booking Page en pesos</p>
+    <p class="meta"><time datetime="2026-11-19">19 de noviembre de 2026</time> · Actualizado 21 de noviembre de 2026
+      · Diego Larios · 3 min de lectura</p>
+    <p class="resumen">Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.</p>
     
+  </div>
+  <figure class="portada"><img src="../../blog/media/palapa.jpg" srcset="../../blog/media/palapa-800.jpg 800w, ../../blog/media/palapa.jpg 1600w" sizes="(max-width:1256px) 100vw, 1200px" width="1600" height="1067" alt="Palapa y alberca al atardecer" fetchpriority="high" decoding="async"></figure>
+  <div class="columna">
+    <p class="dato"><b>En qué se apoya este artículo:</b> Tarifas publicadas de Airbnb México (tarifa única del 16 % para anfitriones, según su centro de ayuda) y Stripe México, con la cuenta hecha para una casa de 2,500 pesos la noche y la cuota de Booking Page en pesos</p>
     <article><p>Hay una familia que vuelve a tu casa cada diciembre. Sabes cómo se llaman los niños. Te escriben por WhatsApp antes de reservar.</p>
 <p>Esa relación la construiste tú. Puede tener también su propia puerta de entrada.</p>
 <h2>Lo que Airbnb y Booking hacen bien</h2>
-<p>Los portales hacen algo muy difícil de hacer solo: ponerte delante de miles de viajeros que no te conocen. Por eso cobran. En México, Airbnb cobra a los anfitriones una tarifa del 16 % desde junio de 2026.</p>
+<p>Los portales hacen algo muy difícil de hacer solo: ponerte delante de miles de viajeros que no te conocen. Por eso cobran. En México, la tarifa única de Airbnb para anfitriones es del 16 %, según su centro de ayuda.</p>
 <p>Para el huésped nuevo, ese trato tiene sentido. Te lo trajeron ellos.</p>
 <p>El huésped que vuelve es otra historia. A ese ya lo conquistaste con la casa limpia, la respuesta rápida y el detalle en la llegada. Ahí no necesitas intermediario: necesitas un lugar propio donde pueda reservar.</p>
 <h2>Tu página, tus reglas</h2>
@@ -124,12 +210,20 @@
 <p><strong>Tu huésped.</strong> Tienes su correo y su teléfono desde el primer día. El año que viene le escribes tú.</p>
 <p><strong>Tu dinero.</strong> El pago llega directo a tu cuenta de Stripe.</p>
 <p><strong>Tu marca.</strong> La página se ve como tu casa, no como un anuncio más en una lista. Y el calendario se sincroniza con Airbnb y Booking, así que sigues en los dos.</p>
+<figure class="figura"><img src="../../blog/media/tumbonas.jpg" srcset="../../blog/media/tumbonas-800.jpg 800w, ../../blog/media/tumbonas.jpg 1600w" sizes="(max-width:760px) 100vw, 960px" width="1600" height="1067" alt="Tumbonas junto a una alberca frente al mar" loading="lazy" decoding="async"></figure>
 <h2>Los números, sin adornos</h2>
 <p>Hicimos la cuenta para una casa a 2,500 pesos la noche, con dos estancias de cuatro noches al mes reservadas directo en lugar de por Airbnb.</p>
 <table><thead><tr><th>Cómo paga el huésped</th><th>Te queda al mes frente a Airbnb</th></tr></thead><tbody><tr><td>Tarjeta mexicana, en pesos</td><td>+734 pesos</td></tr><tr><td>Tarjeta extranjera, en pesos</td><td>+600 pesos</td></tr><tr><td>Tarjeta extranjera, en dólares</td><td>+61 pesos</td></tr></tbody></table>
 <p>En México el ahorro es más pequeño que en Europa, porque Stripe cobra más aquí: 3.6 % más 3 pesos por cobro, con IVA sobre su comisión. Si cobras en dólares, suma un 2 % por conversión. Ya descontamos Booking Page, 1,490 pesos al mes.</p>
 <p>El dinero es un extra. Lo que ganas de verdad es que esa parte del negocio funcione con tus reglas.</p>
-<h2>Dónde está la trampa</h2>
+<aside class="anuncio" aria-label="Booking Page">
+      <div>
+        <span class="etq">Booking Page</span>
+        <p class="t">Tu propia página de reservas, con tus reglas</p>
+        <p>El huésped reserva y te paga a ti. 1,490 MXN al mes, sin comisión por reserva.</p>
+      </div>
+      <a class="btn lleno" href="../../">Ver cómo funciona</a>
+    </aside><h2>Dónde está la trampa</h2>
 <p><strong>El portal te sigue haciendo falta.</strong> Si tus reservas vienen de búsquedas en Airbnb o Booking, quédate ahí. La página propia es para los que ya te conocen.</p>
 <p><strong>La cuota es fija.</strong> Con menos de unos 13,400 pesos al mes en reservas directas, Booking Page te cuesta más de lo que te ahorra.</p>
 <p><strong>El papeleo pasa a ser tuyo.</strong> En directo, Airbnb no te retiene impuestos. Tú cobras el IVA, emites la factura y lo declaras. Si hoy tomas la retención de Airbnb como pago definitivo, cobrar directo puede sacarte de esa opción. Habla con tu contador antes.</p>
@@ -137,17 +231,44 @@
 <h2>Por dónde empezar</h2>
 <p>Piensa en tus tres huéspedes que más repiten. Si el año que viene reservaran contigo, con tus reglas, ¿qué cambiaría? Si la respuesta te gusta, empieza por ellos.</p>
 <p>En <a href="/booking-page/" rel="noopener">la página de Booking Page</a> puedes hacer la cuenta con tu tarifa y tus noches.</p></article>
-    <div class="cierre">
-      <h2>Tu propia página de reservas, desde 79 USD al mes</h2>
-      <p>El huésped reserva y te paga a ti. Sin comisión por reserva.</p>
-      <a class="btn" href="../../">Ver Booking Page</a>
+  </div>
+  
+  <section class="cierre" aria-label="Más de WD Studio">
+    <div class="tarjeta">
+      <img src="../../blog/media/mar.jpg" srcset="../../blog/media/mar-800.jpg 800w, ../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1067" alt="Terraza frente al mar" loading="lazy" decoding="async">
+      <div class="txt">
+        <span class="etq">Booking Page</span>
+        <h2>Una página de reservas que es tuya</h2>
+        <p>Calendario sincronizado con Airbnb y Booking, tus temporadas y tu política de cancelación, el pago directo a tu Stripe. 1,490 MXN al mes.</p>
+        <a class="btn" href="../../">Ver Booking Page</a>
+      </div>
     </div>
-  </div></main>
+    <div class="tarjeta oscura">
+      <img src="../../blog/media/aerea.jpg" srcset="../../blog/media/aerea-800.jpg 800w, ../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1066" alt="Casa vista desde arriba, junto a la playa" loading="lazy" decoding="async">
+      <div class="txt">
+        <span class="etq">WD Studio</span>
+        <h2>¿Quieres el sitio completo, o fotos que vendan?</h2>
+        <p>WD Studio diseña sitios web y hace fotografía para villas, casas y hoteles boutique.</p>
+        <a class="btn" href="https://wdstudio.agency/" rel="noopener">Hablar con WD Studio</a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="relacionados">
+    <h2>Sigue leyendo</h2>
+    <div class="rejilla"><a class="item" href="../../blog/cuanto-cuesta-una-reserva-por-portal/">
+      <img src="../../blog/media/casa.jpg" srcset="../../blog/media/casa-800.jpg 800w, ../../blog/media/casa.jpg 1600w" sizes="(max-width:760px) 100vw, 400px" width="1600" height="1066" alt="Casa con alberca entre la vegetación, al anochecer" loading="lazy" decoding="async">
+      <h3>Cuánto cuesta de verdad una reserva por portal</h3>
+      <p class="meta">13 de noviembre de 2026</p>
+      <p>La comisión de Airbnb que ves no es la que pagas. La cuenta completa con tarifas publicadas, para una casa de 110 € la noche.</p>
+    </a></div>
+  </section></main>
 
 <footer>
   <div class="envoltura">
-    <span>© <span class="anio">2026</span> WD Studio Agency</span>
-    <span><a href="../../">Booking Page</a></span>
+    <span>© <span class="anio">2026</span> <a href="https://wdstudio.agency/">WD Studio Agency</a> ·
+      Sitios web, reserva directa y fotografía para hospitality</span>
+    <span><a href="../../">Booking Page</a> · <a href="https://wdstudio.agency/booking-page/blog/feed.xml">RSS</a></span>
   </div>
 </footer>
 

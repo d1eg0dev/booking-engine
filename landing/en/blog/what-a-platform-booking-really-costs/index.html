@@ -3,17 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>What a platform booking really costs · Booking Page</title>
-<meta name="description" content="The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.">
+<title>The Airbnb host fee in 2026: what a booking really costs</title>
+<meta name="description" content="The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.">
 <link rel="canonical" href="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
+<link rel="alternate" hreflang="en" href="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
 <link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
-
-<meta property="og:title" content="What a platform booking really costs · Booking Page">
-<meta property="og:description" content="The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.">
+<link rel="alternate" hreflang="x-default" href="https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/">
+<meta name="robots" content="max-image-preview:large">
+<meta property="og:site_name" content="Booking Page · WD Studio">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="The Airbnb host fee in 2026: what a booking really costs">
+<meta property="og:description" content="The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/">
-<link rel="alternate" type="application/rss+xml" title="Booking Page"
-      href="https://wdstudio.agency/booking-page/blog/feed.xml">
+<meta property="og:image" content="https://wdstudio.agency/booking-page/blog/media/casa.jpg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="1066">
+<meta property="og:image:alt" content="House with a pool among the trees, at dusk">
+<meta name="twitter:image" content="https://wdstudio.agency/booking-page/blog/media/casa.jpg">
+<meta property="article:published_time" content="2026-11-13">
+<meta property="article:modified_time" content="2026-11-21">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Airbnb host fee in 2026: what a booking really costs">
+<meta name="twitter:description" content="The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.">
+<link rel="alternate" type="application/rss+xml" title="Booking Page" href="https://wdstudio.agency/booking-page/blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,37 +36,52 @@
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --col:680px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
     font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
-  .envoltura{max-width:720px;margin:0 auto;padding:0 28px}
-  .barra{border-bottom:1px solid var(--g200)}
+  .envoltura{max-width:var(--ancho);margin:0 auto;padding:0 28px}
+  .columna{max-width:var(--col);margin:0 auto;padding:0 24px}
+  .barra{border-bottom:1px solid var(--g200);background:var(--papel)}
   .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
     height:64px;gap:20px}
   .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
     color:var(--tinta)}
   .marca span{color:var(--g400);font-weight:400}
+  .navega{display:flex;align-items:center;gap:22px}
+  .navega .cta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta);border:1px solid var(--tinta);padding:9px 14px}
+  .navega .cta:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--g400);margin-left:10px}
   .idiomas a.activo{color:var(--tinta)}
-  main{padding:clamp(44px,6vw,76px) 0}
-  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.1rem,5vw,3.1rem);
-    line-height:1.1;letter-spacing:-.01em}
-  .meta{margin-top:18px;font-size:13px;color:var(--g400);
-    letter-spacing:.04em}
-  .resumen{margin-top:20px;font-size:1.12rem;color:var(--g700);max-width:60ch}
-  .dato{margin-top:26px;padding:14px 18px;background:var(--hueso);
+  main{padding:clamp(36px,5vw,64px) 0 0}
+  .migas{font-size:12px;letter-spacing:.06em;color:var(--g400);margin-bottom:22px}
+  .migas a{color:var(--g500)}
+  .migas span{margin:0 8px}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.2rem,5.4vw,3.5rem);
+    line-height:1.08;letter-spacing:-.01em}
+  .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
+  .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
+  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
+    background:var(--hueso)}
+  .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
+  .dato{margin-top:30px;padding:14px 18px;background:var(--hueso);
     border-left:3px solid var(--verde);font-size:14px;color:var(--g700)}
-  article{margin-top:42px}
-  article h2{font-family:var(--display);font-weight:400;font-size:1.72rem;
-    line-height:1.2;margin:40px 0 12px}
+  .dato b{font-weight:600;color:var(--tinta)}
+  article{margin-top:34px}
+  article h2{font-family:var(--display);font-weight:400;font-size:1.86rem;
+    line-height:1.2;margin:46px 0 12px}
   article h3{font-size:1.14rem;font-weight:600;margin:30px 0 8px}
   article p{margin-bottom:18px;color:var(--g700)}
   article ul,article ol{margin:0 0 20px 22px;color:var(--g700)}
   article li{margin-bottom:8px}
+  article strong{color:var(--tinta)}
   article blockquote{margin:26px 0;padding-left:20px;border-left:2px solid var(--verde);
     font-family:var(--display);font-size:1.3rem;line-height:1.45;color:var(--tinta)}
   article blockquote p{color:inherit;margin:0}
@@ -63,55 +91,113 @@
   article th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
-  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;
-    font-size:.9em}
-  .cierre{margin-top:52px;padding:28px;background:var(--hueso);border-radius:4px}
-  .cierre h2{font-family:var(--display);font-weight:300;font-size:1.6rem;
-    line-height:1.2;margin-bottom:10px}
-  .cierre p{color:var(--g700);font-size:15px;margin-bottom:18px}
+  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
+  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
+     ancho de pantalla para la foto. */
+  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  .figura img{width:100%;border-radius:4px;background:var(--hueso)}
+  .figura figcaption{padding:0 4px}
+  /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
+  .anuncio{margin:40px 0;padding:24px 26px;border:1px solid var(--g200);
+    border-radius:6px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .anuncio div{flex:1 1 300px}
+  .anuncio .etq,.tarjeta .etq{font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--verde);font-weight:600}
+  .anuncio h2,.anuncio p.t{font-family:var(--display);font-weight:400;font-size:1.45rem;
+    line-height:1.2;margin:6px 0 6px;color:var(--tinta)}
+  .anuncio p{font-size:15px;color:var(--g700);margin:0}
   .btn{display:inline-block;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;padding:13px 24px;border:1px solid var(--tinta);
-    color:var(--tinta)}
+    text-transform:uppercase;padding:13px 22px;border:1px solid var(--tinta);
+    color:var(--tinta);white-space:nowrap}
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
-  .lista{margin-top:40px}
-  .lista a.item{display:block;padding:24px 0;border-bottom:1px solid var(--g200);
-    color:inherit}
-  .lista a.item:hover{text-decoration:none}
-  .lista a.item:hover h2{color:var(--verde)}
-  .lista h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
-    line-height:1.22}
-  .lista .meta{margin-top:8px}
-  .lista p{margin-top:8px;color:var(--g700);font-size:15px}
+  .btn.lleno{background:var(--tinta);color:#fff}
+  .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
+  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
+    display:flex;flex-direction:column}
+  .tarjeta img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  .tarjeta .txt{padding:26px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .tarjeta h2{font-family:var(--display);font-weight:300;font-size:1.7rem;line-height:1.15}
+  .tarjeta p{color:var(--g700);font-size:15px;flex:1}
+  .tarjeta .btn{align-self:flex-start;margin-top:6px}
+  .tarjeta.oscura{background:var(--tinta);color:#fff}
+  .tarjeta.oscura p{color:#C9CDD0}
+  .tarjeta.oscura .btn{border-color:#fff;color:#fff}
+  .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
+  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
+    margin-bottom:22px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .item{color:inherit;display:block}
+  .item:hover{text-decoration:none}
+  .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
+    background:var(--hueso);transition:opacity .2s}
+  .item:hover img{opacity:.88}
+  .item h2,.item h3{font-family:var(--display);font-weight:400;font-size:1.42rem;
+    line-height:1.22;margin-top:16px;color:var(--tinta)}
+  .item:hover h2,.item:hover h3{color:var(--verde)}
+  .item .meta{margin-top:6px}
+  .item p{margin-top:8px;color:var(--g700);font-size:15px;line-height:1.6}
+  .destacado{display:grid;grid-template-columns:1.35fr 1fr;gap:40px;align-items:center;
+    margin:44px 0 56px;color:inherit}
+  .destacado:hover{text-decoration:none}
+  .destacado img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}
+  .destacado h2{font-family:var(--display);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.5rem);
+    line-height:1.12;color:var(--tinta)}
+  .destacado:hover h2{color:var(--verde)}
+  .destacado p{margin-top:14px;color:var(--g700)}
+  .cabeza-indice{max-width:760px}
   .vacio{margin-top:40px;color:var(--g400)}
   .aviso{margin-top:26px;padding:12px 16px;border:1px dashed var(--verde);
     font-size:13px;color:var(--g700)}
-  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:56px;
+  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:80px;
     font-size:12px;color:var(--g400)}
   footer .envoltura{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--g500)}
+  @media (max-width:760px){
+    .destacado{grid-template-columns:1fr;gap:20px}
+    .figura{margin:30px -24px}
+    .figura img{border-radius:0}
+    .portada{padding:0}
+    .portada img{border-radius:0;aspect-ratio:4/3}
+    .portada figcaption{padding:0 24px}
+    .navega .cta{display:none}
+    .marca span{display:none}
+    .navega{gap:14px}
+  }
+  .idiomas{white-space:nowrap}
 </style>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "What a platform booking really costs", "description": "The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.", "datePublished": "2026-11-13", "inLanguage": "en", "author": {"@type": "Person", "name": "Diego Larios"}, "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency"}, "mainEntityOfPage": "https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "@id": "https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/#articulo", "headline": "What a platform booking really costs", "description": "The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.", "datePublished": "2026-11-13", "dateModified": "2026-11-21", "inLanguage": "en", "wordCount": 504, "author": {"@type": "Person", "name": "Diego Larios", "url": "https://wdstudio.agency/"}, "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency/"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/"}, "isPartOf": {"@type": "Blog", "@id": "https://wdstudio.agency/booking-page/en/blog/", "name": "Booking Page · Blog"}, "keywords": "airbnb host fee", "image": {"@type": "ImageObject", "url": "https://wdstudio.agency/booking-page/blog/media/casa.jpg", "width": 1600, "height": 1066}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Booking Page", "item": "https://wdstudio.agency/booking-page/en/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://wdstudio.agency/booking-page/en/blog/"}, {"@type": "ListItem", "position": 3, "name": "What a platform booking really costs", "item": "https://wdstudio.agency/booking-page/en/blog/what-a-platform-booking-really-costs/"}]}]}</script>
 </head>
 <body>
 
 <header class="barra">
   <div class="envoltura">
-    <a class="marca" href="../../../">Booking Page <span>· WD Studio</span></a>
-    <div class="idiomas">
-      <a href="../../../blog/">ES</a>
-      <a href="../../../en/blog/" class="activo">EN</a>
-    </div>
+    <a class="marca" href="../../../en/">Booking Page <span>· WD Studio</span></a>
+    <nav class="navega">
+      <a href="../../../en/blog/" style="font-size:13px;color:var(--g700)">Blog</a>
+      <a class="cta" href="../../../en/">Get your page</a>
+      <span class="idiomas">
+        <a href="../../../blog/" hreflang="es">ES</a>
+        <a href="../../../en/blog/" class="activo" hreflang="en">EN</a>
+      </span>
+    </nav>
   </div>
 </header>
 
 <main>
-  <div class="envoltura">
-    <p class="meta"><a href="../../../en/blog/">All articles</a></p>
+  <div class="columna">
+    <nav class="migas" aria-label="breadcrumb"><a href="../../../en/">Booking Page</a><span>/</span><a href="../../../en/blog/">Blog</a></nav>
     <h1>What a platform booking really costs</h1>
-    <p class="meta">November 13, 2026 · Diego Larios
-      · 504 words</p>
-    <p class="resumen">The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.</p>
-    <p class="dato">Airbnb and Stripe published rates as of November 2026, with the arithmetic worked through</p>
+    <p class="meta"><time datetime="2026-11-13">November 13, 2026</time> · Updated November 21, 2026
+      · Diego Larios · 2 min read</p>
+    <p class="resumen">The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.</p>
     
+  </div>
+  <figure class="portada"><img src="../../../blog/media/casa.jpg" srcset="../../../blog/media/casa-800.jpg 800w, ../../../blog/media/casa.jpg 1600w" sizes="(max-width:1256px) 100vw, 1200px" width="1600" height="1066" alt="House with a pool among the trees, at dusk" fetchpriority="high" decoding="async"></figure>
+  <div class="columna">
+    <p class="dato"><b>What this article is built on:</b> Airbnb and Stripe published rates as of November 2026, with the arithmetic worked through</p>
     <article><p>Almost no host knows what a booking costs them. They know the percentage on the screen, which is not the same thing.</p>
 <p>Let us do the whole sum on an ordinary house: €110 a night, four-night stays, eight nights booked a month.</p>
 <h2>What you see and what you don't</h2>
@@ -120,11 +206,19 @@
 <h2>The sum, month by month</h2>
 <table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>Two four-night stays at €110</td><td>€880</td></tr><tr><td>Host commission, 15.5%</td><td>−€136.40</td></tr><tr><td>VAT on that commission, 21%</td><td>−€28.64</td></tr><tr><td><strong>You keep</strong></td><td><strong>€714.96</strong></td></tr></tbody></table>
 <p>That is <strong>€165 a month</strong> that never arrives. Close to <strong>€1,980</strong> a year.</p>
+<figure class="figura"><img src="../../../blog/media/alberca.jpg" srcset="../../../blog/media/alberca-800.jpg 800w, ../../../blog/media/alberca.jpg 1600w" sizes="(max-width:760px) 100vw, 960px" width="1600" height="1067" alt="Infinity pool facing the sea at sunset" loading="lazy" decoding="async"></figure>
 <h2>The same booking, direct</h2>
 <p>If that same guest books on your own page, the money lands in your Stripe account. Stripe charges for processing the payment, which is a real service and not a fee for introducing anyone: in Spain it runs around 1.5% plus €0.25 per transaction for European cards, and in Mexico about 3.6% plus 3 pesos.</p>
 <table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody><tr><td>The same two stays</td><td>€880</td></tr><tr><td>Processing, ~1.5% + €0.25 × 2</td><td>−€13.70</td></tr><tr><td>Booking Page, 79 USD a month</td><td>≈ −€73</td></tr><tr><td><strong>You keep</strong></td><td><strong>€793.30</strong></td></tr></tbody></table>
 <p>Difference: <strong>€78 more a month</strong> on a house billing €880. And from the second house on, the fee doesn't rise per booking: the margin grows on its own.</p>
-<h2>Where this calculation is unfair</h2>
+<aside class="anuncio" aria-label="Booking Page">
+      <div>
+        <span class="etq">Booking Page</span>
+        <p class="t">Your own booking page, your own rules</p>
+        <p>Guests book and pay you directly. 1,490 MXN a month, no commission per booking.</p>
+      </div>
+      <a class="btn lleno" href="../../../en/">See how it works</a>
+    </aside><h2>Where this calculation is unfair</h2>
 <p>It isn't free and I don't want to sell it that way.</p>
 <p><strong>The platform brings you people who had never heard of you.</strong> That is worth paying for. If every booking you get comes from searches inside Airbnb, removing the platform doesn't leave you better off, it leaves you empty.</p>
 <p><strong>The fee is fixed and bookings are not.</strong> In a slow month the 79 USD is due all the same. At two stays a month it pays for itself; at one, barely.</p>
@@ -134,17 +228,44 @@
 <p>The rest can keep arriving the way it already does.</p>
 <h2>Check the sum with your own numbers</h2>
 <p>Rates vary by country and by host type. On <a href="/booking-page/en/" rel="noopener">the Booking Page site</a> there is a calculator where you put in your rate, your nights and your currency, and it runs this same sum on your figures.</p></article>
-    <div class="cierre">
-      <h2>Your own booking page, from 79 USD a month</h2>
-      <p>Guests book and pay you directly. No commission per booking.</p>
-      <a class="btn" href="../../../en/">See Booking Page</a>
+  </div>
+  
+  <section class="cierre" aria-label="More from WD Studio">
+    <div class="tarjeta">
+      <img src="../../../blog/media/mar.jpg" srcset="../../../blog/media/mar-800.jpg 800w, ../../../blog/media/mar.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1067" alt="Terrace facing the sea" loading="lazy" decoding="async">
+      <div class="txt">
+        <span class="etq">Booking Page</span>
+        <h2>A booking page that is yours</h2>
+        <p>Calendar synced with Airbnb and Booking, your seasons and your cancellation policy, payment straight to your Stripe. 1,490 MXN a month.</p>
+        <a class="btn" href="../../../en/">See Booking Page</a>
+      </div>
     </div>
-  </div></main>
+    <div class="tarjeta oscura">
+      <img src="../../../blog/media/aerea.jpg" srcset="../../../blog/media/aerea-800.jpg 800w, ../../../blog/media/aerea.jpg 1600w" sizes="(max-width:760px) 100vw, 600px" width="1600" height="1066" alt="House seen from above, by the beach" loading="lazy" decoding="async">
+      <div class="txt">
+        <span class="etq">WD Studio</span>
+        <h2>Want the whole website, or photos that sell?</h2>
+        <p>WD Studio designs websites and shoots photography for villas, houses and boutique hotels.</p>
+        <a class="btn" href="https://wdstudio.agency/" rel="noopener">Talk to WD Studio</a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="relacionados">
+    <h2>Keep reading</h2>
+    <div class="rejilla"><a class="item" href="../../../en/blog/what-a-booking-really-costs-in-mexico/">
+      <img src="../../../blog/media/palapa.jpg" srcset="../../../blog/media/palapa-800.jpg 800w, ../../../blog/media/palapa.jpg 1600w" sizes="(max-width:760px) 100vw, 400px" width="1600" height="1067" alt="Palapa and pool at sunset" loading="lazy" decoding="async">
+      <h3>Airbnb brings you guests. The ones who come back can book with you</h3>
+      <p class="meta">November 19, 2026</p>
+      <p>Airbnb and Booking help guests find you. With direct booking, the guest who comes back books with you, on your own rules.</p>
+    </a></div>
+  </section></main>
 
 <footer>
   <div class="envoltura">
-    <span>© <span class="anio">2026</span> WD Studio Agency</span>
-    <span><a href="../../../">Booking Page</a></span>
+    <span>© <span class="anio">2026</span> <a href="https://wdstudio.agency/">WD Studio Agency</a> ·
+      Websites, booking and photography for hospitality</span>
+    <span><a href="../../../en/">Booking Page</a> · <a href="https://wdstudio.agency/booking-page/blog/feed.xml">RSS</a></span>
   </div>
 </footer>
 

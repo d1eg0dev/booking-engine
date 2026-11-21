@@ -3,17 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reserva directa, por escrito · Booking Page</title>
-<meta name="description" content="Lo que aprendemos llevando páginas de reserva para anfitriones: números reales, lo que funciona y lo que no.">
+<title>Blog de reservas directas para anfitriones · Booking Page</title>
+<meta name="description" content="Para anfitriones en Airbnb y Booking que quieren un canal propio: lo que cuesta, lo que funciona y lo que se siente cuando el huésped es tuyo.">
 <link rel="canonical" href="https://wdstudio.agency/booking-page/blog/">
+<link rel="alternate" hreflang="es" href="https://wdstudio.agency/booking-page/blog/">
 <link rel="alternate" hreflang="en" href="https://wdstudio.agency/booking-page/en/blog/">
-
-<meta property="og:title" content="Reserva directa, por escrito · Booking Page">
-<meta property="og:description" content="Lo que aprendemos llevando páginas de reserva para anfitriones: números reales, lo que funciona y lo que no.">
-<meta property="og:type" content="article">
+<link rel="alternate" hreflang="x-default" href="https://wdstudio.agency/booking-page/blog/">
+<meta name="robots" content="max-image-preview:large">
+<meta property="og:site_name" content="Booking Page · WD Studio">
+<meta property="og:locale" content="es_MX">
+<meta property="og:title" content="Blog de reservas directas para anfitriones · Booking Page">
+<meta property="og:description" content="Para anfitriones en Airbnb y Booking que quieren un canal propio: lo que cuesta, lo que funciona y lo que se siente cuando el huésped es tuyo.">
+<meta property="og:type" content="website">
 <meta property="og:url" content="https://wdstudio.agency/booking-page/blog/">
-<link rel="alternate" type="application/rss+xml" title="Booking Page"
-      href="https://wdstudio.agency/booking-page/blog/feed.xml">
+<meta property="og:image" content="https://wdstudio.agency/booking-page/blog/media/palapa.jpg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="1067">
+<meta property="og:image:alt" content="Palapa y alberca al atardecer">
+<meta name="twitter:image" content="https://wdstudio.agency/booking-page/blog/media/palapa.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog de reservas directas para anfitriones · Booking Page">
+<meta name="twitter:description" content="Para anfitriones en Airbnb y Booking que quieren un canal propio: lo que cuesta, lo que funciona y lo que se siente cuando el huésped es tuyo.">
+<link rel="alternate" type="application/rss+xml" title="Booking Page" href="https://wdstudio.agency/booking-page/blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,37 +34,52 @@
     --g400:#8A9196; --g200:#E7E5E1; --papel:#fff; --hueso:#F3F2EE;
     --display:'Cormorant Garamond','Bitstream Charter',Georgia,serif;
     --texto:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --col:680px; --ancho:1200px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--papel);color:var(--tinta);font-family:var(--texto);
     font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%;height:auto}
   a{color:var(--verde);text-decoration:none}
   a:hover{text-decoration:underline}
-  .envoltura{max-width:720px;margin:0 auto;padding:0 28px}
-  .barra{border-bottom:1px solid var(--g200)}
+  .envoltura{max-width:var(--ancho);margin:0 auto;padding:0 28px}
+  .columna{max-width:var(--col);margin:0 auto;padding:0 24px}
+  .barra{border-bottom:1px solid var(--g200);background:var(--papel)}
   .barra .envoltura{display:flex;align-items:center;justify-content:space-between;
     height:64px;gap:20px}
   .marca{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
     color:var(--tinta)}
   .marca span{color:var(--g400);font-weight:400}
+  .navega{display:flex;align-items:center;gap:22px}
+  .navega .cta{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta);border:1px solid var(--tinta);padding:9px 14px}
+  .navega .cta:hover{background:var(--tinta);color:#fff;text-decoration:none}
   .idiomas a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--g400);margin-left:10px}
   .idiomas a.activo{color:var(--tinta)}
-  main{padding:clamp(44px,6vw,76px) 0}
-  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.1rem,5vw,3.1rem);
-    line-height:1.1;letter-spacing:-.01em}
-  .meta{margin-top:18px;font-size:13px;color:var(--g400);
-    letter-spacing:.04em}
-  .resumen{margin-top:20px;font-size:1.12rem;color:var(--g700);max-width:60ch}
-  .dato{margin-top:26px;padding:14px 18px;background:var(--hueso);
+  main{padding:clamp(36px,5vw,64px) 0 0}
+  .migas{font-size:12px;letter-spacing:.06em;color:var(--g400);margin-bottom:22px}
+  .migas a{color:var(--g500)}
+  .migas span{margin:0 8px}
+  h1{font-family:var(--display);font-weight:300;font-size:clamp(2.2rem,5.4vw,3.5rem);
+    line-height:1.08;letter-spacing:-.01em}
+  .meta{margin-top:18px;font-size:13px;color:var(--g400);letter-spacing:.04em}
+  .resumen{margin-top:20px;font-size:1.16rem;line-height:1.6;color:var(--g700)}
+  .portada{max-width:var(--ancho);margin:clamp(30px,4vw,48px) auto 0;padding:0 28px}
+  .portada img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;
+    background:var(--hueso)}
+  .portada figcaption,.figura figcaption{font-size:12px;color:var(--g400);margin-top:10px}
+  .dato{margin-top:30px;padding:14px 18px;background:var(--hueso);
     border-left:3px solid var(--verde);font-size:14px;color:var(--g700)}
-  article{margin-top:42px}
-  article h2{font-family:var(--display);font-weight:400;font-size:1.72rem;
-    line-height:1.2;margin:40px 0 12px}
+  .dato b{font-weight:600;color:var(--tinta)}
+  article{margin-top:34px}
+  article h2{font-family:var(--display);font-weight:400;font-size:1.86rem;
+    line-height:1.2;margin:46px 0 12px}
   article h3{font-size:1.14rem;font-weight:600;margin:30px 0 8px}
   article p{margin-bottom:18px;color:var(--g700)}
   article ul,article ol{margin:0 0 20px 22px;color:var(--g700)}
   article li{margin-bottom:8px}
+  article strong{color:var(--tinta)}
   article blockquote{margin:26px 0;padding-left:20px;border-left:2px solid var(--verde);
     font-family:var(--display);font-size:1.3rem;line-height:1.45;color:var(--tinta)}
   article blockquote p{color:inherit;margin:0}
@@ -63,65 +89,127 @@
   article th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
     color:var(--g400);font-weight:500}
   article td{color:var(--g700)}
-  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;
-    font-size:.9em}
-  .cierre{margin-top:52px;padding:28px;background:var(--hueso);border-radius:4px}
-  .cierre h2{font-family:var(--display);font-weight:300;font-size:1.6rem;
-    line-height:1.2;margin-bottom:10px}
-  .cierre p{color:var(--g700);font-size:15px;margin-bottom:18px}
+  article code{background:var(--hueso);padding:2px 6px;border-radius:3px;font-size:.9em}
+  /* La segunda imagen sale de la columna: ancho de lectura para el texto,
+     ancho de pantalla para la foto. */
+  .figura{margin:38px calc(50% - min(48vw, 480px));}
+  .figura img{width:100%;border-radius:4px;background:var(--hueso)}
+  .figura figcaption{padding:0 4px}
+  /* Anuncio dentro del texto: una tarjeta, no una barra lateral. */
+  .anuncio{margin:40px 0;padding:24px 26px;border:1px solid var(--g200);
+    border-radius:6px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .anuncio div{flex:1 1 300px}
+  .anuncio .etq,.tarjeta .etq{font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--verde);font-weight:600}
+  .anuncio h2,.anuncio p.t{font-family:var(--display);font-weight:400;font-size:1.45rem;
+    line-height:1.2;margin:6px 0 6px;color:var(--tinta)}
+  .anuncio p{font-size:15px;color:var(--g700);margin:0}
   .btn{display:inline-block;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;padding:13px 24px;border:1px solid var(--tinta);
-    color:var(--tinta)}
+    text-transform:uppercase;padding:13px 22px;border:1px solid var(--tinta);
+    color:var(--tinta);white-space:nowrap}
   .btn:hover{background:var(--tinta);color:#fff;text-decoration:none}
-  .lista{margin-top:40px}
-  .lista a.item{display:block;padding:24px 0;border-bottom:1px solid var(--g200);
-    color:inherit}
-  .lista a.item:hover{text-decoration:none}
-  .lista a.item:hover h2{color:var(--verde)}
-  .lista h2{font-family:var(--display);font-weight:400;font-size:1.5rem;
-    line-height:1.22}
-  .lista .meta{margin-top:8px}
-  .lista p{margin-top:8px;color:var(--g700);font-size:15px}
+  .btn.lleno{background:var(--tinta);color:#fff}
+  .btn.lleno:hover{background:var(--verde);border-color:var(--verde)}
+  .cierre{max-width:var(--ancho);margin:64px auto 0;padding:0 28px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .tarjeta{border-radius:6px;overflow:hidden;background:var(--hueso);
+    display:flex;flex-direction:column}
+  .tarjeta img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  .tarjeta .txt{padding:26px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .tarjeta h2{font-family:var(--display);font-weight:300;font-size:1.7rem;line-height:1.15}
+  .tarjeta p{color:var(--g700);font-size:15px;flex:1}
+  .tarjeta .btn{align-self:flex-start;margin-top:6px}
+  .tarjeta.oscura{background:var(--tinta);color:#fff}
+  .tarjeta.oscura p{color:#C9CDD0}
+  .tarjeta.oscura .btn{border-color:#fff;color:#fff}
+  .tarjeta.oscura .btn:hover{background:#fff;color:var(--tinta)}
+  .relacionados{max-width:var(--ancho);margin:72px auto 0;padding:0 28px}
+  .relacionados > h2{font-family:var(--display);font-weight:400;font-size:1.6rem;
+    margin-bottom:22px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
+  .item{color:inherit;display:block}
+  .item:hover{text-decoration:none}
+  .item img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:4px;
+    background:var(--hueso);transition:opacity .2s}
+  .item:hover img{opacity:.88}
+  .item h2,.item h3{font-family:var(--display);font-weight:400;font-size:1.42rem;
+    line-height:1.22;margin-top:16px;color:var(--tinta)}
+  .item:hover h2,.item:hover h3{color:var(--verde)}
+  .item .meta{margin-top:6px}
+  .item p{margin-top:8px;color:var(--g700);font-size:15px;line-height:1.6}
+  .destacado{display:grid;grid-template-columns:1.35fr 1fr;gap:40px;align-items:center;
+    margin:44px 0 56px;color:inherit}
+  .destacado:hover{text-decoration:none}
+  .destacado img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}
+  .destacado h2{font-family:var(--display);font-weight:300;font-size:clamp(1.8rem,3.4vw,2.5rem);
+    line-height:1.12;color:var(--tinta)}
+  .destacado:hover h2{color:var(--verde)}
+  .destacado p{margin-top:14px;color:var(--g700)}
+  .cabeza-indice{max-width:760px}
   .vacio{margin-top:40px;color:var(--g400)}
   .aviso{margin-top:26px;padding:12px 16px;border:1px dashed var(--verde);
     font-size:13px;color:var(--g700)}
-  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:56px;
+  footer{border-top:1px solid var(--g200);padding:28px 0;margin-top:80px;
     font-size:12px;color:var(--g400)}
   footer .envoltura{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--g500)}
+  @media (max-width:760px){
+    .destacado{grid-template-columns:1fr;gap:20px}
+    .figura{margin:30px -24px}
+    .figura img{border-radius:0}
+    .portada{padding:0}
+    .portada img{border-radius:0;aspect-ratio:4/3}
+    .portada figcaption{padding:0 24px}
+    .navega .cta{display:none}
+    .marca span{display:none}
+    .navega{gap:14px}
+  }
+  .idiomas{white-space:nowrap}
 </style>
-
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Blog", "@id": "https://wdstudio.agency/booking-page/blog/", "name": "Reservas directas, con tus reglas", "description": "Para anfitriones en Airbnb y Booking que quieren un canal propio: lo que cuesta, lo que funciona y lo que se siente cuando el huésped es tuyo.", "inLanguage": "es", "publisher": {"@type": "Organization", "name": "WD Studio Agency", "url": "https://wdstudio.agency/"}, "blogPost": [{"@type": "BlogPosting", "headline": "Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo", "url": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-en-mexico/", "datePublished": "2026-11-19"}, {"@type": "BlogPosting", "headline": "Cuánto cuesta de verdad una reserva por portal", "url": "https://wdstudio.agency/booking-page/blog/cuanto-cuesta-una-reserva-por-portal/", "datePublished": "2026-11-13"}]}</script>
 </head>
 <body>
 
 <header class="barra">
   <div class="envoltura">
     <a class="marca" href="../">Booking Page <span>· WD Studio</span></a>
-    <div class="idiomas">
-      <a href="../blog/" class="activo">ES</a>
-      <a href="../en/blog/">EN</a>
-    </div>
+    <nav class="navega">
+      <a href="../blog/" style="font-size:13px;color:var(--g700)">Blog</a>
+      <a class="cta" href="../">Tu página</a>
+      <span class="idiomas">
+        <a href="../blog/" class="activo" hreflang="es">ES</a>
+        <a href="../en/blog/" hreflang="en">EN</a>
+      </span>
+    </nav>
   </div>
 </header>
 
 <main>
   <div class="envoltura">
-    <h1>Reserva directa, por escrito</h1>
-    <p class="resumen">Lo que aprendemos llevando páginas de reserva para anfitriones: números reales, lo que funciona y lo que no.</p>
-    <div class="lista"><a class="item" href="../blog/cuanto-cuesta-una-reserva-en-mexico/">
-      <h2>Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo</h2>
-      <p class="meta">19 de noviembre de 2026</p>
-      <p>Airbnb y Booking son buenos para que te encuentren. Para el huésped que ya te conoce, puedes tener tu propia página, con tus reglas, desde un departamento hasta un hotel boutique.</p>
-    </a><a class="item" href="../blog/cuanto-cuesta-una-reserva-por-portal/">
+    <div class="cabeza-indice">
+      <h1>Reservas directas, con tus reglas</h1>
+      <p class="resumen">Para anfitriones en Airbnb y Booking que quieren un canal propio: lo que cuesta, lo que funciona y lo que se siente cuando el huésped es tuyo.</p>
+    </div>
+    <a class="destacado" href="../blog/cuanto-cuesta-una-reserva-en-mexico/">
+      <img src="../blog/media/palapa.jpg" srcset="../blog/media/palapa-800.jpg 800w, ../blog/media/palapa.jpg 1600w" sizes="(max-width:760px) 100vw, 680px" width="1600" height="1067" alt="Palapa y alberca al atardecer" fetchpriority="high" decoding="async">
+      <div>
+        <p class="meta">19 de noviembre de 2026</p>
+        <h2>Airbnb te trae huéspedes. Los que vuelven pueden reservar contigo</h2>
+        <p>Airbnb y Booking te ayudan a que te encuentren. Con reservas directas, el huésped que vuelve reserva contigo, con tus reglas.</p>
+      </div>
+    </a><div class="rejilla"><a class="item" href="../blog/cuanto-cuesta-una-reserva-por-portal/">
+      <img src="../blog/media/casa.jpg" srcset="../blog/media/casa-800.jpg 800w, ../blog/media/casa.jpg 1600w" sizes="(max-width:760px) 100vw, 400px" width="1600" height="1066" alt="Casa con alberca entre la vegetación, al anochecer" loading="lazy" decoding="async">
       <h2>Cuánto cuesta de verdad una reserva por portal</h2>
       <p class="meta">13 de noviembre de 2026</p>
-      <p>La comisión que ves no es la que pagas. Hacemos la cuenta completa con las tarifas publicadas, para una casa de 110 € la noche.</p>
+      <p>La comisión de Airbnb que ves no es la que pagas. La cuenta completa con tarifas publicadas, para una casa de 110 € la noche.</p>
     </a></div>
   </div></main>
 
 <footer>
   <div class="envoltura">
-    <span>© <span class="anio">2026</span> WD Studio Agency</span>
-    <span><a href="../">Booking Page</a></span>
+    <span>© <span class="anio">2026</span> <a href="https://wdstudio.agency/">WD Studio Agency</a> ·
+      Sitios web, reserva directa y fotografía para hospitality</span>
+    <span><a href="../">Booking Page</a> · <a href="https://wdstudio.agency/booking-page/blog/feed.xml">RSS</a></span>
   </div>
 </footer>
 

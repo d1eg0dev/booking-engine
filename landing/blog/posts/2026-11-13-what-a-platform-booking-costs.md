@@ -4,10 +4,15 @@ slug: what-a-platform-booking-really-costs
 idioma: en
 fecha: 2026-11-13
 autor: Diego Larios
-resumen: The commission you see is not the one you pay. Here is the full arithmetic on published rates, for a house at €110 a night.
+resumen: The Airbnb host fee you see is not the one you pay. The full arithmetic on published rates, for a house at €110 a night.
 estado: publicado
 par: cuanto-cuesta-una-reserva-por-portal
 dato: Airbnb and Stripe published rates as of November 2026, with the arithmetic worked through
+titulo_seo: The Airbnb host fee in 2026: what a booking really costs
+palabra_clave: airbnb host fee
+imagen: casa.jpg
+imagen_alt: House with a pool among the trees, at dusk
+modificado: 2026-11-21
 ---
 
 Almost no host knows what a booking costs them. They know the percentage on
@@ -36,6 +41,8 @@ compare against other options. Your house looks dearer than what you charge.
 | **You keep** | **€714.96** |
 
 That is **€165 a month** that never arrives. Close to **€1,980** a year.
+
+![Infinity pool facing the sea at sunset](alberca.jpg)
 
 ## The same booking, direct
 
