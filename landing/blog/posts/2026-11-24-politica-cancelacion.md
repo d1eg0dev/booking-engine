@@ -2,7 +2,7 @@
 titulo: Tu casa ya está reservada para Semana Santa. Si cancelan, que decida tu regla
 slug: politica-de-cancelacion-airbnb-y-la-tuya
 idioma: es
-fecha: 2026-11-21
+fecha: 2026-11-24
 autor: Diego Larios
 resumen: Qué dice cada política de cancelación de Airbnb y cómo se ve tu propia regla cuando la reservación es tuya.
 estado: publicado

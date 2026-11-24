@@ -2,7 +2,7 @@
 titulo: Your house is booked for Easter week. If they cancel, let your rule decide
 slug: airbnb-cancellation-policy-and-your-own
 idioma: en
-fecha: 2026-11-21
+fecha: 2026-11-24
 autor: Diego Larios
 resumen: What each Airbnb cancellation policy says, and what your own rule looks like when the booking is yours.
 estado: publicado
