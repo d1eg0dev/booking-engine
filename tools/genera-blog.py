@@ -712,12 +712,17 @@ def pagina_post(p, pareja, otros, precio):
     </aside>"""
     articulo = con_anuncio(markdown(p['cuerpo'], base, figura), anuncio)
 
-    foto_bp = imagen('mar.jpg')
-    foto_wd = imagen('aerea.jpg')
+    # Las tarjetas del cierre no repiten las fotos del propio artículo.
+    usadas = {pathlib.Path(x).name for x in [p.get('imagen', '')] +
+              re.findall(r'^!\[[^\]]*\]\(([^)\s]+)', p['cuerpo'], re.M)}
+    libres = [x for x in ('mar.jpg', 'aerea.jpg', 'alberca.jpg', 'casa.jpg',
+                          'palapa.jpg', 'tumbonas.jpg') if x not in usadas and imagen(x)]
+    foto_bp = imagen(libres[0]) if libres else None
+    foto_wd = imagen(libres[1]) if len(libres) > 1 else None
     cierre = f"""
   <section class="cierre" aria-label="{'More from WD Studio' if en else 'Más de WD Studio'}">
     <div class="tarjeta">
-      {etiqueta_img(foto_bp, 'Terraza frente al mar' if not en else 'Terrace facing the sea', base, sizes='(max-width:760px) 100vw, 460px') if foto_bp else ''}
+      {etiqueta_img(foto_bp, 'Alojamiento frente al mar' if not en else 'Rental by the sea', base, sizes='(max-width:760px) 100vw, 460px') if foto_bp else ''}
       <div class="txt">
         <span class="etq">Booking Page</span>
         <h2>{t['bp_t']}</h2>
@@ -726,7 +731,7 @@ def pagina_post(p, pareja, otros, precio):
       </div>
     </div>
     <div class="tarjeta oscura">
-      {etiqueta_img(foto_wd, 'Casa vista desde arriba, junto a la playa' if not en else 'House seen from above, by the beach', base, sizes='(max-width:760px) 100vw, 460px') if foto_wd else ''}
+      {etiqueta_img(foto_wd, 'Casa de renta vacacional en México' if not en else 'Vacation rental home in Mexico', base, sizes='(max-width:760px) 100vw, 460px') if foto_wd else ''}
       <div class="txt">
         <span class="etq">{t['wd_etq']}</span>
         <h2>{t['wd_t']}</h2>

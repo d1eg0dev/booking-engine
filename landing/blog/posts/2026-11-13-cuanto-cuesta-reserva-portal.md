@@ -62,20 +62,16 @@ pesos.
 Diferencia: **78 € más al mes** en una casa que factura 880 €. Y a partir de
 la segunda casa la cuota no sube por reserva: el margen crece solo.
 
-## Dónde está la trampa de este cálculo
+## Lo que conviene saber antes
 
-No es gratis y no quiero venderlo así.
+**El portal te trae gente que no te conocía, y eso vale.** Por eso la página propia no lo
+sustituye: lo complementa, para los huéspedes que ya son tuyos.
 
-**El portal te trae gente que no te conocía.** Eso vale lo que cuesta. Si
-todas tus reservas vienen de búsquedas dentro de Airbnb, quitar el portal no
-te deja mejor, te deja sin reservas.
+**La cuota es fija.** Con dos estancias directas al mes sale a cuenta; con una, apenas.
+Arranca cuando ya tengas huéspedes que repiten.
 
-**La cuota es fija y las reservas no.** Un mes flojo, los 79 USD se pagan
-igual. Con dos estancias al mes sale a cuenta; con una, apenas.
-
-**Mover gente a reserva directa lleva trabajo.** Hay que pedírselo al
-huésped que ya estuvo, poner el enlace en tu Instagram, mandarlo al salir.
-Nadie llega solo.
+**Los huéspedes que vuelven necesitan una invitación.** Pídeselo al huésped que ya estuvo,
+pon el enlace en tu Instagram y mándalo al despedirlo.
 
 ## Entonces, cuándo tiene sentido
 
