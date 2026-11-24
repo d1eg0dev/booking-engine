@@ -65,20 +65,43 @@ for f, frases in [('landing/terminos/index.html',
         ok(fr in s, f'{f} contiene "{fr}"')
 
 # --- con JavaScript: el número pintado coincide con el estático -----------
+# La página en español cobra en pesos, así que el número escrito tiene que
+# salir idéntico. La inglesa muestra dólares, y eso depende del tipo de cambio
+# del día: el valor escrito usa el respaldo citado en la página y el script lo
+# afina al cargar. Por eso aquí se permite una desviación.
+#
+# La desviación no es una excusa para no comprobar nada. Si el tipo de cambio
+# se mueve más de un cinco por ciento respecto al respaldo, el número
+# publicado ya engaña a quien llega sin JavaScript, y entonces toca actualizar
+# el respaldo. Eso es justo lo que esta puerta tiene que avisar.
+TOLERANCIA = 0.05
+
+def cifra(t):
+    n = re.sub(r'[^\d]', '', t)
+    return int(n) if n else None
+
 print('\ncon JavaScript')
 with sync_playwright() as pw:
     b = pw.chromium.launch()
-    for f, esperado in (('landing/index.html', '10 noches'), ('landing/en/index.html', '10 nights')):
+    for f, noches_esp, exacto in (('landing/index.html', '10 noches', True),
+                                  ('landing/en/index.html', '10 nights', False)):
         ruta = RAIZ / f
-        estatico = re.search(r'id="r-ahorro"[^>]*>(.*?)<', ruta.read_text(encoding='utf-8')).group(1)
+        estatico = re.search(r'id="r-ahorro"[^>]*>(.*?)<',
+                             ruta.read_text(encoding='utf-8')).group(1).strip()
         pg = b.new_page()
         pg.goto(f'file://{ruta}')
-        pg.wait_for_timeout(1200)
+        pg.wait_for_timeout(1500)
         vivo = pg.inner_text('#r-ahorro').strip()
         noches = pg.inner_text('#v-noches').strip()
-        ok(vivo == estatico.strip(),
-           f'{f}: estático {estatico.strip()!r} == hidratado {vivo!r}')
-        ok(noches == esperado, f'{f}: #v-noches hidrata a {esperado!r} (dio {noches!r})')
+        if exacto:
+            ok(vivo == estatico, f'{f}: estático {estatico!r} == hidratado {vivo!r}')
+        else:
+            a, v = cifra(estatico), cifra(vivo)
+            cerca = bool(a and v and abs(a - v) / a <= TOLERANCIA)
+            ok(cerca, f'{f}: estático {estatico!r} a menos del '
+                      f'{int(TOLERANCIA * 100)}% del hidratado {vivo!r}'
+                      + ('' if cerca else ' · actualiza el respaldo de tipo de cambio'))
+        ok(noches == noches_esp, f'{f}: #v-noches hidrata a {noches_esp!r} (dio {noches!r})')
         pg.close()
     b.close()
 
