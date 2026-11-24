@@ -48,6 +48,24 @@ jobs:
       - name: Construir el blog
         run: python3 tools/genera-blog.py
 
+      # Las barreras van antes que cualquier otra cosa y bloquean sin
+      # preguntar. Una skill le dice a un agente cómo hacer las cosas y puede
+      # olvidarla; esto no pide nada, tumba la publicación. Cada regla existe
+      # porque algo se rompió de verdad: tools/guardrails.py lo documenta.
+      - name: Barreras
+        run: python3 tools/guardrails.py
+
+      # El bucle: abre las páginas en un navegador y comprueba que lo que se
+      # ve sin JavaScript sea lo mismo que se ve con él. Comprobar el diff no
+      # sirve, porque el fallo aparece al cargar la página.
+      - name: Instalar el navegador
+        run: |
+          pip install --quiet playwright
+          playwright install --with-deps chromium
+
+      - name: Bucle de comprobación
+        run: python3 tools/qa-funnel.py
+
       - name: Qué saldría publicado
         run: |
           {

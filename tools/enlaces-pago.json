@@ -1,0 +1,13 @@
+{
+  "_nota": "Los únicos enlaces de pago que pueden aparecer en el sitio. Si cambias un precio en Stripe, el enlace nuevo entra aquí antes de entrar en la landing, y el viejo sale. La barrera G5 de tools/guardrails.py tumba la publicación si una página usa uno que no esté en esta lista. Existe porque el 19 de noviembre de 2026 la landing publicada seguía apuntando a enlaces en dólares cuando el precio ya estaba en pesos.",
+  "revisado": "2026-11-25",
+  "cuenta": "acct_1UYSdfIaBlQec3CG",
+  "vivos": [
+    "https://buy.stripe.com/fZu7sLgZrcLE9IX2KN2Nq02",
+    "https://buy.stripe.com/6oUeVd9wZ9zs7AP4SV2Nq03"
+  ],
+  "detalle": {
+    "https://buy.stripe.com/fZu7sLgZrcLE9IX2KN2Nq02": "Mensual, 1,490 MXN",
+    "https://buy.stripe.com/6oUeVd9wZ9zs7AP4SV2Nq03": "Anual, 14,900 MXN"
+  }
+}
