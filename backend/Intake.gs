@@ -88,7 +88,7 @@ function columna_(h, nombre) {
 
 /* ── Quién puede publicar ────────────────────────────────────────────────
    Dos puertas: haber pagado en Stripe, o traer uno de los códigos que se
-   reparten para las primeras veinte propiedades.
+   reparten para las primeras propiedades que contratan el año.
 
    Se comprueba aquí y no en el navegador. El formulario esconde el botón a
    quien no ha pagado, pero eso es cortesía, no seguridad: cualquiera puede

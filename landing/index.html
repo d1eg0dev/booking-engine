@@ -464,12 +464,12 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       <div class="cuenta">
         <form id="mandos" autocomplete="off">
           <div class="campo">
-            <div class="campo-top"><span class="label">Tu tarifa por noche</span><b id="v-tarifa"></b></div>
+            <div class="campo-top"><span class="label">Tu tarifa por noche</span><b id="v-tarifa">$3,800</b></div>
             <input type="range" id="tarifa" min="400" max="12000" step="100" value="3800"
                    aria-label="Tarifa por noche">
           </div>
           <div class="campo">
-            <div class="campo-top"><span class="label">Noches al mes</span><b id="v-noches"></b></div>
+            <div class="campo-top"><span class="label">Noches al mes</span><b id="v-noches">10 noches</b></div>
             <input type="range" id="noches" min="1" max="30" step="1" value="10"
                    aria-label="Noches reservadas al mes">
           </div>
@@ -489,12 +489,12 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
 
         <div class="ahorro" aria-live="polite">
           <p class="label" id="r-titulo">Al año te quedas con</p>
-          <p class="cifra" id="r-ahorro"></p>
+          <p class="cifra" id="r-ahorro">$53,500</p>
           <dl class="contra">
-            <div><dt>Lo que hoy se va en comisiones</dt><dd id="r-comision"></dd></div>
-            <div><dt>Booking Page, un año</dt><dd id="r-cuesta"></dd></div>
+            <div><dt>Lo que hoy se va en comisiones</dt><dd id="r-comision">$68,400</dd></div>
+            <div><dt>Booking Page, un año</dt><dd id="r-cuesta">$14,900 MXN</dd></div>
           </dl>
-          <p class="nota" id="r-nota"></p>
+          <p class="nota" id="r-nota">Esta cuenta sólo mide las reservas que ya llegarían a ti: huéspedes que repiten, recomendados, gente que te escribe. Un portal sí trae clientes nuevos, y ese valor no está aquí. El precio se cobra en pesos.</p>
         </div>
       </div>
     </div>
@@ -580,7 +580,7 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
   <section class="bone">
     <div class="container">
       <p class="label">Cómo funciona</p>
-      <h2 class="heading">Tres pasos y estás cobrando.</h2>
+      <h2 class="heading">Cuatro pasos y estás cobrando.</h2>
       <ol class="pasos">
         <li><div><h3>Llenas un formulario</h3><p>Nombre, fotos, tarifas y tus reglas de la
           casa. Cinco minutos.</p></div></li>
@@ -625,14 +625,14 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       <div class="planes">
         <div class="plan">
           <p class="label">Mensual</p>
-          <p class="cifra" id="p-mes"></p>
+          <p class="cifra" id="p-mes">$1,490 MXN</p>
           <small>al mes, se cancela cuando quieras</small>
           <a class="btn btn-ghost" href="alta/" data-pago="mes">Empezar</a>
         </div>
         <div class="plan destacado">
           <p class="label">Anual · pagas diez meses</p>
-          <p class="cifra" id="p-ano"></p>
-          <small id="p-ano-nota"></small>
+          <p class="cifra" id="p-ano">$14,900 MXN</p>
+          <small id="p-ano-nota">al año · ahorras $2,980 MXN</small>
           <a class="btn btn-line" href="alta/" data-pago="ano">Empezar</a>
         </div>
       </div>
@@ -645,9 +645,10 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
         <li>Las mejoras que publiquemos, sin costo extra</li>
       </ul>
       <div class="veinte">
-        <p class="label">Las primeras veinte propiedades</p>
-        <p>Entran con seis meses sin costo. Avisamos con treinta días antes del primer cobro,
-          y hasta entonces se puede cancelar sin pagar nada.</p>
+        <p class="label">Las primeras propiedades</p>
+        <p>Las primeras propiedades que contraten el año entran con tres meses sin costo.
+          Avisamos con treinta días antes del primer cobro, y hasta entonces se puede
+          cancelar sin pagar nada.</p>
       </div>
     </div>
   </section>

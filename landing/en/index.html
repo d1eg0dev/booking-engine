@@ -447,12 +447,12 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       <div class="cuenta">
         <form id="mandos" autocomplete="off">
           <div class="campo">
-            <div class="campo-top"><span class="label">Your nightly rate</span><b id="v-tarifa"></b></div>
+            <div class="campo-top"><span class="label">Your nightly rate</span><b id="v-tarifa">$200</b></div>
             <input type="range" id="tarifa" min="20" max="650" step="5" value="200"
                    aria-label="Nightly rate">
           </div>
           <div class="campo">
-            <div class="campo-top"><span class="label">Nights a month</span><b id="v-noches"></b></div>
+            <div class="campo-top"><span class="label">Nights a month</span><b id="v-noches">10 nights</b></div>
             <input type="range" id="noches" min="1" max="30" step="1" value="10"
                    aria-label="Nights booked per month">
           </div>
@@ -472,12 +472,12 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
 
         <div class="ahorro" aria-live="polite">
           <p class="label" id="r-titulo">Each year you keep</p>
-          <p class="cifra" id="r-ahorro"></p>
+          <p class="cifra" id="r-ahorro">$2,805</p>
           <dl class="contra">
-            <div><dt>What goes on commission today</dt><dd id="r-comision"></dd></div>
-            <div><dt>Booking Page, one year</dt><dd id="r-cuesta"></dd></div>
+            <div><dt>What goes on commission today</dt><dd id="r-comision">$3,600</dd></div>
+            <div><dt>Booking Page, one year</dt><dd id="r-cuesta">$795 USD · 14,900 MXN</dd></div>
           </dl>
-          <p class="nota" id="r-nota"></p>
+          <p class="nota" id="r-nota">This only counts bookings that would reach you anyway: repeat guests, referrals, people who message you. A platform does bring new guests, and that value isn't counted here. The price is billed in Mexican pesos.</p>
         </div>
       </div>
     </div>
@@ -560,7 +560,7 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
   <section class="bone">
     <div class="container">
       <p class="label">How it works</p>
-      <h2 class="heading">Three steps and you're taking payments.</h2>
+      <h2 class="heading">Four steps and you're taking payments.</h2>
       <ol class="pasos">
         <li><div><h3>You fill in a form</h3><p>Name, photos, rates and your house rules.
           Five minutes.</p></div></li>
@@ -604,14 +604,14 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       <div class="planes">
         <div class="plan">
           <p class="label">Monthly</p>
-          <p class="cifra" id="p-mes"></p>
+          <p class="cifra" id="p-mes">$79 USD</p>
           <small>a month, cancel any time</small>
           <a class="btn btn-ghost" href="../alta/?lang=en" data-pago="mes">Start</a>
         </div>
         <div class="plan destacado">
           <p class="label">Yearly · pay for ten months</p>
-          <p class="cifra" id="p-ano"></p>
-          <small id="p-ano-nota"></small>
+          <p class="cifra" id="p-ano">$795 USD</p>
+          <small id="p-ano-nota">a year · you save $159 USD</small>
           <a class="btn btn-line" href="../alta/?lang=en" data-pago="ano">Start</a>
         </div>
       </div>
@@ -624,9 +624,10 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
         <li>Every improvement we release, at no extra cost</li>
       </ul>
       <div class="veinte">
-        <p class="label">The first twenty properties</p>
-        <p>Get six months at no cost. We give thirty days' notice before the first charge,
-          and until then you can cancel without paying anything.</p>
+        <p class="label">The first properties</p>
+        <p>The first properties to take the annual plan get three months at no cost. We give
+          thirty days' notice before the first charge, and until then you can cancel without
+          paying anything.</p>
       </div>
     </div>
   </section>
