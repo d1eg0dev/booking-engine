@@ -1,6 +1,6 @@
 {
   "_nota": "Fuente única de lo legal. Los términos son LITERALMENTE los que el cliente acepta en el alta (tools/intake.html, CONDICIONES). Si se cambian aquí, hay que cambiarlos allí y subir la versión en los dos sitios: si divergen, vale la que el cliente firmó y la pública te contradice.",
-  "version": "2026-11-24",
+  "version": "2026-11-25",
   "entidad": {
     "nombre": "WD Studio Agency",
     "razon_social": "Diego Eduardo Larios Mejía",
@@ -18,7 +18,7 @@
         ],
         [
           "Cuánto cuesta",
-          "1,490 pesos mexicanos al mes, o 14,900 al año, cobrados por adelantado. El precio se cobra siempre en pesos; si pagas desde otro país, tu banco hace la conversión. Tienes un mes de prueba que empieza el día que tu página queda publicada, no el día que te registras, y puedes cancelar antes de que termine sin pagar nada. Si estás entre las primeras propiedades y contratas el año, tienes tres meses sin costo. Los impuestos van por separado si pides factura."
+          "1,490 pesos mexicanos al mes, o 14,900 al año, cobrados por adelantado en los dos casos: no hay periodo de prueba. El precio se cobra siempre en pesos; si pagas desde otro país, tu banco hace la conversión. Las primeras propiedades que contratan el año pagan nueve meses en lugar de diez, aplicando el código de lanzamiento al momento de pagar. Los impuestos van por separado si pides factura."
         ],
         [
           "El dinero de tus reservas es tuyo",
@@ -72,7 +72,7 @@
         ],
         [
           "What it costs",
-          "1,490 Mexican pesos a month, or 14,900 a year, charged in advance. Billing is always in pesos; if you pay from another country, your bank handles the conversion. You get a one-month trial that starts the day your page goes live, not the day you sign up, and you can cancel before it ends without paying anything. If you are among the first properties and you take the annual plan, you get three months at no cost. Taxes are added separately if you request an invoice."
+          "1,490 Mexican pesos a month, or 14,900 a year, charged up front in both cases: there is no trial period. Billing is always in pesos; if you pay from another country, your bank handles the conversion. The first properties to take the annual plan pay for nine months instead of ten, by applying the launch code at checkout. Taxes are added separately if you request an invoice."
         ],
         [
           "The money from your bookings is yours",

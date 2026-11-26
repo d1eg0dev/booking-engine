@@ -63,8 +63,11 @@ for pagina in ('landing/index.html', 'landing/en/index.html'):
 # ── G3 · Una sola oferta, en todas partes ─────────────────────────────────
 # Roto el 24 nov 2026: la oferta cambió a tres meses y "seis meses" seguía
 # vivo en siete sitios, los términos que el cliente acepta incluidos.
-PROHIBIDO = ['seis meses', 'six months', 'primeras veinte', 'first twenty',
-             'veinte primeros']
+# "veinte" volvió a ser legítimo el 25 nov 2026: el código de lanzamiento tiene
+# veinte canjes. Lo que no puede volver es la oferta de seis meses ni el periodo
+# de prueba, que contradecía el cobro por adelantado.
+PROHIBIDO = ['seis meses', 'six months', 'mes de prueba', 'one-month trial',
+             'treinta días antes del primer cobro', "thirty days' notice before the first"]
 
 for p in RAIZ.rglob('*'):
     if not p.is_file() or p.suffix not in ('.html', '.js', '.json', '.gs'):

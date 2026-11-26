@@ -57,9 +57,9 @@ ok(not viejo, 'no queda rastro de los seis meses ni de las veinte ' + (str(viejo
 # --- legales --------------------------------------------------------------
 print('\nlegales')
 for f, frases in [('landing/terminos/index.html',
-                   ['PCI-DSS', 'intermediario financiero', 'topada al monto', 'tres meses sin costo']),
+                   ['PCI-DSS', 'intermediario financiero', 'topada al monto', 'nueve meses en lugar de diez']),
                   ('landing/en/terms/index.html',
-                   ['PCI-DSS', 'financial intermediary', 'capped at', 'three months at no cost'])]:
+                   ['PCI-DSS', 'financial intermediary', 'capped at', 'nine months instead of ten'])]:
     s = (RAIZ / f).read_text(encoding='utf-8')
     for fr in frases:
         ok(fr in s, f'{f} contiene "{fr}"')

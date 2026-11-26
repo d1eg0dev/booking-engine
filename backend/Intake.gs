@@ -699,16 +699,16 @@ function escapa_(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-/* ── El mes de prueba empieza al publicar ────────────────────────────────
-   Stripe cuenta la prueba desde que se crea la suscripción, y la suscripción
-   se crea al pagar, que es antes de que exista la página. Aquí se mueve su
-   final a treinta días contados desde hoy: el día que el sitio quedó vivo.
+/* ── Herencia: suscripciones que todavía traen prueba ────────────────────
+   Desde el 25 de noviembre de 2026 los enlaces de pago cobran por adelantado
+   y no crean pruebas: el año se paga el día que se contrata, que es de lo que
+   vive el negocio. Esta función ya no aplica a nadie nuevo.
 
-   Sólo se mueve hacia adelante. Si la suscripción ya tenía una prueba más
-   larga, se deja como estaba: un reintento o una publicación repetida no
-   deben quitarle días a nadie. Y si ya salió de la prueba y está cobrando,
-   no se toca, porque devolverla a prueba sería regalarle un mes a alguien
-   que ya pagó.                                                            */
+   Se queda para las suscripciones creadas antes de ese cambio, que sí están
+   en prueba: a ésas les mueve el final a treinta días desde que su página
+   quedó viva, porque el reloj no debe correr mientras el propietario todavía
+   no tiene nada publicado. Sale sola si la suscripción no está en prueba,
+   que es el caso de todas las nuevas.                                     */
 function arrancaPrueba_(sub) {
   var clave = prop_('STRIPE_SECRET', true);
   if (!clave) throw new Error('falta STRIPE_SECRET');
@@ -754,11 +754,9 @@ function resultado_(c) {
       catch (err) { estado = 'vivo, sin fotos: ' + String(err.message).slice(0, 180); }
     }
 
-    // El mes de prueba empieza cuando la página responde, no cuando el
-    // propietario se registró. Si empezara en el alta, el que tarda dos
-    // semanas en mandar sus fotos se gastaría media prueba esperándose a sí
-    // mismo, y le llegaría el primer cobro sin haber visto su sitio nunca.
-    // Ese es el cobro que se cancela y además deja mal sabor.
+    // Sólo para las suscripciones viejas que todavía traen prueba: el reloj
+    // arranca cuando la página responde, no cuando el propietario se
+    // registró. Las nuevas ya pagaron por adelantado y esto sale solo.
     if (c.ok && c.vivo) {
       var colPrueba = columna_(h, 'prueba desde');
       if (!h.getRange(i + 1, colPrueba).getValue()) {

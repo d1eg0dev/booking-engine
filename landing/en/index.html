@@ -362,6 +362,24 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
   .nav-link{display:none}
   .nav-lang{display:inline;gap:0}
 }
+
+/* Quick-buy band: paying used to be half a page down */
+.franja-rapida{background:var(--verde-hondo);color:var(--bone);padding:34px 0}
+.franja-in{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.franja-rapida .label{color:var(--claro,#8FD9C4)}
+.franja-titulo{font-family:var(--serif,Georgia),serif;font-size:clamp(20px,2.4vw,27px);
+               line-height:1.25;margin-top:8px;max-width:30ch}
+.franja-botones{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.franja-rapida .btn-ghost{border-color:rgba(244,242,237,.45);color:var(--bone)}
+.franja-rapida .btn-ghost:hover{border-color:var(--bone);color:#fff}
+.franja-link{color:rgba(244,242,237,.72);font-size:14px;text-decoration:underline;
+             text-underline-offset:4px}
+.franja-link:hover{color:var(--bone)}
+@media (max-width:720px){
+  .franja-in{flex-direction:column;align-items:flex-start}
+  .franja-botones{width:100%}
+  .franja-botones .btn{flex:1;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -373,7 +391,7 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       <a class="nav-link" href="#producto">The product</a>
       <a class="nav-link" href="#precio">Pricing</a>
       <a class="nav-link nav-lang" href="../" lang="es">ES</a>
-      <a class="nav-cta" href="#empezar">Start</a>
+      <a class="nav-cta" href="#precio">See pricing</a>
     </div>
   </div>
 </nav>
@@ -409,6 +427,20 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
           <button type="button" data-reel="en" aria-pressed="true">English</button>
         </div>
         <button type="button" class="reel-sonido" id="reelSonido" aria-pressed="false">With sound</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="franja-rapida">
+    <div class="container franja-in">
+      <div class="franja-texto">
+        <p class="label">If you already know</p>
+        <p class="franja-titulo">Pick a plan and your page can be live today.</p>
+      </div>
+      <div class="franja-botones">
+        <a class="btn btn-solid" href="../alta/" data-pago="ano">Get the year</a>
+        <a class="btn btn-ghost" href="../alta/" data-pago="mes">Get it monthly</a>
+        <a class="franja-link" href="#precio">See what's included</a>
       </div>
     </div>
   </section>
@@ -625,9 +657,9 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       </ul>
       <div class="veinte">
         <p class="label">The first properties</p>
-        <p>The first properties to take the annual plan get three months at no cost. We give
-          thirty days' notice before the first charge, and until then you can cancel without
-          paying anything.</p>
+        <p>The first properties to take the annual plan pay for <b>nine months instead of
+          ten</b>: three months at no cost, taken off in one go. The launch code is applied
+          for you at checkout.</p>
       </div>
     </div>
   </section>

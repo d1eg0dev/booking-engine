@@ -366,6 +366,24 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
   .nav-link{display:none}
   .nav-lang{display:inline;gap:0}
 }
+
+/* Franja de compra inmediata: antes había que bajar media página para pagar */
+.franja-rapida{background:var(--verde-hondo);color:var(--bone);padding:34px 0}
+.franja-in{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.franja-rapida .label{color:var(--claro,#8FD9C4)}
+.franja-titulo{font-family:var(--serif,Georgia),serif;font-size:clamp(20px,2.4vw,27px);
+               line-height:1.25;margin-top:8px;max-width:30ch}
+.franja-botones{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.franja-rapida .btn-ghost{border-color:rgba(244,242,237,.45);color:var(--bone)}
+.franja-rapida .btn-ghost:hover{border-color:var(--bone);color:#fff}
+.franja-link{color:rgba(244,242,237,.72);font-size:14px;text-decoration:underline;
+             text-underline-offset:4px}
+.franja-link:hover{color:var(--bone)}
+@media (max-width:720px){
+  .franja-in{flex-direction:column;align-items:flex-start}
+  .franja-botones{width:100%}
+  .franja-botones .btn{flex:1;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -381,7 +399,7 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
            ésta: así cada versión tiene su dirección y se puede mandar por
            separado a un cliente de fuera. -->
       <a class="nav-link nav-lang" href="en/" lang="en">EN</a>
-      <a class="nav-cta" href="#empezar">Empezar</a>
+      <a class="nav-cta" href="#precio">Ver precio</a>
     </div>
   </div>
 </nav>
@@ -421,6 +439,20 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
           <button type="button" data-reel="en" aria-pressed="false">English</button>
         </div>
         <button type="button" class="reel-sonido" id="reelSonido" aria-pressed="false">Con sonido</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="franja-rapida">
+    <div class="container franja-in">
+      <div class="franja-texto">
+        <p class="label">Si ya lo tienes claro</p>
+        <p class="franja-titulo">Elige plan y tu página puede estar en línea hoy.</p>
+      </div>
+      <div class="franja-botones">
+        <a class="btn btn-solid" href="alta/" data-pago="ano">Contratar el año</a>
+        <a class="btn btn-ghost" href="alta/" data-pago="mes">Contratar al mes</a>
+        <a class="franja-link" href="#precio">Ver qué incluye</a>
       </div>
     </div>
   </section>
@@ -646,9 +678,9 @@ footer{padding:56px 0 34px;border-top:1px solid var(--g200)}
       </ul>
       <div class="veinte">
         <p class="label">Las primeras propiedades</p>
-        <p>Las primeras propiedades que contraten el año entran con tres meses sin costo.
-          Avisamos con treinta días antes del primer cobro, y hasta entonces se puede
-          cancelar sin pagar nada.</p>
+        <p>Las primeras propiedades que contraten el año pagan <b>nueve meses en lugar de
+          diez</b>: tres meses sin costo, descontados de una vez. El código de lanzamiento
+          se aplica solo al llegar al pago.</p>
       </div>
     </div>
   </section>
